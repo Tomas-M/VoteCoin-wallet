@@ -30,6 +30,8 @@ function update_totals()
    {
       if (res.result)
       {
+         status_updater();
+
          $('#transparentVOT').text(num(res.result.transparent,8));
          $('#privateVOT').text(num(res.result.private,8));
          $('#totalVOT').text(num(res.result.total,8));
@@ -48,6 +50,22 @@ function update_totals()
       }
    },true);
 }
+
+
+function status_updater()
+{
+   main.rpc("getinfo", "", (res)=>
+   {
+        if (res.result)
+        {
+            $('#connections').text(res.result.connections);
+            $('#blockcurrent').text(res.result.blocks);
+            $('#blockheight').text(res.result.blocks);
+         }
+         setTimeout(status_updater,10000);
+    },true);
+}
+
 
 function download_progress(file,size,bytes)
 {

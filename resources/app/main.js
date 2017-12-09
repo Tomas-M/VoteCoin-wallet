@@ -17,7 +17,7 @@ let canQuit=true;
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1200, height: 700, icon: path.join(__dirname, 'votecoin.ico')})
+  win = new BrowserWindow({width: 1200, height: 720, icon: path.join(__dirname, 'votecoin.ico')})
 
   win.setMenu(null);
 
