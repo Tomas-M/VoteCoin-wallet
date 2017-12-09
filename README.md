@@ -1,6 +1,7 @@
-# VoteCoin wallet
+# VoteCoin GUI wallet
 
-Warning: this is a pre-alpha development tree of VoteCoin wallet. Things are expected to be broken. Use at your own risk.
+Warning: this is a pre-alpha development tree of VoteCoin GUI wallet for Windows.
+Things are expected to be broken. Use at your own risk.
 
 # How to start:
 
