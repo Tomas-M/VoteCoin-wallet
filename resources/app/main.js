@@ -1,3 +1,8 @@
+/*
+    Copyright (c) 2017 VoteCoin team, all rights reserved
+    See LICENSE file for more info
+*/
+
 const electron = require('electron');
 const {app, dialog, ipcMain, Menu} = require('electron');
 const BrowserWindow = electron.BrowserWindow; 
