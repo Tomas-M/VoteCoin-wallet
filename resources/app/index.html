@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link href="css/catamaran.css" rel="stylesheet">
+    <link href="css/roboto.css" rel="stylesheet">
+
 <!--
     Copyright (c) 2017 VoteCoin team, all rights reserved
     See LICENSE file for more info
@@ -9,17 +13,17 @@
     <title>VoteCoin wallet</title>
 
     <style>
-        html,body { -webkit-app-region: drag; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: Arial; }
+        html,body { -webkit-app-region: drag; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: Roboto; letter-spacing: 1px; }
         html {    font-size: 100%;    -webkit-text-size-adjust: 100%;    font-variant-ligatures: none;    -webkit-font-variant-ligatures: none;    text-rendering: optimizeLegibility;    -moz-osx-font-smoothing: grayscale;    font-smoothing: antialiased;    -webkit-font-smoothing: antialiased;    text-shadow: rgba(0, 0, 0, .01) 0 0 1px; }
 
         .menu { margin-top: 40px; border-bottom: 1px solid #1e1924;  } 
 
         .menu .menurow { 
+letter-spacing: 1px;
 cursor: pointer;
-kline-height: 60px;
 color: #fff; 
 font-size: 25px; 
-font-family: Arial; 
+font-family: catamaran; 
 border-top: 1px solid #1e1924;
 }
 
@@ -30,7 +34,7 @@ border-left: 5px solid #282230;
 width: 45px; 
 display: inline-block;
 }
-        .menu .menurow span { font-size: 20px; display: inline-block; height: 45px; vertical-align: top; width: calc(100% - 110px); text-align: left; padding-top: 20px;  padding-left: 25px;  }
+        .menu .menurow span { font-size: 20px; display: inline-block; height: 45px; vertical-align: top; width: calc(100% - 110px); text-align: left; padding-top: 17px; padding-bottom: 3px; padding-left: 25px;  }
 
         .menu .menurow.active i { background-color: #1e1924; border-left: 5px solid #f7931a; }
         .menu .menurow.active span { background-color: #282130; }
@@ -39,7 +43,6 @@ display: inline-block;
         .container { display: none; width: calc(100% - 60px); }
     </style>
 
-    <link rel="stylesheet" href="css/font-awesome.min.css">
   </head>
   <body>
 
@@ -55,7 +58,7 @@ display: inline-block;
            <div data-toggle="settings" class=menurow><i class="fa fa-cog"></i><span>Settings</span></div>
         </div>
 
-        <div style="position: absolute; bottom: 0px; color: #848089; background-color: #332c3b; padding: 10px; font-size: 15px; line-height: 20px; font-family: Arial; width: 330px;" align=center>
+        <div style="position: absolute; bottom: 0px; color: #848089; background-color: #332c3b; padding: 10px; font-size: 15px; line-height: 20px; font-family: Catamaran; width: 330px;" align=center>
           <strong id=connections>0</strong> active connections<br>
           block height <span id=blockcurrent>0</span> <strong id=blockheight style="display: none;">/ ?</strong>
         </div>
