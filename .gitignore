@@ -1,2 +1,8 @@
 resources/app/zkSNARK/*
-resources/app/VoteCoin/*
+resources/app/VoteCoin/.lock
+resources/app/VoteCoin/*.log
+resources/app/VoteCoin/*.dat
+resources/app/VoteCoin/chainstate
+resources/app/VoteCoin/blocks
+
+
