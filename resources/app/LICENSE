@@ -1,0 +1,11 @@
+Several parts of VoteCoin wallet are free software,
+for example jquery, electron.
+
+Several parts of VoteCoin wallet are NOT free software,
+for example the code in main.js, votecoin.js and index.html
+as well as images and logos.
+
+If you wish to reuse this software to build a wallet for other conin,
+you can do that only after our written approval.
+
+Contact us at info@votecoin.site
