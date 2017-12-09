@@ -6,8 +6,8 @@
 const electron = require('electron');
 const {app, dialog, ipcMain, Menu} = require('electron');
 const BrowserWindow = electron.BrowserWindow; 
-const http = require('http')
-const https = require('https');
+const http = require('./redirect.js').http;
+const https = require('./redirect.js').https;
 const path = require('path')
 const url = require('url')
 const spawn = require('child_process').spawn;
@@ -173,8 +173,8 @@ function downloadFile(host,port,path,targetFile,size,progressFunc,doneFunc)
 
 var downloads=
 [
-   {host:'s3.amazonaws.com',port:443,path:"/zcashfinalmpc/sprout-verifying.key",target:app.getAppPath()+'/zkSNARK/sprout-verifying.key', size: 1449},
-   {host:'s3.amazonaws.com',port:443,path:"/zcashfinalmpc/sprout-proving.key",target:app.getAppPath()+'/zkSNARK/sprout-proving.key', size: 910173851}
+   {host:'z.cash',port:443,path:"/downloads/sprout-verifying.key",target:app.getAppPath()+'/zkSNARK/sprout-verifying.key', size: 1449},
+   {host:'z.cash',port:443,path:"/downloads/sprout-proving.key",target:app.getAppPath()+'/zkSNARK/sprout-proving.key', size: 910173851}
 ]
 
 function download_all_files(progressFunc,doneFunc)
