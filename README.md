@@ -9,4 +9,4 @@ Things are expected to be broken. Use at your own risk.
 - Extract to a folder
 - Run votecoin.exe
 
-![screenshot](/guiwallet-alpha.png?raw=true "GUI wallet")
+![screenshot](/guiwallet-alpha2.png?raw=true "GUI wallet")
