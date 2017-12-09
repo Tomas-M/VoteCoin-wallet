@@ -36,7 +36,7 @@ display: inline-block;
         .menu .menurow.active span { background-color: #282130; }
 
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
-        .container { display: none; }
+        .container { display: none; width: calc(100% - 60px); }
     </style>
 
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -71,7 +71,8 @@ display: inline-block;
          </div>
 
          <div id=dashboard class=container>
-           <div align=center style="font-size: 40px; color: #332b3b;"><span id=totalVOT style="font-weight: bold;">
+           <div align=center style="font-size: 40px; color: #332b3b;">
+                  <span id=totalVOT style="font-weight: bold;">
               ... </span><span style="color: #949198;"> VOT</span>
            </div>
            <div align=center style='color: #332b3b;'><span id=totalUSD></span></div>
