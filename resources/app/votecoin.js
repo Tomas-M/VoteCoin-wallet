@@ -76,7 +76,7 @@ function download_progress(file,size,bytes)
 function init()
 {
    $('#progress').show();
-   $('#progressmessage').html("Downloading zkSNARK proving keys (900MB)...");
+   $('#progressmessage').html("Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
 
    // check && download sprout proving file
    main.download_all_files(download_progress,function()
