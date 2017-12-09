@@ -13,6 +13,7 @@ var totalPrivate=0;
 var totalTransparent=0;
 var connections=0;
 var blocks=0;
+var totalblocks=0;
 
 
 function JSON_fromString(json)
@@ -64,6 +65,7 @@ function update_gui()
     else settext('totalUSD'," ");
     settext('connections',num(connections));
     settext('blockcurrent',num(blocks));
+    settext('blocktotal',num(totalblocks>blocks?totalblocks:blocks));
 }
 
 
@@ -105,6 +107,15 @@ function update_stats()
 }
 
 
+function update_totalblocks()
+{
+     $.get("http://explorer.votecoin.site/insight-api-zcash/status?q=getInfo",function(res)
+     {
+        totalblocks=parseFloat(res.info.blocks);
+     });
+}
+
+
 function download_progress(file,size,bytes)
 {
    $('#progressbar').css('width',Math.ceil(bytes/size*100)+'%');
@@ -143,6 +154,7 @@ function init()
           setUpdater(update_rates,600000); // once per 10 minutes
           setUpdater(update_totals,10000); // every 10 seconds
           setUpdater(update_stats,2000);  // every 2 seconds
+          setUpdater(update_totalblocks,60000);   // every 1 minute
           setUpdater(update_gui,1000);   // every 1 second
       })
    });
