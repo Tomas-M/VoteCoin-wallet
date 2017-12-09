@@ -7,6 +7,14 @@
 var {ipcRenderer, remote} = require('electron');  
 var main = remote.require("./main.js");
 
+var rateVOTBTC=0;
+var rateBTCUSD=0;
+var totalPrivate=0;
+var totalTransparent=0;
+var connections=0;
+var blocks=0;
+
+
 function JSON_fromString(json)
 {
    var ret={};
@@ -17,6 +25,7 @@ function JSON_fromString(json)
 
 function num(n,precision)
 {
+   if (!precision) precision=0;
    n=parseFloat(n);
    return n.toFixed(precision);
 }
@@ -29,53 +38,82 @@ function msg(s)
 }
 
 
+function wait_for_wallet()
+{
+   return new Promise((resolve,reject)=>
+   {
+      main.rpc("getinfo", "", (res)=> { if (res.result) resolve(); }, true);
+   });
+}
+
+
+function settext(element,t)
+{
+   var el=$('#'+element);
+   if (el.text()==t) return;
+   el.text(t);
+}
+
+
+function update_gui()
+{
+    settext('transparentVOT',num(totalTransparent,8));
+    settext('privateVOT',num(totalPrivate,8));
+    settext('totalVOT',num(totalTransparent+totalPrivate,8));
+    if (rateBTCUSD*rateVOTBTC>0) settext('totalUSD',"$"+num((totalTransparent+totalPrivate)*rateBTCUSD*rateVOTBTC,2));
+    else settext('totalUSD'," ");
+    settext('connections',num(connections));
+    settext('blockcurrent',num(blocks));
+}
+
+
 function update_totals()
 {
-   msg("Connecting to VoteCoin service...");
    main.rpc("z_gettotalbalance", "", (res)=>
    {
       if (res.result)
       {
-         status_updater();
-
-         $('#transparentVOT').text(num(res.result.transparent,8));
-         $('#privateVOT').text(num(res.result.private,8));
-         $('#totalVOT').text(num(res.result.total,8));
-
-         msg("Getting exchange rates from web...");
-         $.get("http://votecoin.site/bestrate.php",function(rates)
-         {
-            rates=JSON_fromString(rates);
-            $('#totalUSD').text("$"+num(res.result.total*rates.BTCUSD*rates.VOTBTC,2));
-            $('#msg').hide();
-            $('#progress').hide();
-            $('#dashboard').show();
-            isInitialized=true;
-            $('.menurow').first().addClass('active');
-         });
+         totalTransparent=parseFloat(res.result.transparent);
+         totalPrivate=parseFloat(res.result.private);
       }
-   },true);
+   });
 }
 
 
-function status_updater()
+function update_rates()
+{
+     $.get("http://votecoin.site/bestrate.php",function(rates)
+     {
+        rates=JSON_fromString(rates);
+        if (!rates) return;
+        rateBTCUSD=parseFloat(rates.BTCUSD);
+        rateVOTBTC=parseFloat(rates.VOTBTC);
+     });
+}
+
+
+function update_stats()
 {
    main.rpc("getinfo", "", (res)=>
    {
         if (res.result)
         {
-            $('#connections').text(res.result.connections);
-            $('#blockcurrent').text(res.result.blocks);
-            $('#blockheight').text(res.result.blocks);
-         }
-         setTimeout(status_updater,10000);
-    },true);
+            connections=parseFloat(res.result.connections);
+            blocks=parseFloat(res.result.blocks);
+        }
+    });
 }
 
 
 function download_progress(file,size,bytes)
 {
    $('#progressbar').css('width',Math.ceil(bytes/size*100)+'%');
+}
+
+function setUpdater(func,time)
+{
+   setInterval(func,time);
+   setTimeout(func,0); // run right away
 }
 
 
@@ -93,10 +131,20 @@ function init()
       // start wallet
       main.walletStart();
 
-      // update totals. This re-executes itself until wallet is started and balances gathered
-      update_totals();
+      // wait for wallet to be ready
+      wait_for_wallet().then(()=>
+      {
+          $('#progress').hide();
+          $('#dashboard').show();
+          $('.menurow').first().addClass('active');
+          isInitialized=true;
 
-      // start periodic checker
+          // init periodic stats updaters
+          setUpdater(update_rates,600000); // once per 10 minutes
+          setUpdater(update_totals,10000); // every 10 seconds
+          setUpdater(update_stats,2000);  // every 2 seconds
+          setUpdater(update_gui,1000);   // every 1 second
+      })
    });
 }
 
