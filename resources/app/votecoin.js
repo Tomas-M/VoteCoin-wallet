@@ -25,11 +25,13 @@ function JSON_fromString(json)
 }
 
 
-function num(n,precision)
+function num(n,precision,strip)
 {
    if (!precision) precision=0;
    n=parseFloat(n);
-   return n.toFixed(precision);
+   n=n.toFixed(precision);
+   if (strip && precision>0) n=n.replace(/0+$/,"").replace(/[.]$/,"");
+   return n;
 }
 
 
@@ -67,10 +69,10 @@ function sethtml(element,h)
 
 function update_gui()
 {
-    settext('transparentVOT',num(totalTransparent,8));
-    settext('privateVOT',num(totalPrivate,8));
+    settext('transparentVOT',num(totalTransparent,8,true));
+    settext('privateVOT',num(totalPrivate,8,true));
     settext('totalVOT',num(totalTransparent+totalPrivate,8));
-    if (rateBTCUSD*rateVOTBTC>0) settext('totalUSD',"$"+num((totalTransparent+totalPrivate)*rateBTCUSD*rateVOTBTC,2));
+    if (rateBTCUSD*rateVOTBTC>0) settext('totalUSD',"$"+num((totalTransparent+totalPrivate)*rateBTCUSD*rateVOTBTC,2,true));
     else sethtml('totalUSD',"&nbsp;");
     settext('connections',num(connections));
     settext('blockcurrent',num(blocks));
@@ -89,7 +91,7 @@ function update_gui()
                     +"<div class=date>"+date(transactionslist[i].blocktime)+"</div>"
                     +"<div class=confirmed>"+(transactionslist[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
                     +"<div class=transid>"+transactionslist[i].txid+"</div>"
-                    +"<div class='amount'>"+(transactionslist[i].amount>0?"+":"")+transactionslist[i].amount+" VOT</div>"
+                    +"<div class='amount'>"+(transactionslist[i].amount>0?"+":"")+num(transactionslist[i].amount,8,true)+" VOT</div>"
                +"</div>";
 
     sethtml('transactionslist',trans);

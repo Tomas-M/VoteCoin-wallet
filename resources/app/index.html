@@ -27,7 +27,7 @@
 
         .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .transactionrow .date { text-align: center; width: 70px; margin-top: 8px; line-height: 20px; font-size: 14px; }
-        .transactionrow .confirmed { text-align: center; width: 50px; margin-bottom: 5px;}
+        .transactionrow .confirmed { text-align: center; width: 50px; margin-bottom: 5px; border-right: 20px solid #e9e9e9;}
         .transactionrow .transid { width: calc(100% - 150px); overflow: hidden; }
         .transactionrow .amount { text-align: right; white-space: nowrap; position: absolute; right: 0px; background-color: #e9e9e9; border-left: 40px solid #e9e9e9; }
         .transactionrow.send .amount { color: #9e9d9f; font-weight: bold; }
@@ -35,6 +35,19 @@
 
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
         .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; }
+        #qrcode { border: 1px solid #ddd; background-color: #ffffff; padding: 15px; display: inline-block; }
+
+        h1 { margin: 0; margin-bottom: 30px; }
+        select { margin-bottom: 10px; border: 1px solid #ccc; height: 39px; -webkit-appearance: none; padding: 10px 38px 10px 10px; width: 100%;  border-radius: 3px;  outline: none; }
+        select { background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
+                 background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 12px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+                 background-size: 5px 5px, 6px 6px, 1px 1.5em;
+                 background-repeat: no-repeat;
+               }
+         input { border: 1px solid #ccc;  width: calc(100% - 22px); height: 17px; padding: 10px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
+         button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
+         button:hover { background-color: #2ba7ff; cursor: pointer; }
+         button:active { background-color: #1197ff; cursor: pointer; }
     </style>
 
   </head>
@@ -83,8 +96,15 @@
          </div>
 
 
-         <div id=send class=container>send</div>
-         <div id=receive class=container>receive</div>
+         <div id=send class=container><h1>Send payment</h1>
+            <select><option>Automatically choose From address</option></select>
+            <input type=text placeholder="Send To address">
+            <input type=text placeholder="Amount" style="width: 100px;"><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -5px;" value=VOT>
+            <select style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
+            <button id=sendbutton>Send payment</button>
+         </div>
+
+         <div id=receive class=container><h1>Receive payment</h1><input id=newaddr><div id=qrcode></div></div>
          <div id=vote class=container>vote</div>
          <div id=backup class=container>backup</div>
          <div id=settings class=container>settings</div>
@@ -113,6 +133,31 @@
 </script>
 
 <script src=votecoin.js></script>
+<script src=qrcode.js></script>
+
+<script>
+   var qrcode = new QRCode("qrcode");
+
+   function agenNewAddress()
+   {
+       addr="zcLqmYqjFWdcvSs7cMK2EurSYft5siHmoKDMkvRNrQc64sK1TZbgfWpj1YLpopJR4NhMsTddwyZFtTSQ5HMpBJt4eoG41k8";
+       $('#newaddr').val(addr);
+       qrcode.makeCode(addr);
+   }
+
+
+   function genNewAddress(isTransparent)
+   {
+       var prefix="";
+       if (isTransparent) prefix="z_";
+       main.rpc(prefix+"getnewaddress","",function(ret)
+       {
+           var addr=ret.result;
+       },true)
+   }
+
+   agenNewAddress(true);
+</script>
 
   </body>
 </html>
