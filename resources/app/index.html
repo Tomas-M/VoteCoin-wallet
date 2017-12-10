@@ -40,7 +40,7 @@ display: inline-block;
         .menu .menurow.active span { background-color: #282130; }
 
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
-        .container { display: none; width: calc(100% - 60px); }
+        .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; }
     </style>
 
   </head>
@@ -65,12 +65,12 @@ display: inline-block;
      </div>
 
      <div style="background-color: #332c3b; width: calc(100% - 350px); float: right; height: 100%;" id=right>
-      <div style="background-color: #e9e9e9; border-radius: 0px 0 0 0px; width: 100%; height: 100%; padding: 30px;">
+      <div style="background-color: #e9e9e9; border-radius: 0px 0 0 0px; width: 100%; height: 100%; overflow: auto; overflow-x: hidden;">
 
 
-         <div id=progress style="width: calc(100% - 60px);">
-            <div align=center id=progressmessage></div>
-            <div id=progressbar style="background-color: #2ab6ff; height: 20px; width: 100%; margin-top: 10px; margin-bottom: 10px;"></div>
+         <div id=progress style="width: 100%; padding: 50px;">
+            <div style="width: calc(100% - 100px);" align=center id=progressmessage></div>
+            <div id=progressbar style="background-color: #2ab6ff; height: 20px; width: calc(100% - 100px); margin-top: 10px; margin-bottom: 10px;"></div>
          </div>
 
          <div id=dashboard class=container>
@@ -83,6 +83,9 @@ display: inline-block;
            <div id=transparentVOT>transparent</div>
            <div id=privateVOT>private</div>
 -->
+
+           <div id=transactionsearch></div>
+           <div id=transactionslist></div>
          </div>
 
 
