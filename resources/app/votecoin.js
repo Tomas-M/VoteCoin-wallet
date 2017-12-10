@@ -42,15 +42,6 @@ function msg(s)
 }
 
 
-function wait_for_wallet()
-{
-   return new Promise((resolve,reject)=>
-   {
-      main.rpc("getinfo", "", (res)=> { if (res.result) resolve(); }, true);
-   });
-}
-
-
 function settext(element,t)
 {
    var el=$('#'+element);
@@ -98,7 +89,16 @@ function update_gui()
 }
 
 
-function update_totals()
+function wait_for_wallet()
+{
+   return new Promise((resolve,reject)=>
+   {
+      update_totals(true,resolve);
+   });
+}
+
+
+function update_totals(repeat,doneFunc)
 {
    main.rpc("z_gettotalbalance", "", (res)=>
    {
@@ -106,8 +106,9 @@ function update_totals()
       {
          totalTransparent=parseFloat(res.result.transparent);
          totalPrivate=parseFloat(res.result.private);
+         if (doneFunc) doneFunc();
       }
-   });
+   },repeat);
 }
 
 
@@ -152,6 +153,7 @@ function update_transactionslist()
         if (res.result)
         {
             transactionslist=res.result;
+            update_gui();
         }
     });
 }
@@ -166,6 +168,39 @@ function setUpdater(func,time)
 {
    setInterval(func,time);
    setTimeout(func,0); // run right away
+}
+
+
+function genNewAddress(isTransparent)
+{
+    var prefix="";
+    if (isTransparent) prefix="z_";
+    main.rpc(prefix+"getnewaddress","",function(ret)
+    {
+        var addr=ret.result;
+        $('#newaddr').val(addr).show();
+        $('#qrcode').show();
+        qrcode.makeCode(addr);
+    },true)
+}
+
+
+function sendpayment()
+{
+     var from=$('#choosefrom').val();
+     var to=$('#sendto').val();
+     var amount=parseFloat($('#amount').val());
+     var fee=parseFloat($('#fee').val());
+     if (isNaN(fee)) fee=0;
+
+//     votecoin-cli z_sendmany %2 "[{\"address\": \"%3\", \"amount\": %4}]" 1 0
+
+     main.rpc("settxfee", [fee], function(res)
+     {
+        main.rpc("sendtoaddress",[to,amount], function(res){
+           console.log('sent',res);
+        });
+     });
 }
 
 

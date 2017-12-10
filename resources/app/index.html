@@ -14,7 +14,6 @@
 
     <style>
         html,body { -webkit-app-region: drag; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: Roboto; letter-spacing: 1px; }
-        #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 
         .menu { margin-top: 40px; border-bottom: 1px solid #1e1924;  } 
         .menu .menurow { user-select: none;letter-spacing: 1px;cursor: pointer;color: #fff; font-size: 25px; font-family: catamaran; border-top: 1px solid #1e1924;}
@@ -22,6 +21,8 @@
         .menu .menurow span { font-size: 20px; display: inline-block; height: 45px; vertical-align: top; width: calc(100% - 110px); text-align: left; padding-top: 17px; padding-bottom: 3px; padding-left: 25px;  }
         .menu .menurow.active i { background-color: #1e1924; border-left: 5px solid #f7931a; }
         .menu .menurow.active span { background-color: #282130; }
+
+        #transactionslist { margin-top: 40px; }
 
         .transactionrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
 
@@ -32,6 +33,8 @@
         .transactionrow .amount { text-align: right; white-space: nowrap; position: absolute; right: 0px; background-color: #e9e9e9; border-left: 40px solid #e9e9e9; }
         .transactionrow.send .amount { color: #9e9d9f; font-weight: bold; }
         .transactionrow.receive .amount { color: #83b93f; font-weight: bold; }
+
+        #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
         .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; }
@@ -92,19 +95,27 @@
 -->
 
            <div id=transactionsearch></div>
-           <div id=transactionslist></div>
+           <div id=transactionslist>loading transactions...</div>
          </div>
 
 
-         <div id=send class=container><h1>Send payment</h1>
-            <select><option>Automatically choose From address</option></select>
-            <input type=text placeholder="Send To address">
-            <input type=text placeholder="Amount" style="width: 100px;"><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -5px;" value=VOT>
-            <select style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
-            <button id=sendbutton>Send payment</button>
+         <div id=send class=container>
+            <h1>Send payment</h1>
+            <select id=choosefrom><option>Automatically choose From address</option></select>
+            <input id=sendto type=text placeholder="Send To address">
+            <input id=amount type=text placeholder="Amount" style="width: 100px;"><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -5px;" value=VOT>
+            <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
+            <button id=sendpayment>Send payment</button>
          </div>
 
-         <div id=receive class=container><h1>Receive payment</h1><input id=newaddr><div id=qrcode></div></div>
+         <div id=receive class=container>
+            <h1>Receive payment</h1>
+            <button id=getnewaddress>Generate new Transparent address</button>&nbsp;
+            <button id=zgetnewaddress>Generate new Shielded address</button>
+            <input id=newaddr style='display: none;'>
+            <div id=qrcode style='display: none;'></div>
+         </div>
+
          <div id=vote class=container>vote</div>
          <div id=backup class=container>backup</div>
          <div id=settings class=container>settings</div>
@@ -138,25 +149,10 @@
 <script>
    var qrcode = new QRCode("qrcode");
 
-   function agenNewAddress()
-   {
-       addr="zcLqmYqjFWdcvSs7cMK2EurSYft5siHmoKDMkvRNrQc64sK1TZbgfWpj1YLpopJR4NhMsTddwyZFtTSQ5HMpBJt4eoG41k8";
-       $('#newaddr').val(addr);
-       qrcode.makeCode(addr);
-   }
+   $(document).on('click','#getnewaddress',function(){ genNewAddress(false); });
+   $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true); });
+   $(document).on('click','#sendpayment',function(){ sendpayment(); });
 
-
-   function genNewAddress(isTransparent)
-   {
-       var prefix="";
-       if (isTransparent) prefix="z_";
-       main.rpc(prefix+"getnewaddress","",function(ret)
-       {
-           var addr=ret.result;
-       },true)
-   }
-
-   agenNewAddress(true);
 </script>
 
   </body>
