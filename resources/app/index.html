@@ -14,30 +14,24 @@
 
     <style>
         html,body { -webkit-app-region: drag; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: Roboto; letter-spacing: 1px; }
+        #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 
         .menu { margin-top: 40px; border-bottom: 1px solid #1e1924;  } 
-
-        .menu .menurow { 
-user-select: none;
-letter-spacing: 1px;
-cursor: pointer;
-color: #fff; 
-font-size: 25px; 
-font-family: catamaran; 
-border-top: 1px solid #1e1924;
-}
-
-        .menu .menurow i { 
-padding: 20px 10px 20px 25px;
-background-color: #282230;
-border-left: 5px solid #282230;
-width: 45px; 
-display: inline-block;
-}
+        .menu .menurow { user-select: none;letter-spacing: 1px;cursor: pointer;color: #fff; font-size: 25px; font-family: catamaran; border-top: 1px solid #1e1924;}
+        .menu .menurow i { padding: 20px 10px 20px 25px;background-color: #282230;border-left: 5px solid #282230;width: 45px; display: inline-block;}
         .menu .menurow span { font-size: 20px; display: inline-block; height: 45px; vertical-align: top; width: calc(100% - 110px); text-align: left; padding-top: 17px; padding-bottom: 3px; padding-left: 25px;  }
-
         .menu .menurow.active i { background-color: #1e1924; border-left: 5px solid #f7931a; }
         .menu .menurow.active span { background-color: #282130; }
+
+        .transactionrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
+
+        .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
+        .transactionrow .date { text-align: center; width: 70px; margin-top: 8px; line-height: 20px; font-size: 14px; }
+        .transactionrow .confirmed { text-align: center; width: 50px; margin-bottom: 5px;}
+        .transactionrow .transid { width: calc(100% - 150px); overflow: hidden; }
+        .transactionrow .amount { text-align: right; white-space: nowrap; position: absolute; right: 0px; background-color: #e9e9e9; border-left: 40px solid #e9e9e9; }
+        .transactionrow.send .amount { color: #9e9d9f; font-weight: bold; }
+        .transactionrow.receive .amount { color: #83b93f; font-weight: bold; }
 
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
         .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; }

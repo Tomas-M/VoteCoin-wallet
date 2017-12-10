@@ -14,6 +14,7 @@ var totalTransparent=0;
 var connections=0;
 var blocks=0;
 var totalblocks=0;
+var transactionslist=[];
 
 
 function JSON_fromString(json)
@@ -55,6 +56,14 @@ function settext(element,t)
    el.text(t);
 }
 
+function sethtml(element,h)
+{
+   var el=$('#'+element);
+   if (el.data('rawhtml')==h) return;
+   el.html(h);
+   el.data('rawhtml',h)
+}
+
 
 function update_gui()
 {
@@ -62,10 +71,28 @@ function update_gui()
     settext('privateVOT',num(totalPrivate,8));
     settext('totalVOT',num(totalTransparent+totalPrivate,8));
     if (rateBTCUSD*rateVOTBTC>0) settext('totalUSD',"$"+num((totalTransparent+totalPrivate)*rateBTCUSD*rateVOTBTC,2));
-    else settext('totalUSD'," ");
+    else sethtml('totalUSD',"&nbsp;");
     settext('connections',num(connections));
     settext('blockcurrent',num(blocks));
     settext('blocktotal',num(totalblocks>blocks?totalblocks:blocks));
+
+    function date(t)
+    {
+      var d = new Date(t*1000);
+      var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      return d.getDate()+" "+monthNames[d.getMonth()]+"<br>"+d.getFullYear()+" ";
+    }
+
+    var trans="";
+    for (var i in transactionslist)
+         trans+="<div class='transactionrow "+transactionslist[i].category+"'>"
+                    +"<div class=date>"+date(transactionslist[i].blocktime)+"</div>"
+                    +"<div class=confirmed>"+(transactionslist[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
+                    +"<div class=transid>"+transactionslist[i].txid+"</div>"
+                    +"<div class='amount'>"+(transactionslist[i].amount>0?"+":"")+transactionslist[i].amount+" VOT</div>"
+               +"</div>";
+
+    sethtml('transactionslist',trans);
 }
 
 
@@ -116,6 +143,18 @@ function update_totalblocks()
 }
 
 
+function update_transactionslist()
+{
+    main.rpc("listtransactions",[],(res)=>
+    {
+        if (res.result)
+        {
+            transactionslist=res.result;
+        }
+    });
+}
+
+
 function download_progress(file,size,bytes)
 {
    $('#progressbar').css('width',Math.ceil(bytes/size*100)+'%');
@@ -155,6 +194,7 @@ function init()
           setUpdater(update_totals,10000); // every 10 seconds
           setUpdater(update_stats,2000);  // every 2 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
+          setUpdater(update_transactionslist,60000);   // every 1 minute
           setUpdater(update_gui,1000);   // every 1 second
       })
    });
