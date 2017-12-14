@@ -1,4 +1,4 @@
-resources/app/zkSNARK/*
+resources/app/zkSNARK/*.key
 resources/app/VoteCoin/.lock
 resources/app/VoteCoin/*.log
 resources/app/VoteCoin/*.dat
