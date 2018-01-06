@@ -4,7 +4,7 @@
 */
 
 
-var {ipcRenderer, remote} = require('electron');  
+var {ipcRenderer, remote} = require('electron');
 var main = remote.require("./main.js");
 
 var rateVOTBTC=0;
@@ -161,7 +161,7 @@ function update_transactionslist()
 
 function download_progress(file,size,bytes)
 {
-   $('#progressbar').css('width',Math.ceil(bytes/size*100)+'%');
+   $('#progressbar').css('width','calc('+Math.ceil(bytes/size*100)+'% - 100px)');
 }
 
 function setUpdater(func,time)

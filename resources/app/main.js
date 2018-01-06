@@ -5,7 +5,7 @@
 
 const electron = require('electron');
 const {app, dialog, ipcMain, Menu} = require('electron');
-const BrowserWindow = electron.BrowserWindow; 
+const BrowserWindow = electron.BrowserWindow;
 const http = require('./redirect.js').http;
 const https = require('./redirect.js').https;
 const path = require('path')
@@ -194,7 +194,7 @@ function download_all_files(progressFunc,doneFunc)
    else
    {
        console.log('Download '+current.target);
-       if (fs.existsSync(current.target) && fs.statSync(current.target).size==current.size) { download_all_files(progressFunc,doneFunc); return; } 
+       if (fs.existsSync(current.target) && fs.statSync(current.target).size==current.size) { download_all_files(progressFunc,doneFunc); return; }
        else downloadFile(current.host,current.port,current.path,current.target,current.size,progressFunc,function(){ download_all_files(progressFunc,doneFunc); });
    }
 }
