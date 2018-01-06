@@ -158,10 +158,25 @@ function update_transactionslist()
     });
 }
 
+function show_progress(pct)
+{
+   if (pct>0 && pct<100)
+   {
+      $('#progressinner').css('width',pct+'%');
+      $('#progressinnertext').text(pct+'%');
+   }
+   else
+   {
+      $('#progressinner').css('width','100%');
+      $('#progressinnertext').text('');
+   }
+}
+
 
 function download_progress(file,size,bytes)
 {
-   $('#progressbar').css('width','calc('+Math.ceil(bytes/size*100)+'% - 100px)');
+   var pct=Math.ceil(bytes/size*100);
+   show_progress(pct);
 }
 
 function setUpdater(func,time)
@@ -212,6 +227,7 @@ function init()
    // check && download sprout proving file
    main.download_all_files(download_progress,function()
    {
+      show_progress(100);
       $('#progressmessage').html("VoteCoin wallet is starting, please wait...");
       // parse votecoin.conf file, if empty set random password and write to file.
 
