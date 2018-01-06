@@ -195,7 +195,7 @@ function download_all_files(progressFunc,doneFunc)
    {
        console.log('Download '+current.target);
        if (fs.existsSync(current.target) && fs.statSync(current.target).size==current.size) { download_all_files(progressFunc,doneFunc); return; }
-       else downloadFile(current.host,current.port,current.path,current.target,current.size,progressFunc,function(){ download_all_files(progressFunc,doneFunc); });
+       else downloadFile(current.host,current.port,current.path,current.target,current.size,progressFunc,function(){ downloads.push(current); download_all_files(progressFunc,doneFunc); });
    }
 }
 
