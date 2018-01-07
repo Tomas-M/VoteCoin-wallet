@@ -69,6 +69,8 @@ function update_gui()
     settext('blockcurrent',num(blocks));
     settext('blocktotal',num(totalblocks>blocks?totalblocks:blocks));
 
+    if (connections==0 || blocks==0 || totalblocks==0 || totalblocks-2>blocks) $('#syncinprogress').slideDown(); else $('#syncinprogress').slideUp();
+
     function date(t)
     {
       var d = new Date(t*1000);
@@ -134,6 +136,17 @@ function update_stats()
             blocks=parseFloat(res.result.blocks);
         }
     });
+}
+
+function update_operation_status()
+{
+  main.rpc("z_listoperationids", "", (res)=>
+  {
+       if (res.result)
+       {
+          console.log(res);
+       }
+   });
 }
 
 
@@ -246,6 +259,7 @@ function init()
           setUpdater(update_rates,600000); // once per 10 minutes
           setUpdater(update_totals,10000); // every 10 seconds
           setUpdater(update_stats,2000);  // every 2 seconds
+          setUpdater(update_operation_status,2000);  // every 2 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
           setUpdater(update_transactionslist,60000);   // every 1 minute
           setUpdater(update_gui,1000);   // every 1 second

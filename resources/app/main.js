@@ -80,14 +80,24 @@ app.on('activate', () => {
 function walletStop()
 {
    console.log('wallet stop');
+
+   win = new BrowserWindow({width: 400, height: 100, icon: path.join(__dirname, 'votecoin.ico')})
+   win.setMenu(null);
+   win.loadURL(url.format({
+     pathname: path.join(__dirname, 'wait.html'),
+     protocol: 'file:',
+     slashes: true
+   }));
+   win.on('closed',function(){ canQuit=true; app.quit(); })
+
    rpc("stop",[],function(){ canQuit=true; app.quit(); },true);
 }
 
 function walletStart()
 {
    console.log('wallet start');
-   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} );
    canQuit=false;
+   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} );
 }
 
 app.on('before-quit', (event) =>
