@@ -80,13 +80,15 @@ function update_gui()
 
     var trans="";
     for (var i in transactionslist)
-         trans+="<div class='transactionrow "+transactionslist[i].category+"'>"
-                    +"<div class=date>"+date(transactionslist[i].blocktime)+"</div>"
+    {
+       var confirm=transactionslist[i].blocktime; if (!confirm) confirm=transactionslist[i].time
+       trans="<div class='transactionrow "+transactionslist[i].category+"'>"
+                    +"<div class=date title='"+(new Date(confirm*1000)).toUTCString()+"'>"+date(confirm)+"</div>"
                     +"<div class=confirmed>"+(transactionslist[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
                     +"<div class=transid>"+transactionslist[i].txid+"</div>"
                     +"<div class='amount'>"+(transactionslist[i].amount>0?"+":"")+num(transactionslist[i].amount,8,true)+" VOT</div>"
-               +"</div>";
-
+             +"</div>"+trans;
+    }
     sethtml('transactionslist',trans);
 }
 
@@ -144,7 +146,7 @@ function update_operation_status()
   {
        if (res.result)
        {
-          console.log(res);
+          console.log(res.result);
        }
    });
 }
@@ -223,10 +225,17 @@ function sendpayment()
 
 //     votecoin-cli z_sendmany %2 "[{\"address\": \"%3\", \"amount\": %4}]" 1 0
 
+// if total T balance > amount, use: sendtoaddress
+// else use z_sendmany
+//   - sendtoaddress returns directly txid in result
+//   - z_sendmany returns ...?
+
+
      main.rpc("settxfee", [fee], function(res)
      {
         main.rpc("sendtoaddress",[to,amount], function(res){
            console.log('sent',res);
+           update_transactionslist();
         });
      });
 }
