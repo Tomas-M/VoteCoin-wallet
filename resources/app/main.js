@@ -111,7 +111,6 @@ app.on('before-quit', (event) =>
 })
 
 
-
 function rpc(method,params,doneFunc,errorFunc)
 {
    var username="admin";
@@ -158,7 +157,7 @@ function rpc(method,params,doneFunc,errorFunc)
             try { result=JSON.parse(result); } catch(e){ console.log("error parsing json response: ",e); }
             console.log(result);
             if (result.error) error(result);
-            else if (doneFunc) doneFunc(result);
+            else if (doneFunc) doneFunc(result.result);
        });
 
     }).on("error", function(e) {

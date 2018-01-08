@@ -5,7 +5,8 @@
 
 
 var {ipcRenderer, remote} = require('electron');
-var main = remote.require("./main.js");
+const main = remote.require("./main.js");
+const child_process = require('child_process');
 
 var rateVOTBTC=0;
 var rateBTCUSD=0;
@@ -15,7 +16,8 @@ var connections=0;
 var blocks=0;
 var totalblocks=0;
 var transactionslist=[];
-
+var transparent_addresses=[];
+var shielded_addresses=[];
 
 function JSON_fromString(json)
 {
@@ -58,6 +60,17 @@ function sethtml(element,h)
 }
 
 
+function openURL(url)
+{
+   child_process.execSync('start '+url);
+}
+
+// add leading and trailing spaces to numerical VOT value
+function spacepad(vot)
+{
+    return vot.toFixed(8);
+}
+
 function update_gui()
 {
     settext('transparentVOT',num(totalTransparent,8,true));
@@ -90,6 +103,10 @@ function update_gui()
              +"</div>"+trans;
     }
     sethtml('transactionslist',trans);
+
+    $('#choosefrom').children().not(':eq(0), :eq(1)').remove();
+    for(var i in transparent_addresses) if (transparent_addresses[i].amount!=0) $('#choosefrom').append('<option value="'+transparent_addresses[i].address+'">'+spacepad(transparent_addresses[i].amount)+' - '+transparent_addresses[i].address+'</option>');
+    for(var i in shielded_addresses) if (shielded_addresses[i].amount!=0) $('#choosefrom').append('<option value="'+shielded_addresses[i].address+'">'+spacepad(shielded_addresses[i].amount)+' - '+shielded_addresses[i].address+'</option>');
 }
 
 
@@ -106,12 +123,9 @@ function update_totals(repeat,doneFunc)
 {
    main.rpc("z_gettotalbalance", "", (res)=>
    {
-      if (res.result)
-      {
-         totalTransparent=parseFloat(res.result.transparent);
-         totalPrivate=parseFloat(res.result.private);
-         if (doneFunc) doneFunc();
-      }
+      totalTransparent=parseFloat(res.transparent);
+      totalPrivate=parseFloat(res.private);
+      if (doneFunc) doneFunc();
    },repeat);
 }
 
@@ -132,22 +146,17 @@ function update_stats()
 {
    main.rpc("getinfo", "", (res)=>
    {
-        if (res.result)
-        {
-            connections=parseFloat(res.result.connections);
-            blocks=parseFloat(res.result.blocks);
-        }
+      connections=parseFloat(res.connections);
+      blocks=parseFloat(res.blocks);
     });
 }
+
 
 function update_operation_status()
 {
   main.rpc("z_listoperationids", "", (res)=>
   {
-       if (res.result)
-       {
-          console.log(res.result);
-       }
+       console.log(res);
    });
 }
 
@@ -165,13 +174,37 @@ function update_transactionslist()
 {
     main.rpc("listtransactions",[],(res)=>
     {
-        if (res.result)
-        {
-            transactionslist=res.result;
-            update_gui();
-        }
+         transactionslist=res;
+         update_gui();
     });
 }
+
+
+function update_shielded_balance(zaddr)
+{
+   main.rpc("z_getbalance",[zaddr],(res)=>
+   {
+      for(var i=shielded_addresses.length-1; i>=0; i--)
+         if (shielded_addresses[i].address==zaddr) { shielded_addresses[i].amount=res; break; }
+      if (i<0) shielded_addresses.push({'address':zaddr,'amount':res});
+   });
+}
+
+
+function update_addresses()
+{
+   main.rpc("listunspent",[],(res)=>
+   {
+      transparent_addresses=res;
+      main.rpc("z_listaddresses",[],(res)=>
+      {
+          for (var i=0; i<res.length; i++) update_shielded_balance(res[i]);
+      });
+
+      update_gui();
+   });
+}
+
 
 function show_progress(pct)
 {
@@ -194,6 +227,7 @@ function download_progress(file,size,bytes)
    show_progress(pct);
 }
 
+
 function setUpdater(func,time)
 {
    setInterval(func,time);
@@ -205,9 +239,9 @@ function genNewAddress(isTransparent)
 {
     var prefix="";
     if (isTransparent) prefix="z_";
-    main.rpc(prefix+"getnewaddress","",function(ret)
+    main.rpc(prefix+"getnewaddress","",function(res)
     {
-        var addr=ret.result;
+        var addr=res;
         $('#newaddr').val(addr).show();
         $('#qrcode').show();
         qrcode.makeCode(addr);
@@ -231,13 +265,20 @@ function sendpayment()
 //   - z_sendmany returns ...?
 
 
-     main.rpc("settxfee", [fee], function(res)
-     {
+//     main.rpc("settxfee", [fee], function(res)
+     //{
+       main.rpc("z_sendmany",["t1HtxNNnrmXqtGgNo5wbKf2kQTJruceigij",[{'address':to,'amount':amount}],0,fee], function(res){
+          console.log('sent',res);
+//          update_transactionslist();
+}, function(e){console.log(e);});
+
+/*
         main.rpc("sendtoaddress",[to,amount], function(res){
            console.log('sent',res);
            update_transactionslist();
         });
-     });
+*/
+     //});
 }
 
 
@@ -263,6 +304,8 @@ function init()
           $('#dashboard').show();
           $('.menurow').first().addClass('active');
           isInitialized=true;
+
+          update_addresses();
 
           // init periodic stats updaters
           setUpdater(update_rates,600000); // once per 10 minutes

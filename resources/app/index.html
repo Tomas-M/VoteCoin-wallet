@@ -29,7 +29,7 @@
         .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .transactionrow .date { text-align: center; width: 70px; margin-top: 8px; line-height: 20px; font-size: 14px; }
         .transactionrow .confirmed { text-align: center; width: 50px; margin-bottom: 5px; border-right: 20px solid #e9e9e9;}
-        .transactionrow .transid { width: calc(100% - 150px); overflow: hidden; }
+        .transactionrow .transid { width: calc(100% - 150px); overflow: hidden; cursor: pointer; }
         .transactionrow .amount { text-align: right; white-space: nowrap; position: absolute; right: 0px; background-color: #e9e9e9; border-left: 40px solid #e9e9e9; }
         .transactionrow.send .amount { color: #9e9d9f; font-weight: bold; }
         .transactionrow.receive .amount { color: #83b93f; font-weight: bold; }
@@ -109,7 +109,10 @@
 
          <div id=send class=container>
             <h1>Send payment</h1>
-            <select id=choosefrom><option>Automatically choose From address</option></select>
+            <select id=choosefrom>
+               <option value=t>Automatically choose Transparent address(es) to send FROM</option>
+               <option value=z>Automatically choose Shielded address to send FROM</option>
+            </select>
             <input id=sendto type=text placeholder="Send To address">
             <input id=amount type=text placeholder="Amount" style="width: 100px;"><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -5px;" value=VOT>
             <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
@@ -163,6 +166,7 @@
    $(document).on('click','#getnewaddress',function(){ genNewAddress(false); });
    $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true); });
    $(document).on('click','#sendpayment',function(){ sendpayment(); });
+   $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$(this).text()); });
 
 </script>
 
