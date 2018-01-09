@@ -134,6 +134,7 @@ function rpc(method,params,doneFunc,errorFunc)
 
    var error=function(data)
    {
+      walletStart(); // rpc error encountered means wallet is not running. Start it. If wallet was started, no problem
       if (errorFunc===true) setTimeout(function(){ rpc(method,params,doneFunc,errorFunc); },1000);
       else if (errorFunc) errorFunc(data);
    }
