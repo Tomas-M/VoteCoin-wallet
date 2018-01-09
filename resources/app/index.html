@@ -25,7 +25,6 @@
         #transactionslist { margin-top: 40px; }
 
         .transactionrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
-
         .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .transactionrow .date { text-align: center; width: 70px; margin-top: 8px; line-height: 20px; font-size: 14px; }
         .transactionrow .confirmed { text-align: center; width: 50px; margin-bottom: 5px; border-right: 20px solid #e9e9e9;}
@@ -33,6 +32,12 @@
         .transactionrow .amount { text-align: right; white-space: nowrap; position: absolute; right: 0px; background-color: #e9e9e9; border-left: 40px solid #e9e9e9; }
         .transactionrow.send .amount { color: #9e9d9f; font-weight: bold; }
         .transactionrow.receive .amount { color: #83b93f; font-weight: bold; }
+
+        .operationrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
+        .operationrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
+        .operationid { text-align: left; width: 150px; margin-bottom: 5px; overflow: hidden; }
+        .operationicon { text-align: center; width: 50px; margin-bottom: 5px; }
+        .operationstatus { width: calc(100% - 200px); }
 
         #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 
@@ -53,6 +58,9 @@
          button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
          button:hover { background-color: #2ba7ff; cursor: pointer; }
          button:active { background-color: #1197ff; cursor: pointer; }
+
+         .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
+         .settingshelp { text-align: justify; }
     </style>
 
   </head>
@@ -114,11 +122,12 @@
                <option value=z>Automatically choose Shielded address to send FROM</option>
             </select>
             <input id=sendto type=text placeholder="Send To address">
+            <input id=memo type=text placeholder="Memo (optional, only for shielded transactions, visible only by the receiver)">
             <input id=amount type=text placeholder="Amount" style="width: 100px;"><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -5px;" value=VOT>
             <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
             <button id=sendpayment>Send payment</button>
 
-            <div id=pending></div>
+            <div id=operationslist></div>
          </div>
 
          <div id=receive class=container>
@@ -131,7 +140,11 @@
 
          <div id=vote class=container>vote</div>
          <div id=backup class=container>backup</div>
-         <div id=settings class=container>settings</div>
+         <div id=settings class=container>
+            <h2><input id=ztrack type=checkbox class=settingscheck> Track shielded transactions</h2>
+            <div class=settingshelp>If checked, VoteCoin wallet will remember all shielded transactions,
+               even those sent from a shielded address to another shielded address, and it will show them in the list of transactions.</div>
+         </div>
 
       </div>
      </div>
@@ -156,6 +169,7 @@
    });
 </script>
 
+<script src=stash.js></script>
 <script src=votecoin.js></script>
 <script src=qrcode.js></script>
 
@@ -167,6 +181,10 @@
    $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true); });
    $(document).on('click','#sendpayment',function(){ sendpayment(); });
    $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$(this).text()); });
+
+   // settings click events
+
+   $(document).on('click','#ztrack', ztrack_toggle);
 
 </script>
 

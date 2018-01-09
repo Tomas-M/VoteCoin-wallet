@@ -8,6 +8,8 @@ var {ipcRenderer, remote} = require('electron');
 const main = remote.require("./main.js");
 const child_process = require('child_process');
 
+const pick = (O, ...K) => K.reduce((o, k) => (o[k]=O[k], o), {});
+
 var rateVOTBTC=0;
 var rateBTCUSD=0;
 var totalPrivate=0;
@@ -15,15 +17,28 @@ var totalTransparent=0;
 var connections=0;
 var blocks=0;
 var totalblocks=0;
-var transactionslist=[];
+
+var transparent_transactions=[];
+var shielded_transactions=[];
+
 var transparent_addresses=[];
 var shielded_addresses=[];
+
+var operations=[];
+
 
 function JSON_fromString(json)
 {
    var ret={};
    try { ret=JSON.parse(json); } catch (e) { console.log(e); };
    return ret;
+}
+
+
+function ztrack_toggle()
+{
+   z_track=$('#ztrack').is(':checked')?1:0;
+   stash.set('z_track',z_track);
 }
 
 
@@ -59,7 +74,6 @@ function sethtml(element,h)
    el.data('rawhtml',h)
 }
 
-
 function openURL(url)
 {
    child_process.execSync('start '+url);
@@ -69,6 +83,20 @@ function openURL(url)
 function spacepad(vot)
 {
     return vot.toFixed(8);
+}
+
+function hexDecode(hex)
+{
+    var str='';
+    hex=hex.replace(/0+$/,"");
+    if (hex.substr(0,2).toUpperCase().match(/^F5|^F6/)) return '';
+    for (var i=0; i<hex.length; i+=2) str+=String.fromCharCode(parseInt(hex.substr(i,2),16));
+    return str;
+}
+
+function htmlspecialchars(str)
+{
+   return str;
 }
 
 function update_gui()
@@ -91,22 +119,36 @@ function update_gui()
       return d.getDate()+" "+monthNames[d.getMonth()]+"<br>"+d.getFullYear()+" ";
     }
 
-    var trans="";
-    for (var i in transactionslist)
+    var trans=""; var i;
+    for (i=transparent_transactions.length-1; i>=0; i--)
     {
-       var confirm=transactionslist[i].blocktime; if (!confirm) confirm=transactionslist[i].time
-       trans="<div class='transactionrow "+transactionslist[i].category+"'>"
+       if (i<transparent_transactions.length-10) break;
+       var confirm=transparent_transactions[i].blocktime; if (!confirm) confirm=transparent_transactions[i].time
+       trans+="<div class='transactionrow "+transparent_transactions[i].category+"'>"
                     +"<div class=date title='"+(new Date(confirm*1000)).toUTCString()+"'>"+date(confirm)+"</div>"
-                    +"<div class=confirmed>"+(transactionslist[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
-                    +"<div class=transid>"+transactionslist[i].txid+"</div>"
-                    +"<div class='amount'>"+(transactionslist[i].amount>0?"+":"")+num(transactionslist[i].amount,8,true)+" VOT</div>"
-             +"</div>"+trans;
+                    +"<div class=confirmed>"+(transparent_transactions[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
+                    +"<div class=transid "+(transparent_transactions[i].memo?'title="'+htmlspecialchars(hexDecode(transparent_transactions[i].memo))+'"':"")+">"+transparent_transactions[i].txid+"</div>"
+                    +"<div class='amount'>"+(transparent_transactions[i].amount>0?"+":"")+num(transparent_transactions[i].amount,8,true)+" VOT</div>"
+             +"</div>";
     }
     sethtml('transactionslist',trans);
 
+    var from=$('#choosefrom').val();
     $('#choosefrom').children().not(':eq(0), :eq(1)').remove();
     for(var i in transparent_addresses) if (transparent_addresses[i].amount!=0) $('#choosefrom').append('<option value="'+transparent_addresses[i].address+'">'+spacepad(transparent_addresses[i].amount)+' - '+transparent_addresses[i].address+'</option>');
     for(var i in shielded_addresses) if (shielded_addresses[i].amount!=0) $('#choosefrom').append('<option value="'+shielded_addresses[i].address+'">'+spacepad(shielded_addresses[i].amount)+' - '+shielded_addresses[i].address+'</option>');
+    $('#choosefrom').val(from);
+
+    var ops="";
+    for (i=operations.length-1; i>=0; i--)
+    {
+       ops+="<div class=operationrow>"
+              +"<div class=operationid>"+operations[i].id.replace(/^opid-/,"")+"</div>"
+              +"<div class=operationicon><i class='fa fa-"+(operations[i].status.match(/pending|queued|executing/)?'clock-o':(operations[i].status=='failed'?'exclamation-circle':'check'))+"'></i></div>"
+              +"<div class=operationstatus>"+(operations[i].error?operations[i].error.message:operations[i].status)+"</div>"
+           +"</div>";
+    }
+    sethtml('operationslist',ops);
 }
 
 
@@ -121,7 +163,7 @@ function wait_for_wallet()
 
 function update_totals(repeat,doneFunc)
 {
-   main.rpc("z_gettotalbalance", "", (res)=>
+   main.rpc("z_gettotalbalance", [0], (res)=>
    {
       totalTransparent=parseFloat(res.transparent);
       totalPrivate=parseFloat(res.private);
@@ -154,9 +196,20 @@ function update_stats()
 
 function update_operation_status()
 {
-  main.rpc("z_listoperationids", "", (res)=>
-  {
-       console.log(res);
+   main.rpc("z_getoperationstatus", [], (res)=>
+   {
+      for(var i=0; i<res.length; i++)
+      {
+         res[i]=pick(res[i], "creation_time", "id", "method", "status", "error");
+
+         if (res[i].status=="success")
+         main.rpc("z_getoperationresult", [[res[i].id]], (ret)=>
+         {
+             console.log(ret);
+             // TODO perhaps msg user that operation has completed
+         },function(e){console.log(e);});
+      }
+      operations=res;
    });
 }
 
@@ -170,19 +223,39 @@ function update_totalblocks()
 }
 
 
-function update_transactionslist()
+function update_transactions(start) // load all T transactions into memory
 {
-    main.rpc("listtransactions",[],(res)=>
-    {
-         transactionslist=res;
-         update_gui();
-    });
+   if (!start) start=0;
+   var max=100;
+   main.rpc("listtransactions",["",max,start],(res)=>
+   {
+      for (var i=0; i<res.length; i++) res[i]=pick(res[i], "blocktime", "time", "fee", "category", "confirmations", "txid", "amount");
+      if (start==0) transparent_transactions=res;
+      else Array.prototype.unshift.apply(transparent_transactions,res);
+
+      if (res.length>=max) update_transactions(start+max);
+      else { update_addresses(); update_gui(); }
+   });
 }
 
 
-function update_shielded_balance(zaddr)
+function add_shielded_transactions_received(zaddr)
 {
-   main.rpc("z_getbalance",[zaddr],(res)=>
+   main.rpc("z_listreceivedbyaddress",[zaddr,0],(res)=>
+   {
+      for (var i=0; i<res.length; i++) (function(rec)
+      {
+         main.rpc("gettransaction",[rec.txid],(ret)=>
+         {
+            transparent_transactions.push({"blocktime":ret.blocktime, "time":ret.time, "fee":ret.fee, "category":"receive", "confirmations": ret.confirmations, "txid": ret.txid, "amount": rec.amount, "memo": rec.memo});
+         });
+      })(res[i]);
+   });
+}
+
+function update_shielded_addr(zaddr)
+{
+   main.rpc("z_getbalance",[zaddr,0],(res)=>
    {
       for(var i=shielded_addresses.length-1; i>=0; i--)
          if (shielded_addresses[i].address==zaddr) { shielded_addresses[i].amount=res; break; }
@@ -193,12 +266,22 @@ function update_shielded_balance(zaddr)
 
 function update_addresses()
 {
-   main.rpc("listunspent",[],(res)=>
+   main.rpc("listunspent",[0],(res)=>
    {
-      transparent_addresses=res;
+      for (var j=0; j<res.length; j++)
+      {
+         for(var i=transparent_addresses.length-1; i>=0; i--)
+            if (transparent_addresses[i].address==res[j].address) { transparent_addresses[i].amount=res[j].amount; break; }
+         if (i<0) transparent_addresses.push(res[j]);
+      }
+
       main.rpc("z_listaddresses",[],(res)=>
       {
-          for (var i=0; i<res.length; i++) update_shielded_balance(res[i]);
+          for (var i=0; i<res.length; i++)
+          {
+             update_shielded_addr(res[i]);
+             add_shielded_transactions_received(res[i]);
+          }
       });
 
       update_gui();
@@ -235,10 +318,10 @@ function setUpdater(func,time)
 }
 
 
-function genNewAddress(isTransparent)
+function genNewAddress(transparent)
 {
     var prefix="";
-    if (isTransparent) prefix="z_";
+    if (transparent) prefix="z_";
     main.rpc(prefix+"getnewaddress","",function(res)
     {
         var addr=res;
@@ -248,37 +331,72 @@ function genNewAddress(isTransparent)
     },true)
 }
 
+function isTransparent(addr) { return addr.substr(0,1)=='t'; }
+function isPrivate(addr) { return !isTransparent(addr); }
+function reset_sendform() {} // TODO
 
 function sendpayment()
 {
+     var i;
      var from=$('#choosefrom').val();
      var to=$('#sendto').val();
      var amount=parseFloat($('#amount').val());
+     if (isNaN(amount)) amount=0;
      var fee=parseFloat($('#fee').val());
      if (isNaN(fee)) fee=0;
 
-//     votecoin-cli z_sendmany %2 "[{\"address\": \"%3\", \"amount\": %4}]" 1 0
+     function payment_failure(err)
+     {
+        if (err.error) err=err.error;
+        if (err.message) err=err.message;
+        console.log(err);
+     }
 
-// if total T balance > amount, use: sendtoaddress
-// else use z_sendmany
-//   - sendtoaddress returns directly txid in result
-//   - z_sendmany returns ...?
+     function payment_success(res)
+     {
+        console.log(res);
+        if (res.match(/^opid-/)) update_operation_status();
+        update_transactions();
+        update_addresses();
+        reset_sendform();
+     }
 
+     if (amount==0) return payment_failure("Amount must be greater than zero");
 
-//     main.rpc("settxfee", [fee], function(res)
-     //{
-       main.rpc("z_sendmany",["t1HtxNNnrmXqtGgNo5wbKf2kQTJruceigij",[{'address':to,'amount':amount}],0,fee], function(res){
-          console.log('sent',res);
-//          update_transactionslist();
-}, function(e){console.log(e);});
-
-/*
-        main.rpc("sendtoaddress",[to,amount], function(res){
-           console.log('sent',res);
-           update_transactionslist();
-        });
-*/
-     //});
+     if (from=='t') // auto-select transparent FROM address
+     {
+        // if TO address is transparent, just use sendtoaddress rpc
+        if (isTransparent(to))
+        {
+            main.rpc("settxfee", [fee], function(res) {
+               main.rpc("sendtoaddress",[to,amount,"","",false], payment_success,payment_failure);
+            }, function(err){ payment_failure("Could not set tx fee to "+fee); });
+        }
+        else
+        {
+           // else if TO address is shielded, we may need to find best suitable FROM t address manually by balance.
+           for(i in transparent_addresses) if (transparent_addresses[i].amount>=amount+fee)
+           {
+              main.rpc("z_sendmany",[transparent_addresses[i].address,[{'address':to,'amount':amount}],0,fee], payment_success,payment_failure);
+              return;
+           }
+           payment_failure("Can't find any transparent address with sufficient balance.");
+        }
+     }
+     else
+     if (from=='z') // auto-select shielded FROM address
+     {
+        for(i in shielded_addresses) if (shielded_addresses[i].amount>=amount+fee)
+        {
+           main.rpc("z_sendmany",[shielded_addresses[i].address,[{'address':to,'amount':amount}],1,fee], payment_success,payment_failure);
+           return;
+        }
+        payment_failure("Can't find any transparent address with sufficient balance.");
+     }
+     else // one particular transparent or shielded address selected, try the payment as is
+     {
+         main.rpc("z_sendmany",[from,[{'address':to,'amount':amount}],isTransparent(from)?0:1,fee], payment_success,payment_failure);
+     }
 }
 
 
@@ -313,10 +431,18 @@ function init()
           setUpdater(update_stats,2000);  // every 2 seconds
           setUpdater(update_operation_status,2000);  // every 2 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
-          setUpdater(update_transactionslist,60000);   // every 1 minute
+          setUpdater(update_transactions,60000);   // every 1 minute
           setUpdater(update_gui,1000);   // every 1 second
       })
    });
 }
+
+// https://github.com/electron/electron/issues/2301
+
+// load settings on start
+
+var z_track = stash.get('z_track');
+if (typeof z_track == "undefined") { z_track=1; stash.set('z_track',z_track); }
+$('#ztrack').prop('checked',z_track);
 
 init();
