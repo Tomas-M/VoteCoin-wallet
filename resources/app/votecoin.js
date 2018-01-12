@@ -533,6 +533,9 @@ function init()
 // TODO make sure to warn user about pending transaction before he closes window
 // see https://github.com/electron/electron/issues/2301
 
+// TODO TOP PRIORITY
+// reset/set votecoin.conf password on first startup, so each user gets new password!
+
 // load settings on start
 
 var z_track = storage_load('z_track');
