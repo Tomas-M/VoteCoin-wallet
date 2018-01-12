@@ -35,9 +35,13 @@
 
         .operationrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .operationrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
-        .operationid { text-align: left; width: 150px; margin-bottom: 5px; overflow: hidden; }
+        .operationtime { text-align: left; width: 130px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .operationicon { text-align: center; width: 50px; margin-bottom: 5px; }
-        .operationstatus { width: calc(100% - 200px); }
+        .operationamount { text-align: right; width: 140px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
+        .operationstatus { width: calc(100% - 320px); overflow: auto; overflow-y:hidden; }
+        .operationstatus::-webkit-scrollbar, .operationamount::-webkit-scrollbar,  .operationtime::-webkit-scrollbar { width: 0; height: 4px; background-color: #d7d7d7; }
+        .operationstatus::-webkit-scrollbar-thumb, .operationamount::-webkit-scrollbar-thumb, .operationtime::-webkit-scrollbar-thumb { background: #aaa; }
+
 
         #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 
@@ -169,7 +173,6 @@
    });
 </script>
 
-<script src=stash.js></script>
 <script src=votecoin.js></script>
 <script src=qrcode.js></script>
 

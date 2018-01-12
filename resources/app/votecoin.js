@@ -21,24 +21,43 @@ var totalblocks=0;
 var transparent_transactions=[];
 var shielded_transactions=[];
 
-var transparent_addresses=[];
-var shielded_addresses=[];
+var transparent_addresses={};
+var shielded_addresses={};
 
-var operations=[];
+var operations=storage_load('operations',{});
 
-
-function JSON_fromString(json)
+function JSON_fromString(str)
 {
    var ret={};
-   try { ret=JSON.parse(json); } catch (e) { console.log(e); };
+   try { ret=JSON.parse(str); } catch (e) { console.log(e); };
    return ret;
+}
+
+function JSON_toString(obj)
+{
+   return JSON.stringify(obj);
 }
 
 
 function ztrack_toggle()
 {
    z_track=$('#ztrack').is(':checked')?1:0;
-   stash.set('z_track',z_track);
+   storage_save('z_track',z_track);
+}
+
+
+function storage_save(key,val)
+{
+   if (typeof val === "undefined") return;
+   localStorage.setItem(key, JSON_toString(val));
+}
+
+function storage_load(key,default_value)
+{
+   var val=localStorage.getItem(key);
+   if (typeof val == "undefined") { val=default_value; storage_save(key,val); }
+   else val=JSON_fromString(val);
+   return val;
 }
 
 
@@ -99,6 +118,48 @@ function htmlspecialchars(str)
    return str;
 }
 
+function utcDate(d)
+{
+   return (new Date(d*1000)).toUTCString();
+}
+
+function now()
+{
+   return Math.floor(Date.now()/1000);
+}
+
+function timeAgo(t)
+{
+   t=now()-t;
+   if (t<60) return "a while ago";
+   if (t<60*2) return Math.floor(t/60)+" minute ago";
+   if (t<60*60) return Math.floor(t/60)+" minutes ago";
+   if (t<60*60*2) return Math.floor(t/60/24)+" hour ago";
+   if (t<60*60*24) return Math.floor(t/60/24)+" hours ago";
+   if (t<60*60*24/7*2) return Math.floor(t/60/24/7)+" week ago";
+   if (t<60*60*24/7) return Math.floor(t/60/24/7)+" weeks ago";
+   if (t<60*60*24/30*2) return Math.floor(t/60/24/30)+" months ago";
+   if (t<60*60*24/30) return Math.floor(t/60/24/30)+" months ago";
+   if (t<60*60*24/365*2) return Math.floor(t/60/24/365)+" year ago";
+   if (t<60*60*24/365) return Math.floor(t/60/24/365)+" years ago";
+   return "";
+}
+
+
+function makeOrderedArray(obj,sortkey,idname)
+{
+   var res=[]; var el;
+   for (var i in obj)
+   {
+      el=obj[i];
+      if (idname) el[idname]=i;
+      res.push(el);
+   }
+   return res.sort( function(a, b) { if (a[sortkey]==b[sortkey]) return 0; if (a[sortkey]<b[sortkey]) return -1; else return 1; } );
+}
+
+
+
 function update_gui()
 {
     settext('transparentVOT',num(totalTransparent,8,true));
@@ -125,7 +186,7 @@ function update_gui()
        if (i<transparent_transactions.length-10) break;
        var confirm=transparent_transactions[i].blocktime; if (!confirm) confirm=transparent_transactions[i].time
        trans+="<div class='transactionrow "+transparent_transactions[i].category+"'>"
-                    +"<div class=date title='"+(new Date(confirm*1000)).toUTCString()+"'>"+date(confirm)+"</div>"
+                    +"<div class=date title='"+utcDate(confirm)+"'>"+date(confirm)+"</div>"
                     +"<div class=confirmed>"+(transparent_transactions[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
                     +"<div class=transid "+(transparent_transactions[i].memo?'title="'+htmlspecialchars(hexDecode(transparent_transactions[i].memo))+'"':"")+">"+transparent_transactions[i].txid+"</div>"
                     +"<div class='amount'>"+(transparent_transactions[i].amount>0?"+":"")+num(transparent_transactions[i].amount,8,true)+" VOT</div>"
@@ -135,18 +196,21 @@ function update_gui()
 
     var from=$('#choosefrom').val();
     $('#choosefrom').children().not(':eq(0), :eq(1)').remove();
-    for(var i in transparent_addresses) if (transparent_addresses[i].amount!=0) $('#choosefrom').append('<option value="'+transparent_addresses[i].address+'">'+spacepad(transparent_addresses[i].amount)+' - '+transparent_addresses[i].address+'</option>');
-    for(var i in shielded_addresses) if (shielded_addresses[i].amount!=0) $('#choosefrom').append('<option value="'+shielded_addresses[i].address+'">'+spacepad(shielded_addresses[i].amount)+' - '+shielded_addresses[i].address+'</option>');
+    for(var i in transparent_addresses) if (transparent_addresses[i]!=0) $('#choosefrom').append('<option value="'+i+'">'+spacepad(transparent_addresses[i])+' - '+i+'</option>');
+    for(var i in shielded_addresses) if (shielded_addresses[i]!=0) $('#choosefrom').append('<option value="'+i+'">'+spacepad(shielded_addresses[i])+' - '+i+'</option>');
     $('#choosefrom').val(from);
+    if ($('#choosefrom').val()==null) $('#choosefrom').val($("#choosefrom option:eq("+(from.match(/^z/)?"1":"0")+")").val());
 
     var ops="";
-    for (i=operations.length-1; i>=0; i--)
+    var operationsAr=makeOrderedArray(operations,'creation_time');
+    for (i in operationsAr)
     {
-       ops+="<div class=operationrow>"
-              +"<div class=operationid>"+operations[i].id.replace(/^opid-/,"")+"</div>"
-              +"<div class=operationicon><i class='fa fa-"+(operations[i].status.match(/pending|queued|executing/)?'clock-o':(operations[i].status=='failed'?'exclamation-circle':'check'))+"'></i></div>"
-              +"<div class=operationstatus>"+(operations[i].error?operations[i].error.message:operations[i].status)+"</div>"
-           +"</div>";
+       ops="<div class=operationrow>"
+              +"<div class=operationtime title='"+utcDate(operationsAr[i].creation_time)+"'>"+timeAgo(operationsAr[i].creation_time)+"</div>"
+              +"<div class=operationamount>"+num(operationsAr[i].amount,8,true)+" VOT</div>"
+              +"<div class=operationicon><i class='fa fa-"+(operationsAr[i].status.match(/pending|queued|executing/)?'clock-o':(operationsAr[i].status=='failed'?'exclamation-circle':'check'))+"'></i></div>"
+              +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].error.message:operationsAr[i].status)+"</div>"
+           +"</div>"+ops;
     }
     sethtml('operationslist',ops);
 }
@@ -200,16 +264,25 @@ function update_operation_status()
    {
       for(var i=0; i<res.length; i++)
       {
-         res[i]=pick(res[i], "creation_time", "id", "method", "status", "error");
+         var id=res[i].id;
+         operations[id]=operations[id]||{};
+         for (k in pick(res[i], "creation_time", "id", "method", "status", "error")) operations[id][k]=(res[i][k]);
 
-         if (res[i].status=="success")
-         main.rpc("z_getoperationresult", [[res[i].id]], (ret)=>
+         if (!operations[id].finished) (function(opid)
          {
-             console.log(ret);
-             // TODO perhaps msg user that operation has completed
-         },function(e){console.log(e);});
+            main.rpc("z_getoperationresult", [[opid]], (ret)=>
+            {
+               console.log(ret);
+               operations[opid].finished=true;
+               operations[opid].result=ret;
+
+               storage_save('operations',operations);
+               update_transactions();
+               update_addresses();
+            },function(e){console.log(e);});
+         })(id);
       }
-      operations=res;
+      storage_save('operations',operations);
    });
 }
 
@@ -253,13 +326,21 @@ function add_shielded_transactions_received(zaddr)
    });
 }
 
+
+function balance_update(tgt,src,reset)
+{
+   var i;
+   if (reset) for (i in tgt) delete tgt[i];
+   for (i in src) tgt[src[i].address]=0;
+   for (i in src) tgt[src[i].address]=(tgt[src[i].address]?tgt[src[i].address]:0)+src[i].amount;
+}
+
+
 function update_shielded_addr(zaddr)
 {
    main.rpc("z_getbalance",[zaddr,0],(res)=>
    {
-      for(var i=shielded_addresses.length-1; i>=0; i--)
-         if (shielded_addresses[i].address==zaddr) { shielded_addresses[i].amount=res; break; }
-      if (i<0) shielded_addresses.push({'address':zaddr,'amount':res});
+      balance_update(shielded_addresses,[{'address':zaddr,'amount':res}]);
    });
 }
 
@@ -268,12 +349,7 @@ function update_addresses()
 {
    main.rpc("listunspent",[0],(res)=>
    {
-      for (var j=0; j<res.length; j++)
-      {
-         for(var i=transparent_addresses.length-1; i>=0; i--)
-            if (transparent_addresses[i].address==res[j].address) { transparent_addresses[i].amount=res[j].amount; break; }
-         if (i<0) transparent_addresses.push(res[j]);
-      }
+      balance_update(transparent_addresses,res,true);
 
       main.rpc("z_listaddresses",[],(res)=>
       {
@@ -355,7 +431,9 @@ function sendpayment()
      function payment_success(res)
      {
         console.log(res);
-        if (res.match(/^opid-/)) update_operation_status();
+        if (res.match(/^opid-/)) { operations[res]={'amount':amount, 'creation_time':now()}; update_operation_status(); }
+        else operations[now(true)]={'amount':amount, 'creation_time':now(), 'finished':true, 'status':"success"}
+
         update_transactions();
         update_addresses();
         reset_sendform();
@@ -375,9 +453,9 @@ function sendpayment()
         else
         {
            // else if TO address is shielded, we may need to find best suitable FROM t address manually by balance.
-           for(i in transparent_addresses) if (transparent_addresses[i].amount>=amount+fee)
+           for(i in transparent_addresses) if (transparent_addresses[i]>=amount+fee)
            {
-              main.rpc("z_sendmany",[transparent_addresses[i].address,[{'address':to,'amount':amount}],0,fee], payment_success,payment_failure);
+              main.rpc("z_sendmany",[i,[{'address':to,'amount':amount}],0,fee], payment_success,payment_failure);
               return;
            }
            payment_failure("Can't find any transparent address with sufficient balance.");
@@ -437,12 +515,13 @@ function init()
    });
 }
 
-// https://github.com/electron/electron/issues/2301
+
+// TODO make sure to warn user about pending transaction before he closes window
+// see https://github.com/electron/electron/issues/2301
 
 // load settings on start
 
-var z_track = stash.get('z_track');
-if (typeof z_track == "undefined") { z_track=1; stash.set('z_track',z_track); }
+var z_track = storage_load('z_track');
 $('#ztrack').prop('checked',z_track);
 
 init();
