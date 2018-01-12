@@ -5,4 +5,5 @@ resources/app/VoteCoin/*.dat
 resources/app/VoteCoin/chainstate
 resources/app/VoteCoin/blocks
 resources/app/VoteCoin/database
+resources/app/VoteCoin/votecoin.conf
 votecoin-cli.exe

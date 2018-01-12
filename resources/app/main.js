@@ -13,6 +13,12 @@ const url = require('url')
 const spawn = require('child_process').spawn;
 const process = require('process');
 const fs = require('fs');
+const crypto = require("crypto");
+
+// global variables, will be needed later
+var wallet_password="";
+var wallet_user="";
+var wallet_port="";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -113,19 +119,17 @@ app.on('before-quit', (event) =>
 
 function rpc(method,params,doneFunc,errorFunc)
 {
-   var username="admin";
-   var password="gWVQGBlFkJSE3f77T3";
    if (!params) params=[];
    var data={"method":method, params, id:Math.floor(Math.random()*10000)};
    data=JSON.stringify(data);
 
    var options = {
      host: "127.0.0.1",
-     port: 1234,
+     port: wallet_port,
      path: "/",
      method: 'POST',
      headers: {
-        'Authorization': 'Basic '+Buffer.from(username+':'+password).toString('base64'),
+        'Authorization': 'Basic '+Buffer.from(wallet_user+':'+wallet_password).toString('base64'),
         'Content-Type': 'application/json',
         'Connection': 'Close',
         'Content-Length': Buffer.byteLength(data)
@@ -207,6 +211,27 @@ function download_all_files(progressFunc,doneFunc)
        else downloadFile(current.host,current.port,current.path,current.target,current.size,progressFunc,function(){ downloads.push(current); download_all_files(progressFunc,doneFunc); });
    }
 }
+
+function init_rpc_password()
+{
+   var confpath=app.getAppPath()+'/VoteCoin/votecoin.conf';
+   if (!fs.existsSync(confpath))
+   {
+      wallet_user="admin";
+      wallet_password=crypto.randomBytes(20).toString('hex')
+      wallet_port=6666;
+      fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password);
+   }
+   else
+   {
+      var data=fs.readFileSync(confpath).toString();
+      wallet_user=data.match(/^rpcuser=(.+)/m)[1];
+      wallet_password=data.match(/^rpcpassword=(.+)/m)[1];
+      wallet_port=data.match(/^rpcport=([0-9]+)/m)[1];
+   }
+}
+
+init_rpc_password();
 
 exports.rpc=rpc;
 exports.walletStart=walletStart;
