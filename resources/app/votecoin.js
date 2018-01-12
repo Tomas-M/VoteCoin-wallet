@@ -178,12 +178,13 @@ function update_gui()
     var trans=""; var i;
     for (i=transparent_transactions.length-1; i>=0; i--)
     {
+       var memo=htmlspecialchars($.trim(hexDecode(transparent_transactions[i].memo)));
        if (i<transparent_transactions.length-10) break;
        var confirm=transparent_transactions[i].blocktime; if (!confirm) confirm=transparent_transactions[i].time
        trans+="<div class='transactionrow "+transparent_transactions[i].category+"'>"
                     +"<div class=date title='"+utcDate(confirm)+"'>"+date(confirm)+"</div>"
                     +"<div class=confirmed>"+(transparent_transactions[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
-                    +"<div class=transid "+(transparent_transactions[i].memo?'title="'+htmlspecialchars(hexDecode(transparent_transactions[i].memo))+'"':"")+" data-txid='"+transparent_transactions[i].txid+"'>"+transparent_transactions[i].txid+"</div>"
+                    +"<div class=transid data-txid='"+transparent_transactions[i].txid+"' "+(memo?'title="'+transparent_transactions[i].txid+'"><span class=memotext>'+memo+"</span>":">"+transparent_transactions[i].txid)+"</div>"
                     +"<div class='amount'>"+(transparent_transactions[i].amount>0?"+":"")+num(transparent_transactions[i].amount,8,true)+" VOT</div>"
              +"</div>";
     }
@@ -432,7 +433,7 @@ function sendpayment()
      var to=$('#sendto').val();
      var amount=parseFloat($('#amount').val()); if (isNaN(amount)) amount=0;
      var fee=parseFloat($('#fee').val()); if (isNaN(fee)) fee=0;
-     var memo=$.trim($('#memo').val());
+     var memo=hexEncode($.trim($('#memo').val()));
 
      function payment_failure(err)
      {

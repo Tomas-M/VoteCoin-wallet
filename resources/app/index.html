@@ -41,9 +41,10 @@
         .operationicon { text-align: center; width: 50px; margin-bottom: 5px; }
         .operationamount { text-align: right; width: 140px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .operationstatus { width: calc(100% - 320px); overflow: auto; overflow-y:hidden; }
-        .operationstatus::-webkit-scrollbar, .operationamount::-webkit-scrollbar,  .operationtime::-webkit-scrollbar { width: 0; height: 4px; background-color: #d7d7d7; }
-        .operationstatus::-webkit-scrollbar-thumb, .operationamount::-webkit-scrollbar-thumb, .operationtime::-webkit-scrollbar-thumb { background: #aaa; }
+        .operationstatus::-webkit-scrollbar-thumb, .operationamount::-webkit-scrollbar-thumb, .operationtime::-webkit-scrollbar-thumb {  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #aaa 5px, #aaa 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
+        .operationstatus::-webkit-scrollbar, .operationamount::-webkit-scrollbar,  .operationtime::-webkit-scrollbar { width: 0; height: 13px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #d7d7d7 5px, #d7d7d7 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
 
+        .memotext { font-family: Verdana !important; font-size: 14px; }
 
         #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 

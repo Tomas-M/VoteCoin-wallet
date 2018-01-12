@@ -218,6 +218,7 @@ function hexEncode(str)
 
 function hexDecode(hex)
 {
+	 if (hex=='' || typeof hex == "undefined") return '';
     hex=hex.replace(/0+$/,"");
     if (hex.substr(0,2).toUpperCase().match(/^F5|^F6/)) return '';
     ret='';
