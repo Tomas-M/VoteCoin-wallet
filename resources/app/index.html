@@ -23,6 +23,7 @@
         .menu .menurow.active span { background-color: #282130; }
 
         #transactionslist { margin-top: 40px; }
+        #operationslist { margin-top: 40px; }
 
         .transactionrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
@@ -34,6 +35,7 @@
         .transactionrow.receive .amount { color: #83b93f; font-weight: bold; }
 
         .operationrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
+        .operationrow .transid { cursor: pointer; color: #2ba7ff; }
         .operationrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .operationtime { text-align: left; width: 130px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .operationicon { text-align: center; width: 50px; margin-bottom: 5px; }
@@ -50,6 +52,10 @@
         #qrcode { border: 1px solid #ddd; background-color: #ffffff; padding: 15px; display: inline-block; }
         #progressinnertext { font-size: 10px; line-height: 22px; text-align: center; position: absolute; width: calc(100% - 450px); }
         #syncinprogress { text-align: center; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; padding: 10px; margin-top: 20px; margin-bottom: 20px; }
+
+        .sendallbtn { margin:0; padding: 0; height: 39px; width: 24px; background-color: #ffffff; color: #000; border:1px solid #ccc; border-radius:0; position: relative; left: -5px; }
+        .sendallbtn:hover { background-color: #ccc;  }
+        .sendallbtn:active { background-color: #aaa;  }
 
         h1 { margin: 0; margin-bottom: 30px; }
         select { margin-bottom: 10px; border: 1px solid #ccc; height: 39px; -webkit-appearance: none; padding: 10px 38px 10px 10px; width: 100%;  border-radius: 3px;  outline: none; }
@@ -127,7 +133,7 @@
             </select>
             <input id=sendto type=text placeholder="Send To address">
             <input id=memo type=text placeholder="Memo (optional, only for shielded transactions, visible only by the receiver)">
-            <input id=amount type=text placeholder="Amount" style="width: 100px;"><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -5px;" value=VOT>
+            <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
             <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
             <button id=sendpayment>Send payment</button>
 
@@ -183,7 +189,8 @@
    $(document).on('click','#getnewaddress',function(){ genNewAddress(false); });
    $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true); });
    $(document).on('click','#sendpayment',function(){ sendpayment(); });
-   $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$(this).text()); });
+   $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$.trim($(this).data('txid'))); });
+   $(document).on('click','.sendallbtn',function(){ maxSendAmount(); });
 
    // settings click events
 

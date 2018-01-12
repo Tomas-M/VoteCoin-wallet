@@ -65,6 +65,7 @@ function num(n,precision,strip)
 {
    if (!precision) precision=0;
    n=parseFloat(n);
+   if (isNaN(n)) n=0;
    n=n.toFixed(precision);
    if (strip && precision>0) n=n.replace(/0+$/,"").replace(/[.]$/,"");
    return n;
@@ -188,7 +189,7 @@ function update_gui()
        trans+="<div class='transactionrow "+transparent_transactions[i].category+"'>"
                     +"<div class=date title='"+utcDate(confirm)+"'>"+date(confirm)+"</div>"
                     +"<div class=confirmed>"+(transparent_transactions[i].confirmations==0?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
-                    +"<div class=transid "+(transparent_transactions[i].memo?'title="'+htmlspecialchars(hexDecode(transparent_transactions[i].memo))+'"':"")+">"+transparent_transactions[i].txid+"</div>"
+                    +"<div class=transid "+(transparent_transactions[i].memo?'title="'+htmlspecialchars(hexDecode(transparent_transactions[i].memo))+'"':"")+" data-txid='"+transparent_transactions[i].txid+"'>"+transparent_transactions[i].txid+"</div>"
                     +"<div class='amount'>"+(transparent_transactions[i].amount>0?"+":"")+num(transparent_transactions[i].amount,8,true)+" VOT</div>"
              +"</div>";
     }
@@ -209,7 +210,7 @@ function update_gui()
               +"<div class=operationtime title='"+utcDate(operationsAr[i].creation_time)+"'>"+timeAgo(operationsAr[i].creation_time)+"</div>"
               +"<div class=operationamount>"+num(operationsAr[i].amount,8,true)+" VOT</div>"
               +"<div class=operationicon><i class='fa fa-"+(operationsAr[i].status.match(/pending|queued|executing/)?'clock-o':(operationsAr[i].status=='failed'?'exclamation-circle':'check'))+"'></i></div>"
-              +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].error.message:operationsAr[i].status)+"</div>"
+              +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status)+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
            +"</div>"+ops;
     }
     sethtml('operationslist',ops);
@@ -268,13 +269,13 @@ function update_operation_status()
          operations[id]=operations[id]||{};
          for (k in pick(res[i], "creation_time", "id", "method", "status", "error")) operations[id][k]=(res[i][k]);
 
-         if (!operations[id].finished) (function(opid)
+         if (!operations[id].finished && !operations[id].status.match(/executing|queued/)) (function(opid)
          {
             main.rpc("z_getoperationresult", [[opid]], (ret)=>
             {
-               console.log(ret);
                operations[opid].finished=true;
-               operations[opid].result=ret;
+               operations[opid].result=ret.pop();
+               try { operations[opid].txid=operations[opid].result.result.txid; } catch(err){}
 
                storage_save('operations',operations);
                update_transactions();
@@ -407,6 +408,25 @@ function genNewAddress(transparent)
     },true)
 }
 
+
+function maxSendAmount()
+{
+   var i;
+   var amount=0;
+   var fee=parseFloat($('#fee').val()); if (isNaN(fee)) fee=0;
+
+   var from=$('#choosefrom').val();
+
+   if (from=='t') for(i in transparent_addresses) amount+=transparent_addresses[i];
+   else if (from=='z') { for(i in shielded_addresses) if (shielded_addresses[i]>amount) amount=shielded_addresses[i]; }
+   else if (isTransparent(from)) amount=transparent_addresses[from];
+   else amount=shielded_addresses[from];
+
+   amount=amount-fee;
+   $('#amount').val(num(amount,8,true));
+}
+
+
 function isTransparent(addr) { return addr.substr(0,1)=='t'; }
 function isPrivate(addr) { return !isTransparent(addr); }
 function reset_sendform() {} // TODO
@@ -416,16 +436,14 @@ function sendpayment()
      var i;
      var from=$('#choosefrom').val();
      var to=$('#sendto').val();
-     var amount=parseFloat($('#amount').val());
-     if (isNaN(amount)) amount=0;
-     var fee=parseFloat($('#fee').val());
-     if (isNaN(fee)) fee=0;
+     var amount=parseFloat($('#amount').val()); if (isNaN(amount)) amount=0;
+     var fee=parseFloat($('#fee').val()); if (isNaN(fee)) fee=0;
 
      function payment_failure(err)
      {
         if (err.error) err=err.error;
         if (err.message) err=err.message;
-        console.log(err);
+        operations[now(true)]={'amount':amount, 'creation_time':now(), 'finished':true, 'status':"failed", 'error':{'message':err}}
      }
 
      function payment_success(res)
@@ -464,9 +482,9 @@ function sendpayment()
      else
      if (from=='z') // auto-select shielded FROM address
      {
-        for(i in shielded_addresses) if (shielded_addresses[i].amount>=amount+fee)
+        for(i in shielded_addresses) if (shielded_addresses[i]>=amount+fee)
         {
-           main.rpc("z_sendmany",[shielded_addresses[i].address,[{'address':to,'amount':amount}],1,fee], payment_success,payment_failure);
+           main.rpc("z_sendmany",[shielded_addresses[i],[{'address':to,'amount':amount}],1,fee], payment_success,payment_failure);
            return;
         }
         payment_failure("Can't find any transparent address with sufficient balance.");
