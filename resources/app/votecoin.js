@@ -125,19 +125,28 @@ function now()
 
 function timeAgo(t)
 {
-   t=now()-t;
-   if (t<60) return "a while ago";
-   if (t<60*2) return Math.floor(t/60)+" minute ago";
-   if (t<60*60) return Math.floor(t/60)+" minutes ago";
-   if (t<60*60*2) return Math.floor(t/60/24)+" hour ago";
-   if (t<60*60*24) return Math.floor(t/60/24)+" hours ago";
-   if (t<60*60*24/7*2) return Math.floor(t/60/24/7)+" week ago";
-   if (t<60*60*24/7) return Math.floor(t/60/24/7)+" weeks ago";
-   if (t<60*60*24/30*2) return Math.floor(t/60/24/30)+" months ago";
-   if (t<60*60*24/30) return Math.floor(t/60/24/30)+" months ago";
-   if (t<60*60*24/365*2) return Math.floor(t/60/24/365)+" year ago";
-   if (t<60*60*24/365) return Math.floor(t/60/24/365)+" years ago";
-   return "";
+   function plural(n) { if (n>1 || n==0) return "s"; else return ""; }
+   var length=now()-t;
+
+   var days=length/60/60/24;
+   var hours=(days-Math.floor(days))*24;
+   var minutes=(hours-Math.floor(hours))*60;
+
+   var weeks=Math.floor(days/7);
+   var months=Math.floor(days/30);
+   var years=Math.floor(days/365);
+
+   days=Math.floor(days);
+   hours=Math.floor(hours);
+   minutes=Math.floor(minutes);
+
+   if (years>0) return years+" year"+plural(years)+" ago";
+   if (months>0) return months+" month"+plural(months)+" ago";
+   if (weeks>0) return weeks+" week"+plural(weeks)+" ago";
+   if (days>0) return days+" day"+plural(days)+" ago";
+   if (hours>0) return hours+" hour"+plural(hours)+" ago";
+   if (minutes>0) return minutes+" minute"+plural(minutes)+" ago";
+   return "a while ago";
 }
 
 
