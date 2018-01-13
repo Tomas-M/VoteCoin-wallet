@@ -465,6 +465,8 @@ function sendpayment()
      }
 
      if (amount==0) return payment_failure("Amount must be greater than zero");
+     var param={'address':to,'amount':amount};
+     if (memo) param['memo']=memo;
 
      if (from=='t') // auto-select transparent FROM address
      {
@@ -480,7 +482,7 @@ function sendpayment()
            // else if TO address is shielded, we may need to find best suitable FROM t address manually by balance.
            for(i in transparent_addresses) if (transparent_addresses[i]>=amount+fee)
            {
-              main.rpc("z_sendmany",[i,[{'address':to,'amount':amount,'memo':memo}],0,fee], payment_success,payment_failure);
+              main.rpc("z_sendmany",[i,[param],0,fee], payment_success,payment_failure);
               return;
            }
            payment_failure("Can't find any transparent address with sufficient balance.");
@@ -491,14 +493,14 @@ function sendpayment()
      {
         for(i in shielded_addresses) if (shielded_addresses[i]>=amount+fee)
         {
-           main.rpc("z_sendmany",[shielded_addresses[i],[{'address':to,'amount':amount,'memo':memo}],1,fee], payment_success,payment_failure);
+           main.rpc("z_sendmany",[shielded_addresses[i],[param],1,fee], payment_success,payment_failure);
            return;
         }
         payment_failure("Can't find any transparent address with sufficient balance.");
      }
      else // one particular transparent or shielded address selected, try the payment as is
      {
-         main.rpc("z_sendmany",[from,[{'address':to,'amount':amount,'memo':memo}],isTransparent(from)?0:1,fee], payment_success,payment_failure);
+         main.rpc("z_sendmany",[from,[param],isTransparent(from)?0:1,fee], payment_success,payment_failure);
      }
 }
 
