@@ -51,8 +51,8 @@
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
         .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; }
         #qrcode { border: 1px solid #ddd; background-color: #ffffff; padding: 15px; display: inline-block; }
-        #progressinnertext { font-size: 10px; line-height: 22px; text-align: center; position: absolute; width: calc(100% - 450px); }
-        #syncinprogress { text-align: center; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; padding: 10px; margin-top: 20px; margin-bottom: 20px; }
+        #progressinnertext { font-size: 10px; line-height: 22px; text-align: center; position: absolute; width: calc(100% - 550px); }
+        #syncinprogress div { text-align: center; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; padding: 10px; margin-top: 20px; margin-bottom: 20px; }
 
         .sendallbtn { margin:0; padding: 0; height: 39px; width: 24px; background-color: #ffffff; color: #000; border:1px solid #ccc; border-radius:0; position: relative; left: -5px; }
         .sendallbtn:hover { background-color: #ccc;  }
@@ -72,6 +72,7 @@
 
          .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
          .settingshelp { text-align: justify; }
+         @keyframes spin { 100% { transform:rotate(-360deg); } }
     </style>
 
   </head>
@@ -99,10 +100,10 @@
       <div style="background-color: #e9e9e9; border-radius: 0px 0 0 0px; width: 100%; height: 100%; overflow: auto; overflow-x: hidden;">
 
 
-         <div id=progress style="width: 100%; padding: 50px;">
-            <div style="width: calc(100% - 100px);" align=center id=progressmessage></div>
-            <div id=progressbar style="width: calc(100% - 100px); border: 1px solid #2ab6ff; margin-top: 10px; margin-bottom: 10px;">
-              <div id=progressinner style="background-color: #2ab6ff; height: 20px; width: 1px;">
+         <div id=progress style="width: 100%; padding: 100px;">
+            <div style="width: calc(100% - 200px);" align=center id=progressmessage></div>
+            <div id=progressbar style="width: calc(100% - 200px); border: 1px solid #aaaaaa; margin-top: 10px; margin-bottom: 10px;">
+              <div id=progressinner style="background-color: #dddddd; height: 20px; width: 1px;">
                 <div id=progressinnertext></div>
               </div>
             </div>
@@ -120,7 +121,7 @@
 <!--              <div align=center style='color: #332b3b;'><span id=totalUSD></span></div> -->
            </div>
 
-           <div id=syncinprogress><span style='display: inline-block;'>Synchronization with VoteCoin network is in progress,</span> <span style='display: inline-block;'>your wallet may not include most recent transactions.</span></div>
+           <div id=syncinprogress><div style="overflow: auto;"><span style='display: inline-block;'>Synchronization with VoteCoin network is in progress,</span> <span style='display: inline-block;'>your wallet will include most recent transactions</span> <span style='display: inline-block;'>as soon as the syncrhonization is fully complete.</span></div></div>
            <div id=transactionsearch></div>
            <div id=transactionslist>loading transactions...</div>
          </div>

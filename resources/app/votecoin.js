@@ -376,11 +376,13 @@ function show_progress(pct)
    {
       $('#progressinner').css('width',pct+'%');
       $('#progressinnertext').text(pct+'%');
+      $('#progressbar').show();
    }
    else
    {
       $('#progressinner').css('width','100%');
       $('#progressinnertext').text('');
+      $('#progressbar').hide();
    }
 }
 
@@ -504,13 +506,13 @@ function sendpayment()
 function init()
 {
    $('#progress').show();
-   $('#progressmessage').html("Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
+   $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'><span class='fa fa-cloud-download' style='color: #ddd; font-size: 150px;'></span></div>Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
 
    // check && download sprout proving file
    main.download_all_files(download_progress,function()
    {
       show_progress(100);
-      $('#progressmessage').html("VoteCoin wallet is starting, please wait...");
+      $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'><span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span></div>VoteCoin wallet is starting, please wait...");
       // parse votecoin.conf file, if empty set random password and write to file.
 
       // start wallet
