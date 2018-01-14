@@ -67,9 +67,11 @@ function utcDate(d)
    return (new Date(d*1000)).toString();
 }
 
-function now()
+function now(miliseconds)
 {
-   return Math.floor(Date.now()/1000);
+   var n=Date.now();
+   if (miliseconds) return n;
+   else return Math.floor(n/1000);
 }
 
 function timeAgo(t)
