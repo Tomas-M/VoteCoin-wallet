@@ -187,15 +187,19 @@ function setUpdater(func,time)
 function init()
 {
    $('#progress').show();
-   $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'><span class='fa fa-cloud-download' style='color: #ddd; font-size: 150px;'></span></div>Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
+   $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
+                                 +"<span class='fa fa-cloud-download' style='color: #ddd; font-size: 150px;'></span>"
+                              +"</div>"
+                              +"Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
 
    // check && download sprout proving file
    main.download_all_files(download_progress,function()
    {
       show_progress(100);
-      $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'><span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span></div>VoteCoin wallet is starting, please wait...");
-      // parse votecoin.conf file, if empty set random password and write to file.
-
+      $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
+                                     +"<span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span>"
+                                 +"</div>"
+                                 +"VoteCoin wallet is starting, please wait...");
       // start wallet
       main.walletStart();
 
@@ -221,13 +225,8 @@ function init()
    });
 }
 
-
 // TODO make sure to warn user about pending transaction before he closes window
 // see https://github.com/electron/electron/issues/2301
 
-// load settings on start
-
-var z_track = storage_load('z_track');
-$('#ztrack').prop('checked',z_track);
 
 init();
