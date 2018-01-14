@@ -53,7 +53,7 @@ function update_gui()
        ops="<div class=operationrow>"
               +"<div class=operationtime title='"+utcDate(operationsAr[i].creation_time)+"'>"+timeAgo(operationsAr[i].creation_time)+"</div>"
               +"<div class=operationamount>"+num(operationsAr[i].amount,8,true)+" VOT</div>"
-              +"<div class=operationicon><i class='fa fa-"+(operationsAr[i].status.match(/pending|queued|executing/)?'clock-o':(operationsAr[i].status=='failed'?'exclamation-circle':'check'))+"'></i></div>"
+              +"<div class=operationicon><i class='fa fa-"+(operationsAr[i].status.match(/pending|queued|executing/)?'clock-o':(operationsAr[i].status.match(/failed|canceled/)?'exclamation-circle':'check'))+"'></i></div>"
               +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status)+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
            +"</div>"+ops;
     }

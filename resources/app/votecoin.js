@@ -23,7 +23,17 @@ var shielded_transactions=[];
 var transparent_addresses={};
 var shielded_addresses={};
 
+
+// Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
+for(i in operations)
+{
+   if (operations[i].status.match(/executing|queued/))
+   {
+      operations[i].status='canceled by wallet close';
+      operations[i].finished=true;
+   }
+}
 
 
 function wait_for_wallet()
@@ -93,6 +103,10 @@ function update_operation_status()
          })(id);
       }
       storage_save('operations',operations);
+
+      var preventExit=false;
+      for(i in operations) if (operations[i].status.match(/executing|queued/)) preventExit=true;
+      main.setTransactionInProgress(preventExit);
    });
 }
 

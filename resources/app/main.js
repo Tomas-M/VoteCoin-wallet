@@ -25,6 +25,7 @@ var wallet_port="";
 let win;
 let server;
 let canQuit=true;
+let showExitPrompt=true;
 
 function createWindow () {
   // Create the browser window.
@@ -41,6 +42,21 @@ function createWindow () {
 
   // Open the DevTools.
   //win.webContents.openDevTools()
+
+  win.on('close', (e) =>
+  {
+     if (showExitPrompt)
+     {
+         e.preventDefault() // Prevents the window from closing
+         dialog.showMessageBox({type: 'question', buttons: ['Yes', 'No'], title: 'Confirm', message: 'Closing wallet will cancel all transactions which are executing at the moment. Are you sure you want to quit?' }, function (response)
+         {
+              if (response===0) { // 'Yes' is clicked
+                  showExitPrompt=false;
+                  win.close();
+              }
+          });
+      }
+  });
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -231,8 +247,14 @@ function init_rpc_password()
    }
 }
 
+function setTransactionInProgress(e)
+{
+   showExitPrompt=!!e;
+}
+
 init_rpc_password();
 
 exports.rpc=rpc;
 exports.walletStart=walletStart;
 exports.download_all_files=download_all_files;
+exports.setTransactionInProgress=setTransactionInProgress;
