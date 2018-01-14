@@ -90,7 +90,7 @@ function sendpayment()
      {
         for(i in shielded_addresses) if (shielded_addresses[i]>=amount+fee)
         {
-           main.rpc("z_sendmany",[shielded_addresses[i],[param],1,fee], payment_success,payment_failure);
+           main.rpc("z_sendmany",[i,[param],1,fee], payment_success,payment_failure);
            return;
         }
         payment_failure("Can't find any transparent address with sufficient balance.");
