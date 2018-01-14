@@ -48,7 +48,7 @@ function createWindow () {
      if (showExitPrompt)
      {
          e.preventDefault() // Prevents the window from closing
-         dialog.showMessageBox({type: 'question', buttons: ['Yes', 'No'], title: 'Confirm', message: 'Closing wallet will cancel all transactions which are executing at the moment. Are you sure you want to quit?' }, function (response)
+         dialog.showMessageBox({type: 'question', buttons: ['Yes', 'No'], title: 'Confirm', message: 'Some payments are still pending. If you close VoteCoin Wallet now, these payments will be canceled. Is this what you want?' }, function (response)
          {
               if (response===0) { // 'Yes' is clicked
                   showExitPrompt=false;
