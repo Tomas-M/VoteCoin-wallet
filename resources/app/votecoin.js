@@ -26,12 +26,6 @@ var shielded_addresses={};
 var operations=storage_load('operations',{});
 
 
-function ztrack_toggle()
-{
-   z_track=$('#ztrack').is(':checked')?1:0;
-   storage_save('z_track',z_track);
-}
-
 function wait_for_wallet()
 {
    return new Promise((resolve,reject)=>
