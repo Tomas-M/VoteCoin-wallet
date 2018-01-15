@@ -10,7 +10,7 @@ var schemes = {};
 var exports = module.exports = {
 	maxRedirects: 21
 };
-// RFC7231§4.2.1: Of the request methods defined by this specification,
+// RFC7231 4.2.1: Of the request methods defined by this specification,
 // the GET, HEAD, OPTIONS, and TRACE methods are defined to be safe.
 var safeMethods = {GET: true, HEAD: true, OPTIONS: true, TRACE: true};
 
@@ -105,7 +105,7 @@ RedirectableRequest.prototype._performRequest = function () {
 
 // Processes a response from the current native request
 RedirectableRequest.prototype._processResponse = function (response) {
-	// RFC7231§6.4: The 3xx (Redirection) class of status code indicates
+	// RFC7231ï¿½6.4: The 3xx (Redirection) class of status code indicates
 	// that further action needs to be taken by the user agent in order to
 	// fulfill the request. If a Location header field is provided,
 	// the user agent MAY automatically redirect its request to the URI
@@ -114,16 +114,16 @@ RedirectableRequest.prototype._processResponse = function (response) {
 	var location = response.headers.location;
 	if (location && this._options.followRedirects !== false &&
 			response.statusCode >= 300 && response.statusCode < 400) {
-		// RFC7231§6.4: A client SHOULD detect and intervene
+		// RFC7231ï¿½6.4: A client SHOULD detect and intervene
 		// in cyclical redirections (i.e., "infinite" redirection loops).
 		if (++this._redirectCount > this._options.maxRedirects) {
 			return this.emit('error', new Error('Max redirects exceeded.'));
 		}
 
-		// RFC7231§6.4: Automatic redirection needs to done with
-		// care for methods not known to be safe […],
+		// RFC7231ï¿½6.4: Automatic redirection needs to done with
+		// care for methods not known to be safe [ï¿½],
 		// since the user might not wish to redirect an unsafe request.
-		// RFC7231§6.4.7: The 307 (Temporary Redirect) status code indicates
+		// RFC7231ï¿½6.4.7: The 307 (Temporary Redirect) status code indicates
 		// that the target resource resides temporarily under a different URI
 		// and the user agent MUST NOT change the request method
 		// if it performs an automatic redirection to that URI.
