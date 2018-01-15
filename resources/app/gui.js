@@ -1,6 +1,15 @@
 
 const child_process = require('child_process');
 
+function gui_show(t)
+{
+    $('.menurow').removeClass('active');
+    $('.menurow[data-toggle="'+t+'"]').addClass('active');
+    $('.container').hide();
+    $('#'+t).show();
+}
+
+
 function update_gui()
 {
     settext('transparentVOT',num(totalTransparent,8,true));

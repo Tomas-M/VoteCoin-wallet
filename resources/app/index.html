@@ -193,15 +193,6 @@
 
 <script>
    var isInitialized=false;
-
-   $(document).on('click','.menurow',function()
-   {
-       if (!isInitialized) return;
-       $('.menurow').removeClass('active');
-       $(this).addClass('active');
-       $('.container').hide();
-       $('#'+$(this).data('toggle')).show();
-   });
 </script>
 
 <script src=lib.js></script>
@@ -216,12 +207,15 @@
 
    var qrcode = new QRCode("qrcode");
 
+   $(document).on('click','.menurow',function() { if (isInitialized) gui_show($(this).data('toggle')); });
+
    $(document).on('click','#getnewaddress',function(){ genNewAddress(false); });
    $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true); });
    $(document).on('click','#sendpayment',function(){ sendpayment(); });
    $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$.trim($(this).data('txid'))); });
    $(document).on('click','.sendallbtn',function(){ maxSendAmount(); });
    $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).text()); });
+   $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); $('#choosefrom').val($(this).parent().prev().prev().text()); });
 
    // settings click events
 
