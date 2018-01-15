@@ -242,5 +242,4 @@ function init()
 // TODO make sure to warn user about pending transaction before he closes window
 // see https://github.com/electron/electron/issues/2301
 
-
 init();

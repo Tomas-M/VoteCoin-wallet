@@ -8,8 +8,6 @@ function ztrack_toggle()
    storage_save('z_track',z_track);
 }
 
-
-
 // ------------------------------------------------------------------------------
 
 function resend_mempool_transactions()
@@ -17,7 +15,8 @@ function resend_mempool_transactions()
    // get all transaction IDs from mempool
    main.rpc("getrawmempool", [], (mempool)=>
    {
-      $('#rebroadcastclicked').text("Rebroadcasted "+mempool.length+" transactions. "+humanReadableDate(now()));
+      $('#rebroadcastclicked').text("Rebroadcasted "+mempool.length+" transactions.").css('opacity',0).fadeTo(500,1);
+      setTimeout(function(){ $('#rebroadcastclicked').fadeTo(500,0); },3000);
 
       for (var i=0; i<mempool.length; i++)
       {
