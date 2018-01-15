@@ -156,6 +156,11 @@
             <h2><input id=ztrack type=checkbox class=settingscheck> Track shielded transactions</h2>
             <div class=settingshelp>If checked, VoteCoin wallet will remember all shielded transactions,
                even those sent from a shielded address to another shielded address, and it will show them in the list of transactions.</div>
+            <hr noshade size=1 color=#dddddd style="margin-top: 30px;">
+            <h2>Resend all unocnfirmed transactions</h2>
+            Every time you send a transaction, it is broadcasted to the network to other nodes. Rebroadcasting should occur automatically,
+            until your transaction is confirmed. You can also rebroadcast all transactions manually, by clicking the following button:
+            <p align=left><button id=rebroadcast>Rebroadcast now</button> &nbsp; <span id=rebroadcastclicked></span></p>
          </div>
 
       </div>
@@ -202,6 +207,7 @@
    // settings click events
 
    $(document).on('click','#ztrack', ztrack_toggle);
+   $(document).on('click','#rebroadcast', resend_mempool_transactions);
 
 </script>
 

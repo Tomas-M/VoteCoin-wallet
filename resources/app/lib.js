@@ -62,9 +62,9 @@ function htmlspecialchars(text)
    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-function utcDate(d)
+function humanReadableDate(d)
 {
-   return (new Date(d*1000)).toString();
+   return (new Date(d*1000)).toString().replace(/ GMT.*/,"");
 }
 
 function now(miliseconds)
