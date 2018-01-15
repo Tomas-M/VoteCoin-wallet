@@ -1,12 +1,13 @@
 
-function genNewAddress(transparent)
+function genNewAddress(shielded)
 {
     var prefix="";
-    if (transparent) prefix="z_";
+    if (shielded) prefix="z_";
     main.rpc(prefix+"getnewaddress","",function(res)
     {
         var addr=res;
         $('#newaddr').val(addr).show();
+        $('#newaddr').css('height',shielded?'45px':'17px');
         $('#qrcode').show();
         qrcode.makeCode(addr);
     },true)

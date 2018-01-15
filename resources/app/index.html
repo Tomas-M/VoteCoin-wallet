@@ -65,8 +65,8 @@
                  background-size: 5px 5px, 6px 6px, 1px 1.5em;
                  background-repeat: no-repeat;
                }
-         input { border: 1px solid #ccc;  width: calc(100% - 22px); height: 17px; padding: 10px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
-         button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
+         input,textarea { resize: none; border: 1px solid #ccc;  width: calc(100% - 22px); height: 17px; padding: 10px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
+         button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; font-size: 14px; letter-spacing: 1px; }
          button:hover { background-color: #2ba7ff; cursor: pointer; }
          button:active { background-color: #1197ff; cursor: pointer; }
 
@@ -144,10 +144,12 @@
 
          <div id=receive class=container>
             <h1>Receive payment</h1>
-            <button id=getnewaddress>Generate new Transparent address</button>&nbsp;
-            <button id=zgetnewaddress>Generate new Shielded address</button>
-            <input id=newaddr style='display: none;'>
-            <div id=qrcode style='display: none;'></div>
+            <div style="width: 50%; float: left;">
+               <button id=getnewaddress style="width: 100%">Generate new Transparent address</button>
+               <button id=zgetnewaddress style="width: 100%">Generate new Shielded address</button>
+               <textarea id=newaddr style='display: none; width: calc(100% - 20px);'></textarea>
+            </div>
+            <div id=qrcode style='display: none; float: right; width: 255px;'></div>
          </div>
 
          <div id=vote class=container>vote</div>
