@@ -6,10 +6,7 @@ function genNewAddress(shielded)
     main.rpc(prefix+"getnewaddress","",function(res)
     {
         var addr=res;
-        $('#newaddr').val(addr).show();
-        $('#newaddr').css('height',shielded?'45px':'17px');
-        $('#qrcode').show();
-        qrcode.makeCode(addr);
+        show_receiving_address(addr);
     },true)
 }
 

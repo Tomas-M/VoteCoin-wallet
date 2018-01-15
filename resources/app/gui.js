@@ -58,6 +58,12 @@ function update_gui()
            +"</div>"+ops;
     }
     sethtml('operationslist',ops);
+
+    var addressesT='';
+    var addressesS='';
+    for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
+    for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
+    sethtml('walletaddresses',(addressesT!=''?"<br><h2>Transparent addresses with balance</h2>"+addressesT:"")+(addressesS!=''?"<br><h2>Shielded addresses with balance</h2>"+addressesS:""));
 }
 
 function show_progress(pct)
@@ -76,6 +82,15 @@ function show_progress(pct)
    }
 }
 
+function show_receiving_address(addr)
+{
+   $('#newaddr').val(addr).show();
+   $('#newaddr').css('height',addr.length>60?'45px':'17px');
+   $('#qrcode').show();
+   qrcode.makeCode(addr);
+   $('#right div').stop().animate({scrollTop:0}, 500, 'swing');
+   $('#newaddr').select();
+}
 
 function download_progress(file,size,bytes)
 {
