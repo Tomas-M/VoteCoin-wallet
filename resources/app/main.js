@@ -48,13 +48,7 @@ function createWindow () {
      if (showExitPrompt)
      {
          e.preventDefault() // Prevents the window from closing
-         dialog.showMessageBox({type: 'question', buttons: ['Yes', 'No'], title: 'Confirm', message: 'Some payments are still pending. If you close VoteCoin Wallet now, these payments will be canceled. Is this what you want?' }, function (response)
-         {
-              if (response===0) { // 'Yes' is clicked
-                  showExitPrompt=false;
-                  win.close();
-              }
-          });
+         dialog.showMessageBox({type: 'warning', buttons: [], title: 'Warning', message: 'Please wait for all outgoing payments to complete. This can take few minutes.' });
       }
   });
 
