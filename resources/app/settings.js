@@ -14,11 +14,11 @@ function ztrack_toggle()
 
 function resend_mempool_transactions()
 {
-   $('#rebroadcastclicked').text("Last manual rebroadcast at "+humanReadableDate(now()));
-
    // get all transaction IDs from mempool
    main.rpc("getrawmempool", [], (mempool)=>
    {
+      $('#rebroadcastclicked').text("Rebroadcasted "+mempool.length+" transactions. "+humanReadableDate(now()));
+
       for (var i=0; i<mempool.length; i++)
       {
          // get raw trasnaction data
