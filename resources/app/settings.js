@@ -29,3 +29,17 @@ function resend_mempool_transactions()
       }
    });
 }
+
+// ------------------------------------------------------------------------------
+
+function cleanup()
+{
+   transparent_addresses={};
+   shielded_addresses={};
+
+   operations={};
+   storage_save('operations',operations);
+
+   $('#cleanupclicked').text("Cleanup and refresh complete.").css('opacity',0).fadeTo(500,1);
+   setTimeout(function(){ $('#cleanupclicked').fadeTo(500,0); },3000);
+}

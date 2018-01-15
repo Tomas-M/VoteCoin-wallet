@@ -173,13 +173,17 @@
             <hr noshade size=1 color=#dddddd style="margin-top: 30px;">
             <h2>Resend all unocnfirmed transactions</h2>
             Every time you send a transaction, it is periodically broadcasted to the network to other nodes. Similarly other nodes may periodically broadcast their
-            transactions to you. Rebroadcasting occurs automatically from time to time. You can also rebroadcast all transactions manually, by clicking the following button:
+            transactions to you. Rebroadcasting occurs automatically from time to time. You can also rebroadcast all transactions manually, by clicking the following button.
             <p align=left><button id=rebroadcast>Rebroadcast now</button> &nbsp; <span id=rebroadcastclicked></span></p>
+            <hr noshade size=1 color=#dddddd style="margin-top: 30px;">
+            <h2>Cleanup and Refresh</h2>
+            If you wish to clear the log of outgoing payments and refresh transacions list from blockchain, click the following button. Keep in mind that
+            some of the information will be re-read from blockchain, but some may be lost forever (such as the log of failed payments, or log of outgoing shielded payments).
+            <p align=left><button id=cleanup>Cleanup now</button> &nbsp; <span id=cleanupclicked></span></p>
          </div>
 
       </div>
      </div>
-
 
      <div id=msg></div>
 
@@ -223,6 +227,7 @@
 
    $(document).on('click','#ztrack', ztrack_toggle);
    $(document).on('click','#rebroadcast', resend_mempool_transactions);
+   $(document).on('click','#cleanup', cleanup);
 
 </script>
 
