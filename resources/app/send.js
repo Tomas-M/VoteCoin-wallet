@@ -54,7 +54,7 @@ function sendpayment()
      {
         console.log(res);
         if (res.match(/^opid-/)) { operations[res]={'amount':amount, 'creation_time':now()}; update_operation_status(); }
-        else operations[now(true)]={'amount':amount, 'creation_time':now(), 'finished':true, 'status':"success"}
+        else operations[now(true)]={'amount':amount, 'txid':res, 'creation_time':now(), 'finished':true, 'status':"success"}
 
         update_transactions();
         update_addresses();
