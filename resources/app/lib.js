@@ -30,11 +30,12 @@ function storage_load(key,default_value)
 
 // -----------------------------------------------------------------------------------------
 
-function settext(element,t)
+function settext(element,t,active)
 {
    var el=$('#'+element);
    if (el.text()==t) return;
    el.text(t);
+   if (active) el.addClass('active'); else el.removeClass('active');
 }
 
 function sethtml(element,h)

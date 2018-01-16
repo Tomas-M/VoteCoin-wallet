@@ -22,7 +22,9 @@ function update_gui()
     settext('blockcurrent',num(blocks));
     settext('blocktotal',num(totalblocks>blocks?totalblocks:blocks));
 
-    if (connections==0 || blocks==0 || totalblocks==0 || totalblocks-2>blocks) $('#syncinprogress').slideDown(); else $('#syncinprogress').slideUp();
+    if (connections==0 || blocks==0 || totalblocks==0) settext('blockcurrent','sync',true);
+    else if (totalblocks-2>blocks) settext('blockcurrent','sync '+Math.floor(blocks/totalblocks*100)+'%',true);
+    else settext('blockcurrent','sync ok');
 
     function date(t)
     {
