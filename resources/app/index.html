@@ -206,6 +206,7 @@
 <script>
 
    var qrcode = new QRCode("qrcode");
+   qrcode.makeCode("VoteCoin");
 
    $(document).on('click','.menurow',function() { if (isInitialized) gui_show($(this).data('toggle')); });
 

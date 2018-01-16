@@ -7,6 +7,7 @@ function gui_show(t)
     $('.menurow[data-toggle="'+t+'"]').addClass('active');
     $('.container').hide();
     $('#'+t).show();
+    if (t=='send') $('#sendto').focus();
 }
 
 
