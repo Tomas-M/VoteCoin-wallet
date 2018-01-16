@@ -24,7 +24,7 @@ function update_gui()
 
     if (connections==0 || blocks==0 || totalblocks==0) settext('blockcurrent','sync 0%',true);
     else if (totalblocks-2>blocks) settext('blockcurrent','sync '+Math.floor(blocks/totalblocks*100)+'%',true);
-    else settext('blockcurrent','sync ok');
+    else settext('blockcurrent','sync 100%');
 
     function date(t)
     {
