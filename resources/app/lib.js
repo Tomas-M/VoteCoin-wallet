@@ -102,7 +102,12 @@ function timeAgo(t)
 
 // -----------------------------------------------------------------------------------------
 
-function makeOrderedArray(obj,sortkey,idname)
+function sortByKeys(ar,sortkeys)
+{
+   return ar.sort( function(a, b) { for (var i=0; i<sortkeys.length; i++) { if (a[sortkeys[i]]<b[sortkeys[i]]) return -1; if (a[sortkeys[i]]>b[sortkeys[i]]) return 1; } return 0;} );
+}
+
+function makeOrderedArray(obj,sortkeys,idname)
 {
    var res=[]; var el;
    for (var i in obj)
@@ -111,5 +116,5 @@ function makeOrderedArray(obj,sortkey,idname)
       if (idname) el[idname]=i;
       res.push(el);
    }
-   return res.sort( function(a, b) { if (a[sortkey]==b[sortkey]) return 0; if (a[sortkey]<b[sortkey]) return -1; else return 1; } );
+   return sortByKeys(res,sortkeys);
 }

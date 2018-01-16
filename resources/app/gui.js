@@ -56,7 +56,8 @@ function update_gui()
     if ($('#choosefrom').val()==null) $('#choosefrom').val($("#choosefrom option:eq("+(from.match(/^z/)?"1":"0")+")").val());
 
     var ops="";
-    var operationsAr=makeOrderedArray(operations,'creation_time');
+    var operationsAr=makeOrderedArray(operations,['creation_time']);
+
     for (i in operationsAr)
     {
        ops="<div class=operationrow>"
@@ -66,6 +67,7 @@ function update_gui()
               +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status)+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
            +"</div>"+ops;
     }
+
     sethtml('operationslist',ops);
 
     var addressesT='';
