@@ -33,17 +33,19 @@ function storage_load(key,default_value)
 function settext(element,t,active)
 {
    var el=$('#'+element);
-   if (el.text()==t) return;
+   if (el.text()==t) return false;
    el.text(t);
    if (active) el.addClass('active'); else el.removeClass('active');
+   return true;
 }
 
 function sethtml(element,h)
 {
    var el=$('#'+element);
-   if (el.data('rawhtml')==h) return;
+   if (el.data('rawhtml')==h) return false;
    el.html(h);
-   el.data('rawhtml',h)
+   el.data('rawhtml',h);
+   return true;
 }
 
 function num(n,precision,strip)
