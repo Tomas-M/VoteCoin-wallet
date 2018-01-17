@@ -68,7 +68,12 @@ function htmlspecialchars(text)
 
 function humanReadableDate(d)
 {
-   return (new Date(d*1000)).toString().replace(/ GMT.*/,"");
+   return (new Date(d*1000)).toLocaleString();
+}
+
+function UCfirst(str)
+{
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function now(miliseconds)

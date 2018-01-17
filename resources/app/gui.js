@@ -26,6 +26,24 @@ function update_gui()
     else if (totalblocks-2>blocks) settext('blockcurrent','sync '+Math.floor(blocks/totalblocks*100)+'%',true);
     else settext('blockcurrent','sync 100%');
 
+    // Show a welcome screen until the user has some transaction
+    if (transactions.length==0)
+    {
+       $('#welcomescreen').show();
+       $('#totals').hide();
+       $('#transactionsearch').hide();
+       $('#transactionslist').hide();
+       $('#transactionchart').hide();
+    }
+    else
+    {
+       $('#welcomescreen').hide();
+       $('#totals').show();
+       $('#transactionsearch').show();
+       $('#transactionslist').show();
+       $('#transactionchart').show();
+    }
+
     function date(t)
     {
       var d = new Date(t*1000);
@@ -49,7 +67,15 @@ function update_gui()
              +"</div>";
     }
 
-    sethtml('transactionslist',trans);
+    var change=sethtml('transactionslist',trans);
+
+    if (change) // only update chart if there are new transactions sent or received
+    {
+        var chart=""; var i,max=0;
+        for (i=0; i<transactions.length; i++) max=transactions[i].amount>max?transactions[i].amount:max;
+        for (i=0; i<transactions.length; i++) chart='<div title="'+humanReadableDate(transactions[i].blocktime||transactions[i].time)+'\n'+UCfirst(transactions[i].category)+" "+num(Math.abs(transactions[i].amount,8))+' VOT" class="chartbar '+(transactions[i].amount<0?'minus':'')+'" style="width: calc('+100/transactions.length+'% - 2px); height: '+Math.ceil(Math.abs(transactions[i].amount)/max*150)+'px"></div>'+chart;
+        sethtml('transactionchart',chart);
+    }
 
     var from=$('#choosefrom').val();
     $('#choosefrom').children().not(':eq(0), :eq(1)').remove();
