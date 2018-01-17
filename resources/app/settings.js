@@ -40,6 +40,12 @@ function cleanup()
    operations={};
    storage_save('operations',operations);
 
+   transactions=[];
+   storage_save('transactions',transactions);
+
    $('#cleanupclicked').text("Cleanup and refresh complete.").css('opacity',0).fadeTo(500,1);
    setTimeout(function(){ $('#cleanupclicked').fadeTo(500,0); },3000);
+
+   update_transactions();
+   update_addresses();
 }

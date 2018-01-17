@@ -34,20 +34,21 @@ function update_gui()
     }
 
     var trans=""; var i;
-    for (i=transparent_transactions.length-1; i>=0; i--)
+    for (i=0; i<transactions.length; i++)
     {
-       var memo=htmlspecialchars($.trim(hexDecode(transparent_transactions[i].memo)));
-       if (i<transparent_transactions.length-10) break;
-       var blocktime=transparent_transactions[i].blocktime;
+       var memo=htmlspecialchars(transactions[i].memo);
+       if (i>20) break;
+       var blocktime=transactions[i].blocktime;
 
-       var confirmtime=blocktime; if (!confirmtime) confirmtime=transparent_transactions[i].time;
-       trans+="<div class='transactionrow "+transparent_transactions[i].category+"'>"
+       var confirmtime=blocktime; if (!confirmtime) confirmtime=transactions[i].time;
+       trans+="<div class='transactionrow "+transactions[i].category+"'>"
                     +"<div class=date title='"+humanReadableDate(confirmtime)+"'>"+date(confirmtime)+"</div>"
                     +"<div class=confirmed>"+(!blocktime?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
-                    +"<div class=transid data-txid='"+transparent_transactions[i].txid+"' "+(memo?'title="'+transparent_transactions[i].txid+'"><span class=memotext>'+memo+"</span>":">"+transparent_transactions[i].txid)+"</div>"
-                    +"<div class='amount'>"+(transparent_transactions[i].amount>0?"+":"")+num(transparent_transactions[i].amount,8,true)+" VOT</div>"
+                    +"<div class=transid data-txid='"+transactions[i].txid+"' "+(memo?'title="'+transactions[i].txid+'"><span class=memotext>'+memo+"</span>":">"+transactions[i].txid)+"</div>"
+                    +"<div class='amount'>"+(transactions[i].amount>0?"+":"")+num(transactions[i].amount,8,true)+" VOT</div>"
              +"</div>";
     }
+
     sethtml('transactionslist',trans);
 
     var from=$('#choosefrom').val();

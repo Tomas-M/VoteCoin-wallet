@@ -17,12 +17,8 @@ var connections=0;
 var blocks=0;
 var totalblocks=0;
 
-var transparent_transactions=[];
-var shielded_transactions=[];
-
 var transparent_addresses={};
 var shielded_addresses={};
-
 
 // Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
@@ -34,6 +30,9 @@ for(i in operations)
       operations[i].finished=true;
    }
 }
+
+// get all transactions
+var transactions=storage_load('transactions',[]);
 
 
 function wait_for_wallet()
@@ -86,15 +85,19 @@ function update_operation_status()
       {
          var id=res[i].id;
          operations[id]=operations[id]||{};
-         for (k in pick(res[i], "creation_time", "id", "method", "status", "error")) operations[id][k]=(res[i][k]);
+         for (k in pick(res[i], "creation_time", "id", "method", "status", "error")) operations[id][k]=res[i][k];
 
          if (!operations[id].finished && !operations[id].status.match(/executing|queued/)) (function(opid)
          {
             main.rpc("z_getoperationresult", [[opid]], (ret)=>
             {
+console.log(JSON_fromString(JSON_toString(ret)));
+               var ret=ret.pop()
                operations[opid].finished=true;
-               operations[opid].result=ret.pop();
-               try { operations[opid].txid=operations[opid].result.result.txid; } catch(err){}
+               operations[opid].txid=ret.result.txid;
+
+               if (isShielded(ret.params.amounts[0].address)) // we're sending to Z address, tx may not be in list, memo definitely is not
+                  add_transaction({"time":now(), "fee":ret.params.fee, "category":"send", "txid": ret.result.txid, "amount": -1*ret.params.amounts[0].amount, "memo": ret.params.amounts[0].memo});
 
                storage_save('operations',operations);
                update_transactions();
@@ -119,19 +122,77 @@ function update_totalblocks()
      });
 }
 
+function propertiesMatch(a,b,p)
+{
+   for (var i=0; i<p.length; i++) if (a[p[i]]!=b[p[i]]) return false;
+   return true;
+}
 
-function update_transactions(start) // load all T transactions into memory
+function add_transaction(entry)
+{
+   var ex=-1;
+   if (entry.memo) entry.memo=$.trim(hexDecode(entry.memo)); // decode memo if present and store it natively
+
+   for (var i=0; i<transactions.length; i++)
+      if (propertiesMatch(transactions[i], entry, ["fee", "category", "txid", "amount"]))
+         { ex=i; break; }
+
+   if (ex==-1)
+   {
+      transactions.push(entry);
+      sort_transactions();
+      return true;
+   }
+   else
+   {
+      if (entry.memo) transactions[ex].memo=entry.memo;
+      return false; // already seen
+   }
+}
+
+
+function sort_transactions()
+{
+   sortByKeys(transactions,["blocktime|time","time","amount"],true);
+   storage_save("transactions",transactions);
+}
+
+function update_unconfirmed_transactions()
+{
+   for (var i=0; i<transactions.length; i++)
+   if (!transactions[i].blocktime)
+   (function(tr)
+   {
+      main.rpc("gettransaction",[tr.txid,true],(res)=>
+      {
+         tr.blocktime=res.blocktime;
+         sort_transactions();
+      });
+   })(transactions[i]);
+}
+
+function update_transactions(start) // load all T transactions into array
 {
    if (!start) start=0;
-   var max=100;
+   var max=10;
+   var added, canstop=false;
    main.rpc("listtransactions",["",max,start],(res)=>
    {
-      for (var i=0; i<res.length; i++) res[i]=pick(res[i], "blocktime", "time", "fee", "category", "confirmations", "txid", "amount");
-      if (start==0) transparent_transactions=res;
-      else Array.prototype.unshift.apply(transparent_transactions,res);
+      for (var i=0; i<res.length; i++)
+      {
+         added=add_transaction(pick(res[i], "blocktime", "time", "fee", "category", "txid", "amount"));
+         // as soon as we reach a known transaction, we can stop querying for next transactions
+         if (!added) canstop=true;
+      }
 
-      if (res.length>=max) update_transactions(start+max);
-      else { update_addresses(); update_gui(); }
+      if (res.length>=max && !canstop) update_transactions(start+max);
+      else
+      {
+         // all yet-unknown transactions were loaded, we can finish
+         update_unconfirmed_transactions();
+         update_addresses(); // this also updates shielded received transactions
+         update_gui();
+      }
    });
 }
 
@@ -144,7 +205,7 @@ function add_shielded_transactions_received(zaddr)
       {
          main.rpc("gettransaction",[rec.txid],(ret)=>
          {
-            transparent_transactions.push({"blocktime":ret.blocktime, "time":ret.time, "fee":ret.fee, "category":"receive", "confirmations": ret.confirmations, "txid": ret.txid, "amount": rec.amount, "memo": rec.memo});
+            add_transaction({"blocktime":ret.blocktime, "time":ret.time, "fee":ret.fee, "category":"receive", "txid": ret.txid, "amount": rec.amount, "memo": rec.memo});
          });
       })(res[i]);
    });
@@ -233,13 +294,10 @@ function init()
           setUpdater(update_stats,2000);  // every 2 seconds
           setUpdater(update_operation_status,2000);  // every 2 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
-          setUpdater(update_transactions,60000);   // every 1 minute
+          setUpdater(update_transactions,5000);   // every 5 seconds
           setUpdater(update_gui,1000);   // every 1 second
       })
    });
 }
-
-// TODO make sure to warn user about pending transaction before he closes window
-// see https://github.com/electron/electron/issues/2301
 
 init();

@@ -23,7 +23,7 @@ function storage_save(key,val)
 function storage_load(key,default_value)
 {
    var val=localStorage.getItem(key);
-   if (typeof val == "undefined") { val=default_value; storage_save(key,val); }
+   if (typeof val == "undefined" || val == null) { val=default_value; storage_save(key,val); }
    else val=JSON_fromString(val);
    return val;
 }
@@ -58,6 +58,7 @@ function num(n,precision,strip)
 
 function htmlspecialchars(text)
 {
+   if (typeof text == "undefined") return '';
    text=text+"";
    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
@@ -103,9 +104,25 @@ function timeAgo(t)
 
 // -----------------------------------------------------------------------------------------
 
-function sortByKeys(ar,sortkeys)
+function sortByKeys(ar,sortkeys,desc)
 {
-   return ar.sort( function(a, b) { for (var i=0; i<sortkeys.length; i++) { if (a[sortkeys[i]]<b[sortkeys[i]]) return -1; if (a[sortkeys[i]]>b[sortkeys[i]]) return 1; } return 0;} );
+   var keys=[];
+   var x,y,i,j;
+   if (desc) desc=-1; else desc=1;
+
+   return ar.sort( function(a, b)
+   {
+      for (i=0; i<sortkeys.length; i++)
+      {
+         x=undefined; y=undefined;
+         keys=sortkeys[i].split("|");
+         for (j=0; j<keys.length; j++) { if (!x) x=a[keys[j]]; }
+         for (j=0; j<keys.length; j++) { if (!y) y=b[keys[j]]; }
+         if (x<y) return -1*desc;
+         if (x>y) return 1*desc;
+      }
+      return 0;
+   });
 }
 
 function makeOrderedArray(obj,sortkeys,idname)

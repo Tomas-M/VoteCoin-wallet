@@ -29,7 +29,7 @@ function maxSendAmount()
 
 
 function isTransparent(addr) { return addr.substr(0,1)=='t'; }
-function isPrivate(addr) { return !isTransparent(addr); }
+function isShielded(addr) { return !isTransparent(addr); }
 function reset_sendform() {} // TODO
 
 function sendpayment()
@@ -53,7 +53,6 @@ function sendpayment()
         console.log(res);
         if (res.match(/^opid-/)) { operations[res]={'amount':amount, 'creation_time':now()}; update_operation_status(); }
         else operations[now(true)]={'amount':amount, 'txid':res, 'creation_time':now(), 'finished':true, 'status':"success"}
-
         update_transactions();
         update_addresses();
         reset_sendform();
