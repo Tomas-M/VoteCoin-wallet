@@ -91,13 +91,12 @@ function update_operation_status()
          {
             main.rpc("z_getoperationresult", [[opid]], (ret)=>
             {
-console.log(JSON_fromString(JSON_toString(ret)));
                var ret=ret.pop()
                operations[opid].finished=true;
                operations[opid].txid=ret.result.txid;
 
                if (isShielded(ret.params.amounts[0].address)) // we're sending to Z address, tx may not be in list, memo definitely is not
-                  add_transaction({"time":now(), "fee":ret.params.fee, "category":"send", "txid": ret.result.txid, "amount": -1*ret.params.amounts[0].amount, "memo": ret.params.amounts[0].memo});
+                  if (z_track) add_transaction({"time":now(), "fee":ret.params.fee, "category":"send", "txid": ret.result.txid, "amount": -1*ret.params.amounts[0].amount, "memo": ret.params.amounts[0].memo});
 
                storage_save('operations',operations);
                update_transactions();
@@ -199,6 +198,7 @@ function update_transactions(start) // load all T transactions into array
 
 function add_shielded_transactions_received(zaddr)
 {
+   if (!z_track) return;
    main.rpc("z_listreceivedbyaddress",[zaddr,0],(res)=>
    {
       for (var i=0; i<res.length; i++) (function(rec)
