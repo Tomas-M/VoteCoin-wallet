@@ -61,7 +61,7 @@ function update_gui()
        var confirmtime=blocktime; if (!confirmtime) confirmtime=transactions[i].time;
        trans+="<div class='transactionrow "+transactions[i].category+"'>"
                     +"<div class=date title='"+humanReadableDate(confirmtime)+"'>"+date(confirmtime)+"</div>"
-                    +"<div class=confirmed>"+(!blocktime?"<i class='fa fa-clock-o'></i>":"<i class='fa fa-check'></i>")+"</div>"
+                    +"<div class=confirmed><i class='fa fa-"+(!blocktime?"clock-o":"check")+"' style='margin-left: 0px; font-size: 14px;'></i><i class='fa fa-"+(transactions[i].address?"user":"shield")+"' style='margin-left: 8px; opacity: 0.6; font-size: 14px;'></i></div>"
                     +"<div class=transid data-txid='"+transactions[i].txid+"' "+(memo?'title="'+transactions[i].txid+'"><span class=memotext>'+memo+"</span>":">"+transactions[i].txid)+"</div>"
                     +"<div class='amount'>"+(transactions[i].amount>0?"+":"")+num(transactions[i].amount,8,true)+" VOT</div>"
              +"</div>";

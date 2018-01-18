@@ -179,7 +179,7 @@ function update_transactions(start) // load all T transactions into array
    {
       for (var i=0; i<res.length; i++)
       {
-         added=add_transaction(pick(res[i], "blocktime", "time", "fee", "category", "txid", "amount"));
+         added=add_transaction(pick(res[i], "address", "blocktime", "time", "fee", "category", "txid", "amount"));
          // as soon as we reach a known transaction, we can stop querying for next transactions
          if (!added) canstop=true;
       }
