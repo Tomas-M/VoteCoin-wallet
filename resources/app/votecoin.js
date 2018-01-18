@@ -152,7 +152,7 @@ function add_transaction(entry)
 
 function sort_transactions()
 {
-   sortByKeys(transactions,["blocktime|time","time","amount"],true);
+   sortByKeys(transactions,["blocktime","time","amount"],true);
    storage_save("transactions",transactions);
 }
 
@@ -173,6 +173,14 @@ function update_unconfirmed_transactions()
 function update_transactions(start) // load all T transactions into array
 {
    if (!start) start=0;
+
+   if (reset_transactions_list)
+   {
+      transactions=[];
+      reset_transactions_list=false;
+      return update_transactions();
+   }
+
    var max=10;
    var added, canstop=false;
    main.rpc("listtransactions",["",max,start],(res)=>
