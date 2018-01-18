@@ -27,36 +27,36 @@
         #operationslist { margin-top: 40px; }
 
         .transactionrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
-        .transactionrow:last-child { border-bottom: 0; }
-        .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
-        .transactionrow .date { text-align: center; width: 70px; margin-top: 8px; line-height: 20px; font-size: 14px; }
-        .transactionrow .confirmed { text-align: center; width: 50px; margin-bottom: 5px; border-right: 8px solid #e9e9e9;}
-        .transactionrow .transid { width: calc(100% - 150px); overflow: hidden; cursor: pointer; }
+        .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px;  font-size: 15px; }
+        .transactionrow .date { text-align: center; width: 110px; }
+        .transactionrow .confirmed { text-align: center; width: 50px; border-right: 8px solid #e9e9e9; }
+        .transactionrow .transid { width: calc(100% - 190px); overflow: hidden; cursor: pointer; }
         .transactionrow .amount { text-align: right; white-space: nowrap; position: absolute; right: 0px; background-color: #e9e9e9; border-left: 40px solid #e9e9e9; }
         .transactionrow.send .amount { color: #9e9d9f; font-weight: bold; }
         .transactionrow.receive .amount { color: #83b93f; font-weight: bold; }
+        .transactionrow:last-child { border-bottom: 0; }
 
         .operationrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
-        .operationrow:last-child { border-bottom: 0; }
         .operationrow .transid { cursor: pointer; color: #2ba7ff; }
         .operationrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .operationtime { text-align: left; width: 130px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .operationicon { text-align: center; width: 50px; margin-bottom: 5px; }
         .operationamount { text-align: right; width: 160px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .operationstatus { width: calc(100% - 340px); overflow: auto; overflow-y:hidden; }
+        .operationrow:last-child { border-bottom: 0; }
 
         .addresslistrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
-        .addresslistrow:last-child { border-bottom: 0; }
         .addresslistrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .addressbuttons { display: none; text-align: right; width: 30px; margin-bottom: 5px; }
         .addressbalance { text-align: right; width: 160px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .addresslabel { width: calc(100% - 190px); overflow: auto; overflow-y:hidden; cursor:pointer; }
         .addressbuttons .fa-upload { cursor:pointer; }
+        .addresslistrow:last-child { border-bottom: 0; }
 
         .operationstatus::-webkit-scrollbar-thumb, .operationamount::-webkit-scrollbar-thumb, .addresslabel::-webkit-scrollbar-thumb, .operationtime::-webkit-scrollbar-thumb {  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #aaa 5px, #aaa 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
         .operationstatus::-webkit-scrollbar, .operationamount::-webkit-scrollbar, .addresslabel::-webkit-scrollbar, .operationtime::-webkit-scrollbar { width: 0; height: 13px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #d7d7d7 5px, #d7d7d7 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
 
-        #transactionchart { margin-top: 30px; }
+        #transactionchart { margin-top: 40px; margin-left: 6px; }
         .chartbar { background-color: #f7931a; max-width: 10px; display: inline-block; border: 1px solid #e9e9e9; }
         .chartbar.minus { background-color: #f0be81; }
         .chartbar:hover { opacity: 0.7; }

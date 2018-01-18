@@ -48,7 +48,7 @@ function update_gui()
     {
       var d = new Date(t*1000);
       var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-      return d.getDate()+" "+monthNames[d.getMonth()]+"<br>"+d.getFullYear()+" ";
+      return d.getDate()+" "+monthNames[d.getMonth()]+" "+d.getFullYear()+" ";
     }
 
     var trans=""; var i;
@@ -104,7 +104,7 @@ function update_gui()
     var addressesS='';
     for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
-    sethtml('walletaddresses',(addressesT!=''?"<br><h2>Transparent addresses with balance</h2>"+addressesT:"")+(addressesS!=''?"<br><h2>Shielded addresses with balance</h2>"+addressesS:""));
+    sethtml('walletaddresses',(addressesT!=''?"<br><h2><i class='fa fa-user' style='margin-right: 10px;'></i></h2>"+addressesT:"")+(addressesS!=''?"<br><h2><i class='fa fa-shield' style='margin-right: 10px;'></i></h2>"+addressesS:""));
 }
 
 function show_progress(pct)
