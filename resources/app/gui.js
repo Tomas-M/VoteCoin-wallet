@@ -98,7 +98,7 @@ function update_gui()
               +"<div class=operationtime title='"+humanReadableDate(operationsAr[i].creation_time)+"'>"+timeAgo(operationsAr[i].creation_time)+"</div>"
               +"<div class=operationamount>"+num(operationsAr[i].amount,8,true)+" VOT</div>"
               +"<div class=operationicon><i class='fa fa-"+(!operationsAr[i].status || operationsAr[i].status.match(/queued|executing/)?'clock-o':(operationsAr[i].status.match(/failed|canceled/)?'exclamation-circle':'check'))+"'></i></div>"
-              +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status)+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
+              +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status.replace(/^executing/,"executing, please wait..."))+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
            +"</div>"+ops;
     }
 
@@ -129,12 +129,14 @@ function show_progress(pct)
 
 function show_receiving_address(addr)
 {
-   $('#newaddr').val(addr).show();
-   $('#newaddr').css('height',addr.length>60?'48px':'17px');
+   var el=$('#'+(addr.length>60?"z":"t")+'addrbox');
+   $('#taddrbox').html('');
+   $('#zaddrbox').html('');
+   el.html("<textarea style='width: calc(100% - 20px);'></textarea>");
+   el.find('textarea').val(addr).css('height',addr.length>60?'48px':'17px').select();
    $('#qrcode').show();
    qrcode.makeCode(addr);
    $('#right div').stop().animate({scrollTop:0}, 500, 'swing');
-   $('#newaddr').select();
 }
 
 function download_progress(file,size,bytes)
