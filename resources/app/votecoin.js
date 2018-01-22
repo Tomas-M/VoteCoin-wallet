@@ -289,11 +289,7 @@ function init()
       // wait for wallet to be ready
       wait_for_wallet().then(()=>
       {
-          $('#progress').hide();
-          $('#dashboard').show();
-          $('.menurow').first().addClass('active');
           isInitialized=true;
-
           update_addresses();
 
           // init periodic stats updaters
@@ -304,6 +300,8 @@ function init()
           setUpdater(update_totalblocks,60000);   // every 1 minute
           setUpdater(update_transactions,5000);   // every 5 seconds
           setUpdater(update_gui,1000);   // every 1 second
+
+          gui_show('dashboard');
       })
    });
 }

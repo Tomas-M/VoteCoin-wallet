@@ -1,17 +1,17 @@
 
 const child_process = require('child_process');
 
-function gui_show(t)
+function gui_show(t,duration)
 {
-    $('.menurow').removeClass('active');
-    $('.menurow[data-toggle="'+t+'"]').addClass('active');
-
-    $('.container:visible').fadeTo(100,0,function()
+    $('.container:visible').css('opacity',0);
+    setTimeout(function()
     {
         $('.container').hide();
-        $('#'+t).css('opacity',0).show().fadeTo(200,1);
-       if (t=='send') $('#sendto').focus();
-    })
+        $('.menurow').removeClass('active');
+        $('.menurow[data-toggle="'+t+'"]').addClass('active');
+        $('#'+t).show().css('opacity',0).fadeTo(1,1);
+        if (t=='send') $('#sendto').focus();
+    },100);
 }
 
 

@@ -40,9 +40,6 @@ function createWindow () {
     slashes: true
   }))
 
-  // Open the DevTools.
-  //win.webContents.openDevTools()
-
   win.on('close', (e) =>
   {
      if (showExitPrompt)
