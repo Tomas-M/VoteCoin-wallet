@@ -5,9 +5,13 @@ function gui_show(t)
 {
     $('.menurow').removeClass('active');
     $('.menurow[data-toggle="'+t+'"]').addClass('active');
-    $('.container').hide();
-    $('#'+t).show();
-    if (t=='send') $('#sendto').focus();
+
+    $('.container:visible').fadeTo(100,0,function()
+    {
+        $('.container').hide();
+        $('#'+t).css('opacity',0).show().fadeTo(200,1);
+       if (t=='send') $('#sendto').focus();
+    })
 }
 
 
