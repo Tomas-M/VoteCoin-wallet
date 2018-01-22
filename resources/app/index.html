@@ -23,8 +23,9 @@
         .menu .menurow.active i { background-color: #1e1924; border-left: 5px solid #f7931a; }
         .menu .menurow.active span { background-color: #282130; }
 
-        #transactionslist { margin-top: 40px; }
+        #transactionslist { margin-top: 20px; }
         #operationslist { margin-top: 40px; }
+        #walletaddresses { margin-top: -20px; }
 
         .transactionrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .transactionrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px;  font-size: 15px; }
@@ -56,18 +57,20 @@
         .operationstatus::-webkit-scrollbar-thumb, .operationamount::-webkit-scrollbar-thumb, .addresslabel::-webkit-scrollbar-thumb, .operationtime::-webkit-scrollbar-thumb {  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #aaa 5px, #aaa 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
         .operationstatus::-webkit-scrollbar, .operationamount::-webkit-scrollbar, .addresslabel::-webkit-scrollbar, .operationtime::-webkit-scrollbar { width: 0; height: 13px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #d7d7d7 5px, #d7d7d7 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
 
-        #transactionchart { margin-top: 40px; margin-left: 6px; white-space: nowrap; }
+        #transactionchart { margin-top: 40px; white-space: nowrap; }
         .chartbar { background-color: #f7931a; min-width: 1px; max-width: 20px; display: inline-block; border: 1px solid #e9e9e9; }
         .chartbar.minus { background-color: #f0be81; }
         .chartbar:hover { opacity: 0.7; }
+        h1 .fa { margin-right: 15px; color: #333; }
+        h1 .fa-download { position: relative; top: 2px; }
 
         .memotext { font-family: Verdana !important; font-size: 14px; }
 
         #totalUSD { height: 30px; font-size: 20px; margin-bottom: 40px; line-height: 30px; }
 
         #msg { position: absolute; bottom: 5px; right: 5px; padding: 10px; }
-        .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; }
-        #qrcode { border: 1px solid #ddd; background-color: #ffffff; padding: 15px; display: inline-block; float: right; width: 256px; height: 256px; }
+        .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; position: relative; }
+        #qrcode { border: 1px solid #ddd; background-color: #ffffff; padding: 15px; display: inline-block; float: right; width: 256px; height: 256px; margin-bottom: 10px; margin-left: 10px; }
         #progressinnertext { font-size: 10px; line-height: 22px; text-align: center; position: absolute; width: calc(100% - 550px); }
         #blockcurrent.active { color: #f7931a; font-weight: bold; }
 
@@ -102,7 +105,7 @@
            <div data-toggle="dashboard" class="menurow"><i class="fa fa-home"></i><span>Dashboard</span></div>
            <div data-toggle="send" class=menurow><i class="fa fa-upload"></i><span>Send</span></div>
            <div data-toggle="receive" class=menurow><i class="fa fa-download"></i><span>Receive</span></div>
-           <div data-toggle="vote" class=menurow><i class="fa fa-paper-plane-o"></i><span>Vote</span></div>
+           <div data-toggle="vote" class=menurow><i class="fa fa-bar-chart"></i><span>Vote</span></div>
            <div data-toggle="backup" class=menurow><i class="fa fa-life-ring"></i><span>Backup</span></div>
            <div data-toggle="settings" class=menurow><i class="fa fa-cog"></i><span>Settings</span></div>
         </div>
@@ -116,8 +119,7 @@
      <div style="background-color: #332c3b; width: calc(100% - 350px); float: right; height: 100%;" id=right>
       <div style="background-color: #e9e9e9; border-radius: 0px 0 0 0px; width: 100%; height: 100%; overflow: auto; overflow-x: hidden;">
 
-
-         <div id=progress style="width: 100%; padding: 100px;">
+         <div id=progress class=container style="width: 100%; padding: 100px;">
             <div style="width: calc(100% - 200px);" align=center id=progressmessage></div>
             <div id=progressbar style="width: calc(100% - 200px); border: 1px solid #aaaaaa; margin-top: 10px; margin-bottom: 10px;">
               <div id=progressinner style="background-color: #dddddd; height: 20px; width: 1px;">
@@ -153,19 +155,21 @@
 
                <div align=center>
                   Transparent: <span id=transparentVOT>transparent</span> VOT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  Private: <span id=privateVOT>private</span> VOT<br>
+                  Shielded: <span id=privateVOT>private</span> VOT<br>
 <!--              <div align=center style='color: #332b3b;'><span id=totalUSD></span></div> -->
                </div>
             </div>
 
             <div id=transactionchart></div>
-            <div id=transactionsearch></div>
+            <div id=transactionsearch>
+               <input type=text style="margin-top: 40px;" class=search placeholder=" &#128269;  Seach for transaction, amount, date, or memo... ">
+            </div>
             <div id=transactionslist></div>
          </div>
 
 
          <div id=send class=container>
-            <h1>Send payment</h1>
+            <h1><i class="fa fa-upload"></i>Send payment</h1>
             <select id=choosefrom>
                <option value=t>Automatically choose Transparent address(es) to send FROM</option>
                <option value=z>Automatically choose Shielded address to send FROM</option>
@@ -180,14 +184,16 @@
          </div>
 
          <div id=receive class=container>
-            <h1>Receive payment</h1>
+            <h1 style="position: absolute; width: 100%;"><i class="fa fa-download"></i>Receive payment</h1>
+            <div id=qrcode></div>
+            <br><br><br><br>
             <div>
                <div style="width: 50%; float: left;">
-                  <button id=getnewaddress style="width: 100%">Generate new Transparent address</button>
-                  <button id=zgetnewaddress style="width: 100%">Generate new Shielded address</button>
-                  <textarea id=newaddr style='display: none; width: calc(100% - 20px);'></textarea>
+                  <button id=getnewaddress style="width: 100%; text-align: left;"><i class="fa fa-user"></i>&nbsp;&nbsp;Transparent address</button>
+                  <div id=taddrbox></div>
+                  <button id=zgetnewaddress style="width: 100%; text-align: left;"><i class="fa fa-shield"></i>&nbsp;&nbsp;Shielded address</button>
+                  <div id=zaddrbox></div>
                </div>
-               <div id=qrcode></div>
             </div>
             <br clear=all>
             <div id=walletaddresses></div>
