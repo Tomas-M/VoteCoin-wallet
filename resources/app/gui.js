@@ -126,7 +126,7 @@ function show_progress(pct)
 function show_receiving_address(addr)
 {
    $('#newaddr').val(addr).show();
-   $('#newaddr').css('height',addr.length>60?'45px':'17px');
+   $('#newaddr').css('height',addr.length>60?'48px':'17px');
    $('#qrcode').show();
    qrcode.makeCode(addr);
    $('#right div').stop().animate({scrollTop:0}, 500, 'swing');
