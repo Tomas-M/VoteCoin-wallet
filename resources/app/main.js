@@ -246,9 +246,16 @@ function setTransactionInProgress(e)
    showExitPrompt=!!e;
 }
 
+function openDevelTools()
+{
+   win.webContents.openDevTools();
+}
+
+
 init_rpc_password();
 
 exports.rpc=rpc;
 exports.walletStart=walletStart;
 exports.download_all_files=download_all_files;
 exports.setTransactionInProgress=setTransactionInProgress;
+exports.openDevelTools=openDevelTools;

@@ -255,6 +255,7 @@
    $(document).on('click','#ztrack', ztrack_toggle);
    $(document).on('click','#rebroadcast', resend_mempool_transactions);
    $(document).on('click','#cleanup', cleanup);
+   $(document).on('keyup','', function(e){ console.log(e.altKey,e.ctrlKey,e.keyCode); if (e.keyCode==116) location.reload(); if (e.altKey && e.ctrlKey && e.keyCode==68) main.openDevelTools(); });
 
 </script>
 
