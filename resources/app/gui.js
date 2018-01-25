@@ -11,6 +11,7 @@ function gui_show(t,duration)
         $('.menurow[data-toggle="'+t+'"]').addClass('active');
         $('#'+t).show().css('opacity',0).fadeTo(1,1);
         if (t=='send') $('#sendto').focus();
+        $('#right div').stop().scrollTop(0);
     },100);
 }
 
