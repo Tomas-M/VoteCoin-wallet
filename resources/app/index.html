@@ -79,20 +79,29 @@
         .sendallbtn:active { background-color: #aaa;  }
 
         h1 { margin: 0; margin-bottom: 30px; }
-        select { margin-bottom: 10px; border: 1px solid #ccc; height: 39px; -webkit-appearance: none; padding: 10px 38px 10px 10px; width: 100%;  border-radius: 3px;  outline: none; }
-        select { background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
-                 background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 12px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
-                 background-size: 5px 5px, 6px 6px, 1px 1.5em;
-                 background-repeat: no-repeat;
-               }
-         input,textarea { resize: none; border: 1px solid #ccc;  width: calc(100% - 22px); height: 17px; padding: 10px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
-         button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; font-size: 14px; letter-spacing: 1px; }
-         button:hover { background-color: #2ba7ff; cursor: pointer; }
-         button:active { background-color: #1197ff; cursor: pointer; }
+        #choosefromoptions { display: none; box-sizing: border-box; background: #ffffff; border: 1px solid #cccccc; border-radius: 0 0 3px 3px; border-top: 0; max-height: 300px; overflow: auto; overflow-x: hidden; width: 100%; }
+        #choosefromoptions table { width: 100%; overflow: hidden; padding: 0; margin-right: 1px; }
+        #choosefromoptions td { font-size: 13px; font-family: Arial; letter-spacing: 0; }
+        #choosefromoptions td.vot { text-align: right; padding: 6px; padding-left: 8px; padding-right: 8px;  white-space: nowrap; }
+        #choosefromoptions td.addr { width: 100%; padding: 6px; padding-left: 0; overflow-x: hidden; white-space: nowrap; }
+        #choosefromoptions td.addrsel { padding: 6px; padding-left: 8px; padding-right: 8px;  width: 100%;  white-space: nowrap; }
+        #choosefromoptions tr.active td { background-color: #2ab6ff; color: #ffffff; cursor: pointer; }
+        #choosefromoptions:hover tr.active td { background-color: #ffffff; color: #000000; }
+        #choosefromoptions tr:hover td { background-color: #2ab6ff !important; color: #ffffff !important; cursor: pointer; }
+        #choosefromaddresses table { border-top: 1px solid #cccccc; }
 
-         .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
-         .settingshelp { text-align: justify; }
-         @keyframes spin { 100% { transform:rotate(360deg); } }
+        select { margin-bottom: 10px; border: 1px solid #ccc; height: 39px; -webkit-appearance: none; padding: 10px 38px 10px 10px; width: 100%;  border-radius: 3px;  outline: none; }
+        input,textarea { resize: none; border: 1px solid #ccc;  width: calc(100% - 22px); height: 17px; padding: 10px; margin-bottom: 10px; border-radius: 3px;  outline: none; }
+        button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; font-size: 14px; letter-spacing: 1px; }
+        button:hover { background-color: #2ba7ff; cursor: pointer; }
+        button:active { background-color: #1197ff; cursor: pointer; }
+
+        #choosefromlabel { cursor: pointer; margin-bottom: 0; }
+        #sendto { margin-top: 8px; }
+
+        .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
+        .settingshelp { text-align: justify; }
+        @keyframes spin { 100% { transform:rotate(360deg); } }
     </style>
 
   </head>
@@ -170,14 +179,25 @@
 
          <div id=send class=container>
             <h1><i class="fa fa-upload"></i>Send payment</h1>
-            <select id=choosefrom>
-               <option value=t>Automatically choose Transparent address(es) to send FROM</option>
-               <option value=z>Automatically choose Shielded address to send FROM</option>
-            </select>
+            <div style="position: relative">
+               <span class="fa fa-caret-down" style="position: absolute; top: 12px; right: 10px; pointer-events: none; color: #777;"></span>
+               <input type=text id=choosefromlabel>
+            </div>
+            <input type=hidden id=choosefrom>
+            <div id=choosefromoptions>
+               <table cellspacing=0 cellpadding=0>
+                  <tr data-value=t><td class=addrsel>Automatically choose Transparent address(es) to send FROM</td></tr>
+                  <tr data-value=z><td class=addrsel>Automatically choose Shielded address to send FROM</td></tr>
+               </table>
+               <div id=choosefromaddresses></div>
+            </div>
             <input id=sendto type=text placeholder="Send To address">
             <input id=memo type=text placeholder="Memo (optional, only for shielded transactions, visible only to the receiver)">
-            <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
-            <select id=fee style="width: 120px;"><option>Fee: none</option><option selected>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
+            <div style="position: relative">
+               <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
+               <span class="fa fa-caret-down" style="position: absolute; top: 12px; left: 310px; pointer-events: none; color: #777;"></span>
+               <select id=fee style="width: 120px;"><option>Fee: none</option><option selected>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
+            </div>
             <button id=sendpayment>Send payment</button>
 
             <div id=operationslist></div>
@@ -253,8 +273,10 @@
    $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$.trim($(this).data('txid'))); });
    $(document).on('click','.sendallbtn',function(){ maxSendAmount(); });
    $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).text()); });
-   $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); $('#choosefrom').val($(this).parent().prev().prev().text()); });
+   $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); setAddressFrom($(this).parent().prev().prev().text()); });
    $(document).on('click','#tradesatoshi',function(){ openURL("https://tradesatoshi.com/Exchange/?market=VOT_BTC"); });
+   $(document).on('mousedown','#choosefromlabel',function(e){ e.preventDefault(); $('#choosefromoptions').slideToggle(100); });
+   $(document).on('mousedown','#choosefromoptions tr',function(e){ setTimeout(function(){setAddressFrom(e);},200); });
 
    // settings click events
 
@@ -262,9 +284,8 @@
    $(document).on('click','#rebroadcast', resend_mempool_transactions);
    $(document).on('click','#cleanup', cleanup);
    $(document).on('keyup','', function(e){ console.log(e.altKey,e.ctrlKey,e.keyCode); if (e.keyCode==116) location.reload(); if (e.altKey && e.ctrlKey && e.keyCode==68) main.openDevelTools(); });
-
    $(document).on('mousedown', '#transactionchart',function (e) { $(this).data('down', true).data('x', e.clientX).data('scrollLeft', this.scrollLeft).addClass("dragging"); return false; });
-   $(document).on('mouseup',null,function (e) { $('#transactionchart').data('down', false).removeClass("dragging"); });
+   $(document).on('mouseup',null,function (e) { if ($(e.target).attr('id')!='choosefromlabel') $('#choosefromoptions').slideUp(100); $('#transactionchart').data('down', false).removeClass("dragging"); });
    $(document).on('mousemove',null,function (e) { if ($('#transactionchart').data('down') == true) { $('#transactionchart').get(0).scrollLeft = $('#transactionchart').data('scrollLeft') + $('#transactionchart').data('x') - e.clientX; } });
 
 </script>

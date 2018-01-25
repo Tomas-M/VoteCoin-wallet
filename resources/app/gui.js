@@ -82,12 +82,13 @@ function update_gui()
     }
 
     var from=$('#choosefrom').val();
-    $('#choosefrom').children().not(':eq(0), :eq(1)').remove();
-    $('#choosefrom').append('<option disabled>------------------------------------------------------------------------------------------------------');
-    for(var i in transparent_addresses) if (transparent_addresses[i]!=0) $('#choosefrom').append('<option value="'+i+'">'+num(transparent_addresses[i],8)+' - '+i+'</option>');
-    for(var i in shielded_addresses) if (shielded_addresses[i]!=0) $('#choosefrom').append('<option value="'+i+'">'+num(shielded_addresses[i],8)+' - '+i+'</option>');
-    $('#choosefrom').val(from);
-    if ($('#choosefrom').val()==null) $('#choosefrom').val($("#choosefrom option:eq("+(from.match(/^z/)?"1":"0")+")").val());
+    var fromaddr="";
+
+    for(var i in transparent_addresses) if (transparent_addresses[i]!=0) fromaddr+='<tr data-value="'+i+'"><td class=vot>'+num(transparent_addresses[i],8)+' VOT &nbsp;-</td><td class=addr>'+i+'</td></tr>';
+    for(var i in shielded_addresses) if (shielded_addresses[i]!=0) fromaddr+='<tr data-value="'+i+'"><td class=vot>'+num(shielded_addresses[i],8)+' VOT &nbsp;-</td><td class=addr>'+i+'</td></tr>';
+    if (fromaddr!='') fromaddr="<table cellspacing=0 cellpadding=0>"+fromaddr+"</table>"
+    sethtml('choosefromaddresses',fromaddr);
+    setAddressFrom(from);
 
     var ops="";
     var operationsAr=makeOrderedArray(operations,['creation_time']);
@@ -109,6 +110,28 @@ function update_gui()
     for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     sethtml('walletaddresses',(addressesT!=''?"<br><h2><i class='fa fa-user' style='margin-right: 10px;'></i></h2>"+addressesT:"")+(addressesS!=''?"<br><h2><i class='fa fa-shield' style='margin-right: 10px;'></i></h2>"+addressesS:""));
+}
+
+function setAddressFrom(ev)
+{
+   if (typeof ev == "string")
+   {
+      ev=$("#choosefromoptions [data-value='"+ev+"']");
+      if (ev.length>0) ev={'currentTarget':ev};
+      else ev=undefined;
+   }
+
+   if (typeof ev == "undefined")
+   {
+      if ($('#choosefrom').val().match(/^z/)) setAddressFrom("z");
+      else setAddressFrom("t");
+      return;
+   }
+
+   $('#choosefromlabel').val($(ev.currentTarget).find('td').last().text());
+   $('#choosefrom').val($(ev.currentTarget).data('value'));
+   $('#choosefromoptions tr').removeClass('active');
+   $("#choosefromoptions [data-value='"+$(ev.currentTarget).data('value')+"']").addClass('active');
 }
 
 function show_progress(pct)
