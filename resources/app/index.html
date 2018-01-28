@@ -180,14 +180,14 @@
          <div id=send class=container>
             <h1><i class="fa fa-upload"></i>Send payment</h1>
             <div style="position: relative">
-               <span class="fa fa-caret-down" style="position: absolute; top: 12px; right: 10px; pointer-events: none; color: #777;"></span>
+               <span class="fa fa-caret-down" style="background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; right: 2px; border-left: 1px solid #ddd; pointer-events: none; color: #777;"></span>
                <input type=text id=choosefromlabel>
             </div>
             <input type=hidden id=choosefrom>
             <div id=choosefromoptions>
                <table cellspacing=0 cellpadding=0>
-                  <tr data-value=t><td class=addrsel>Automatically choose Transparent address(es) to send FROM</td></tr>
-                  <tr data-value=z><td class=addrsel>Automatically choose Shielded address to send FROM</td></tr>
+                  <tr data-value=t><td class=addrsel>From: Automatically choose Transparent address</td></tr>
+                  <tr data-value=z><td class=addrsel>From: Automatically choose Shielded address</td></tr>
                </table>
                <div id=choosefromaddresses></div>
             </div>
@@ -195,8 +195,8 @@
             <input id=memo type=text placeholder="Memo (optional, only for shielded transactions, visible only to the receiver)">
             <div style="position: relative">
                <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
-               <span class="fa fa-caret-down" style="position: absolute; top: 12px; left: 310px; pointer-events: none; color: #777;"></span>
-               <select id=fee style="width: 120px;"><option>Fee: none</option><option selected>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
+               <span class="fa fa-caret-down" style="background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 296px; border-left: 1px solid #ddd; pointer-events: none; color: #777;"></span>
+               <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
             </div>
             <button id=sendpayment>Send payment</button>
 
@@ -275,6 +275,7 @@
    $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).text()); });
    $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); setAddressFrom($(this).parent().prev().prev().text()); });
    $(document).on('click','#tradesatoshi',function(){ openURL("https://tradesatoshi.com/Exchange/?market=VOT_BTC"); });
+   $(document).on('focus','#choosefromlabel',function(e){ $(this).blur(); $('#choosefromoptions').slideDown(100); });
    $(document).on('mousedown','#choosefromlabel',function(e){ e.preventDefault(); $('#choosefromoptions').slideToggle(100); });
    $(document).on('mousedown','#choosefromoptions tr',function(e){ setTimeout(function(){setAddressFrom(e);},200); });
 

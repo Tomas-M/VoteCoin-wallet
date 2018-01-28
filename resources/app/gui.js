@@ -11,7 +11,7 @@ function gui_show(t,duration)
         $('.menurow[data-toggle="'+t+'"]').addClass('active');
         $('#'+t).show().css('opacity',0).fadeTo(1,1);
         if (t=='send') $('#sendto').focus();
-        $('#right div').stop().scrollTop(0);
+        $('#right div').scrollTop(0);
     },100);
 }
 
@@ -129,7 +129,7 @@ function setAddressFrom(ev)
       return;
    }
 
-   $('#choosefromlabel').val($(ev.currentTarget).find('td').last().text());
+   $('#choosefromlabel').val("From: "+$(ev.currentTarget).find('td').last().text().replace(/^From: /,""));
    $('#choosefrom').val($(ev.currentTarget).data('value'));
    $('#choosefromoptions tr').removeClass('active');
    $("#choosefromoptions [data-value='"+$(ev.currentTarget).data('value')+"']").addClass('active');
