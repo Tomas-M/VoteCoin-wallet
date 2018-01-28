@@ -283,7 +283,7 @@
 
    $(document).on('click','#ztrack', ztrack_toggle);
    $(document).on('click','#rebroadcast', resend_mempool_transactions);
-   $(document).on('click','#cleanup', cleanup);
+   $(document).on('click','#cleanup', function(){ if (confirm("Clean the logs and reload transactions from blockchain? Records of outgoing Z-to-Z payments will be permanently lost.")) cleanup(); });
    $(document).on('keyup','', function(e){ console.log(e.altKey,e.ctrlKey,e.keyCode); if (e.keyCode==116) location.reload(); if (e.altKey && e.ctrlKey && e.keyCode==68) main.openDevelTools(); });
    $(document).on('mousedown', '#transactionchart',function (e) { $(this).data('down', true).data('x', e.clientX).data('scrollLeft', this.scrollLeft).addClass("dragging"); return false; });
    $(document).on('mouseup',null,function (e) { if ($(e.target).attr('id')!='choosefromlabel') $('#choosefromoptions').slideUp(100); $('#transactionchart').data('down', false).removeClass("dragging"); });
