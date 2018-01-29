@@ -1,7 +1,33 @@
 
 function importBtnClick()
 {
-   alert('not implemented yet')
+   var key=$.trim($('#privimp').val());
+   if (key=='') { alert("Please enter private key first"); return; }
+   if (!confirm("Importing of the private key requires VoteCoin wallet to rescan the entire blockchain to find any previous transactions involving the newly imported address. This may take several minutes or longer. Are you sure to proceed now?")) return;
+
+   gui_show('progress');
+
+   if (key.substr(0,2)=='SK') main.rpc('z_importkey',[key],function(res){ console.log(res); },function(res){ console.log(res); });
+   else main.rpc('importprivkey',[key,'',true],function(res){ console.log(res); },function(res){ console.log(res); });
+
+   setTimeout(function()
+   {
+      $('#progress').show();
+      $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
+                                   +"<span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span>"
+                                +"</div>"
+                                +"VoteCoin wallet is rescanning, please wait...");
+
+      isInitialized=false;
+      wait_for_wallet().then(()=>
+      {
+         isInitialized=true;
+         $('#privimp').val('');
+         update_transactions();
+         update_addresses();
+         gui_show('dashboard');
+      });
+   }, 300);
 }
 
 
