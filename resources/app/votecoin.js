@@ -17,8 +17,8 @@ var connections=0;
 var blocks=0;
 var totalblocks=0;
 
-var transparent_addresses={};
-var shielded_addresses={};
+var transparent_addresses=storage_load('taddresses',{});;
+var shielded_addresses=storage_load('zaddresses',{});;
 
 // Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
@@ -223,7 +223,7 @@ function add_shielded_transactions_received(zaddr)
 function balance_update(tgt,src,reset)
 {
    var i;
-   if (reset) for (i in tgt) delete tgt[i];
+   if (reset) for (i in tgt) tgt[i]=0;
    for (i in src) tgt[src[i].address]=0;
    for (i in src) tgt[src[i].address]=(tgt[src[i].address]?tgt[src[i].address]:0)+src[i].amount;
 }
@@ -234,6 +234,7 @@ function update_shielded_addr(zaddr)
    main.rpc("z_getbalance",[zaddr,0],(res)=>
    {
       balance_update(shielded_addresses,[{'address':zaddr,'amount':res}]);
+      storage_save("zaddresses",shielded_addresses);
    });
 }
 
@@ -243,6 +244,7 @@ function update_addresses()
    main.rpc("listunspent",[0],(res)=>
    {
       balance_update(transparent_addresses,res,true);
+      storage_save("taddresses",transparent_addresses);
 
       main.rpc("z_listaddresses",[],(res)=>
       {

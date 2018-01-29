@@ -35,7 +35,9 @@ function resend_mempool_transactions()
 function cleanup()
 {
    transparent_addresses={};
+   storage_save('taddresses',transparent_addresses);
    shielded_addresses={};
+   storage_save('zaddresses',shielded_addresses);
 
    operations={};
    storage_save('operations',operations);

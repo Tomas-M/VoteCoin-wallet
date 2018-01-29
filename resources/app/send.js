@@ -7,6 +7,8 @@ function genNewAddress(shielded)
     {
         var addr=res;
         show_receiving_address(addr);
+        if (shielded) { shielded_addresses[addr]=0; storage_save("zaddresses",shielded_addresses); }
+        else { transparent_addresses[addr]=0; storage_save("taddresses",transparent_addresses); }
     },true)
 }
 

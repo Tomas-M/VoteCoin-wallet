@@ -160,7 +160,7 @@ function show_receiving_address(addr)
    el.find('textarea').val(addr).css('height',addr.length>60?'48px':'17px').select();
    $('#qrcode').show();
    qrcode.makeCode(addr);
-   $('#right div').stop().animate({scrollTop:0}, 500, 'swing');
+   $('#right div').animate({scrollTop:0}, 500, 'swing');
 }
 
 function download_progress(file,size,bytes)
