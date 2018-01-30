@@ -67,6 +67,8 @@ var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory)
 
 if (shouldQuit) { app.quit(); return; }
 
+// register default protocol client
+app.setAsDefaultProtocolClient("votecoin");
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
