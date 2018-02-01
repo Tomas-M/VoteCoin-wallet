@@ -72,6 +72,7 @@ function update_gui()
              +"</div>";
     }
 
+    var listWasEmpty=$.trim($('#transactionslist').html())=='';
     var change=sethtml('transactionslist',trans);
 
     if (change) // only update chart if there are new transactions sent or received
@@ -80,6 +81,7 @@ function update_gui()
         for (i=0; i<transactions.length; i++) max=transactions[i].amount>max?transactions[i].amount:max;
         for (i=0; i<transactions.length; i++) chart+='<div title="'+humanReadableDate(transactions[i].blocktime||transactions[i].time)+'\n'+UCfirst(transactions[i].category)+" "+num(Math.abs(transactions[i].amount,8))+' VOT" class="chartbar '+(transactions[i].amount<0?'minus':'')+'" style="width: calc('+100/transactions.length+'% - 2px); height: '+Math.ceil(Math.abs(transactions[i].amount)/max*150)+'px"></div>';
         sethtml('transactionchart',chart);
+        if (!listWasEmpty) $('#sound').html('<audio autoplay="autoplay"><source src="notify.mp3" type="audio/mpeg" /></audio>');
     }
 
     var from=$('#choosefrom').val();
