@@ -42,6 +42,7 @@ function sendpayment()
      var amount=parseFloat($('#amount').val()); if (isNaN(amount)) amount=0;
      var fee=parseFloat($('#fee').val()); if (isNaN(fee)) fee=0;
      var memo=hexEncode($.trim($('#memo').val()));
+     var zbalance=0;
 
      function payment_failure(err)
      {
@@ -53,8 +54,8 @@ function sendpayment()
      function payment_success(res)
      {
         console.log(res);
-        if (res.match(/^opid-/)) { operations[res]={'amount':amount, 'creation_time':now()}; update_operation_status(); }
-        else operations[now(true)]={'amount':amount, 'txid':res, 'creation_time':now(), 'finished':true, 'status':"success"}
+        if (res.match(/^opid-/)) { operations[res]={'amount':amount, 'zbalance': zbalance, 'creation_time':now()}; update_operation_status(); }
+        else operations[now(true)]={'amount':amount, 'zbalance': zbalance, 'txid':res, 'creation_time':now(), 'finished':true, 'status':"success"}
         update_transactions();
         update_addresses();
         reset_sendform();
@@ -89,6 +90,7 @@ function sendpayment()
      {
         for(i in shielded_addresses) if (shielded_addresses[i]>=amount+fee)
         {
+           zbalance=shielded_addresses[i];
            main.rpc("z_sendmany",[i,[param],1,fee], payment_success,payment_failure);
            return;
         }
@@ -96,6 +98,7 @@ function sendpayment()
      }
      else // one particular transparent or shielded address selected, try the payment as is
      {
+         zbalance=shielded_addresses[from];
          main.rpc("z_sendmany",[from,[param],isTransparent(from)?0:1,fee], payment_success,payment_failure);
      }
 }

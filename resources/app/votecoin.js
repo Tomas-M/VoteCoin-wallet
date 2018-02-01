@@ -91,16 +91,28 @@ function update_operation_status()
          {
             main.rpc("z_getoperationresult", [[opid]], (ret)=>
             {
-               var ret=ret.pop()
+               var ret=ret.pop();
                operations[opid].finished=true;
-               operations[opid].txid=ret.result.txid;
 
-               if (isShielded(ret.params.amounts[0].address)) // we're sending to Z address, tx may not be in list, memo definitely is not
-                  if (z_track) add_transaction({"time":now(), "fee":ret.params.fee, "category":"send", "txid": ret.result.txid, "amount": -1*ret.params.amounts[0].amount, "memo": ret.params.amounts[0].memo});
+               if (!ret.error)
+               {
+                  operations[opid].txid=ret.result.txid;
+
+                  if (isShielded(ret.params.amounts[0].address)) // we're sending to Z address, tx may not be in list, memo definitely is not
+                  if (z_track)
+                  {
+                     // track the change as well
+                     var change=ret.params.amounts[0].amount+ret.params.fee-operations[opid].zbalance;
+                     if (isShielded(ret.params.fromaddress) && change!=0) add_transaction({"time":now(), "fee":ret.params.fee, "category":"send", "txid": ret.result.txid, "amount": change});
+                     add_transaction({"time":now(), "fee":ret.params.fee, "category":"send", "txid": ret.result.txid, "amount": -1*ret.params.amounts[0].amount, "memo": ret.params.amounts[0].memo});
+                  }
+
+                  update_transactions();
+                  update_addresses();
+               }
 
                storage_save('operations',operations);
-               update_transactions();
-               update_addresses();
+
             },function(e){console.log(e);});
          })(id);
       }
