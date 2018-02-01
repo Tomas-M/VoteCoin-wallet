@@ -221,7 +221,16 @@
             <div id=walletaddresses></div>
          </div>
 
-         <div id=vote class=container>Voting functionality will be included in the next release of VoteCoin wallet, during Q1 2018</div>
+         <div id=vote class=container>
+            <button style="position: absolute; right: 30px;">+ Add poll or elections</button>
+            <h1><i class="fa fa-bar-chart"></i>Vote</h1>
+               <input type=text class=search placeholder=" &#128269;  Search polls and elections">
+
+            <div id=votelist>
+               <br><br>Voting functionality is a work in progress and will be added in one of the next releases of VoteCoin wallet.
+            </div>
+            
+         </div>
 
          <div id=backup class=container>
             <h1><i class="fa fa-life-ring"></i>Backup and restore</h1>
@@ -291,6 +300,10 @@
    $(document).on('mousedown','#choosefromoptions tr',function(e){ setTimeout(function(){setAddressFrom(e);},200); });
    $(document).on('click','#importBtn',importBtnClick);
    $(document).on('click','#exportBtn',exportBtnClick);
+
+// change error message invalid zcash address
+// change default port for rpc (in votecoind)
+// addr balance stats http://explorer.votecoin.site/insight-api-zcash/addr/t1Up..../?noTxList=1
 
    // settings click events
 
