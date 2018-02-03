@@ -25,7 +25,7 @@ var wallet_port="";
 let win;
 let server;
 let canQuit=true;
-let showExitPrompt=true;
+let showExitPrompt=false;
 
 function createWindow () {
   // Create the browser window.
