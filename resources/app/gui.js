@@ -11,6 +11,7 @@ function gui_show(t,duration)
         $('.menurow[data-toggle="'+t+'"]').addClass('active');
         $('#'+t).show().css('opacity',0).fadeTo(1,1);
         if (t=='send') $('#sendto').focus();
+        if (t=='dashboard') $('#txfilter').focus();
         $('#right div').scrollTop(0);
     },100);
 }
@@ -31,6 +32,43 @@ function update_logerr()
       $('#rpclog').hide();
       $('#blockheight').show();
    }
+}
+
+
+function dateShort(t)
+{
+   var d = new Date(t*1000);
+   var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+   return d.getDate()+" "+monthNames[d.getMonth()]+" "+d.getFullYear()+" ";
+}
+
+
+function txfiltermatch(tx,filter)
+{
+   filter=$.trim(filter);
+   if (filter.match(/^-?[0-9.,]+$/))  // user wants to search for amount
+   {
+      var amount=parseFloat(filter.replace(/,/g,"."));
+      if (!isNaN(amount))
+      {
+         amount=Math.abs(amount);
+         if (Math.abs(tx.amount)==amount) return true;
+         if (Math.floor(amount)==amount && Math.floor(Math.abs(tx.amount))==amount) return true; // searching for whole number returns fractions as well
+         else return false;
+      }
+   }
+
+   var date=Date.parse(filter);
+   if (!isNaN(date)) // user wants to search for date
+   {
+      // round both date and tx.blocktime to date boundaries
+      date=(new Date(date)).getTime()/1000;
+      if (dateShort(date)==dateShort(tx.blocktime || tx.time)) return true;
+      else return false;
+   }
+
+   if (tx.txid.match(filter)) return true;
+   return false;
 }
 
 
@@ -75,15 +113,10 @@ function update_gui()
        $('#transactionchart').show();
     }
 
-    function date(t)
-    {
-      var d = new Date(t*1000);
-      var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-      return d.getDate()+" "+monthNames[d.getMonth()]+" "+d.getFullYear()+" ";
-    }
-
+    var filter=$('#txfilter').val();
     var trans=""; var i;
     for (i=0; i<transactions.length; i++)
+    if (txfiltermatch(transactions[i],filter))
     {
        var memo=htmlspecialchars(transactions[i].memo);
        if (i>20) break;
@@ -91,7 +124,7 @@ function update_gui()
 
        var confirmtime=blocktime; if (!confirmtime) confirmtime=transactions[i].time;
        trans+="<div class='transactionrow "+transactions[i].category+"'>"
-                    +"<div class=date title='"+humanReadableDate(confirmtime)+"'>"+date(confirmtime)+"</div>"
+                    +"<div class=date title='"+humanReadableDate(confirmtime)+"'>"+dateShort(confirmtime)+"</div>"
                     +"<div class=confirmed><i class='fa fa-"+(!blocktime?"clock-o":"check")+"' style='margin-left: 0px; font-size: 14px;'></i><i class='fa fa-"+(transactions[i].address?"user":"shield")+"' style='margin-left: 8px; opacity: 0.6; font-size: 14px;'></i></div>"
                     +"<div class=transid data-txid='"+transactions[i].txid+"' "+(memo?'title="'+transactions[i].txid+'"><span class=memotext>'+memo+"</span>":">"+transactions[i].txid)+"</div>"
                     +"<div class='amount'>"+(transactions[i].amount>0?"+":"")+num(transactions[i].amount,8,true)+" VOT</div>"

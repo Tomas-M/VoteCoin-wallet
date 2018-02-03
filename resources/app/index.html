@@ -179,7 +179,7 @@
 
             <div id=transactionchart></div>
             <div id=transactionsearch>
-               <input type=text style="margin-top: 40px;" class=search placeholder=" &#128269;  Seach for transaction, amount, date, or memo... ">
+               <input id=txfilter type=text style="margin-top: 40px;" class=search placeholder=" &#128269;  Seach for transaction, amount, date, or memo... ">
             </div>
             <div id=transactionslist></div>
             <div id=sound></div>
@@ -307,6 +307,7 @@
    $(document).on('mousedown','#choosefromoptions tr',function(e){ setTimeout(function(){setAddressFrom(e);},200); });
    $(document).on('click','#importBtn',importBtnClick);
    $(document).on('click','#exportBtn',exportBtnClick);
+   $(document).on('keyup','#txfilter',update_gui);
 
 // change error message invalid zcash address
 // change default port for rpc (in votecoind)
