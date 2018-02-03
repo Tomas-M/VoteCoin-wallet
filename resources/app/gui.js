@@ -67,6 +67,7 @@ function txfiltermatch(tx,filter)
       else return false;
    }
 
+   if (tx.memo && tx.memo.toLocaleUpperCase().search(filter.toLocaleUpperCase())>=0) return true;
    if (tx.txid.match(filter)) return true;
    return false;
 }
