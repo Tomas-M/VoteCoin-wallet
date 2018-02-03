@@ -28,8 +28,16 @@ function update_gui()
     settext('blocktotal',num(totalblocks>blocks?totalblocks:blocks));
 
     if (connections==0 || blocks==0 || totalblocks==0) settext('blockcurrent','sync 0%',true);
-    else if (totalblocks-2>blocks) settext('blockcurrent','sync '+Math.floor(blocks/totalblocks*100)+'%',true);
-    else settext('blockcurrent','sync 100%');
+    else if (totalblocks-2>blocks)
+    {
+       settext('blockcurrent','sync '+Math.floor(blocks/totalblocks*100)+'%',true);
+       settext('blockcurrentheight','block '+blocks,true);
+    }
+    else
+    {
+       settext('blockcurrent','sync 100%');
+       settext('blockcurrentheight','block '+blocks);
+    }
 
     // Show a welcome screen until the user has some transaction
     if (transactions.length==0)
