@@ -95,12 +95,12 @@ function update_gui()
     else if (totalblocks-2>blocks)
     {
        settext('blockcurrent','sync '+Math.floor(blocks/totalblocks*100)+'%',true);
-       settext('blockcurrentheight','block '+blocks,true);
+       settext('blockcurrentheight','block #'+blocks,true);
     }
     else
     {
        settext('blockcurrent','sync 100%');
-       settext('blockcurrentheight','block '+blocks);
+       settext('blockcurrentheight','block #'+blocks);
     }
 
     // Show a welcome screen until the user has some transaction
