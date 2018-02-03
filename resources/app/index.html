@@ -73,7 +73,7 @@
         .container { display: none; width: calc(100% - 60px); height: calc(100% - 60px); padding: 30px; position: relative; transition: opacity 0.3s ease-in-out; }
         #qrcode { border: 1px solid #ddd; background-color: #ffffff; padding: 15px; display: inline-block; float: right; width: 256px; height: 256px; margin-bottom: 10px; margin-left: 10px; }
         #progressinnertext { font-size: 10px; line-height: 22px; text-align: center; position: absolute; width: calc(100% - 550px); }
-        #blockcurrent.active, #blockcurrentheight.active { color: #f7931a; font-weight: bold; }
+        #blockcurrent.active, #blockcurrentheight.active, #rpclog { color: #f7931a; font-weight: bold; }
         #blockcurrentheight { display: none; }
         #blockheight:hover #blockcurrentheight { display: inline; }
         #blockheight:hover #blockcurrent { display: none; }
@@ -129,6 +129,7 @@
              <span id=blockcurrentheight class=active>0</span>
              <span id=blockcurrent class=active>sync 0%</span> / <strong id=blocktotal>0</strong> blocks
           </div>
+          <div id=rpclog></div>
         </div>
      </div>
 
@@ -235,7 +236,7 @@
             <div id=votelist>
                <br><br>Voting functionality is a work in progress and will be added in one of the next releases of VoteCoin wallet.
             </div>
-            
+
          </div>
 
          <div id=backup class=container>

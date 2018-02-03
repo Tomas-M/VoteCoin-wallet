@@ -26,6 +26,7 @@ let win;
 let server;
 let canQuit=true;
 let showExitPrompt=false;
+let lastRPCerr='';
 
 function createWindow () {
   // Create the browser window.
@@ -147,6 +148,7 @@ function rpc(method,params,doneFunc,errorFunc)
 
    var error=function(data)
    {
+      if (data && data.error && data.error.message) lastRPCerr=data.error.message;
       walletStart(); // rpc error encountered means wallet is not running. Start it. If wallet was started, no problem
       if (errorFunc===true) setTimeout(function(){ rpc(method,params,doneFunc,errorFunc); },1000);
       else if (errorFunc) errorFunc(data);
@@ -156,6 +158,7 @@ function rpc(method,params,doneFunc,errorFunc)
    var request = http.request(options, function(response)
    {
       var result="";
+      lastRPCerr="";
 
       response.on('data', function(chunk)
       {
@@ -168,7 +171,7 @@ function rpc(method,params,doneFunc,errorFunc)
 
        response.on('end',function(e)
        {
-            try { result=JSON.parse(result); } catch(e){ console.log("error parsing json response: ",e); result=false; }
+            try { result=JSON.parse(result); } catch(e){ lastRPCerr=result; console.log("error parsing json response: ",e); result=false; }
             if (!result || result.error) error(result);
             else if (doneFunc) { console.log(result); doneFunc(result.result); }
        });
@@ -245,6 +248,11 @@ function setTransactionInProgress(e)
    showExitPrompt=!!e;
 }
 
+function getLastRPCerrorMessage()
+{
+   return lastRPCerr;
+}
+
 function openDevelTools()
 {
    win.webContents.openDevTools();
@@ -258,3 +266,4 @@ exports.walletStart=walletStart;
 exports.download_all_files=download_all_files;
 exports.setTransactionInProgress=setTransactionInProgress;
 exports.openDevelTools=openDevelTools;
+exports.getLastRPCerrorMessage=getLastRPCerrorMessage;

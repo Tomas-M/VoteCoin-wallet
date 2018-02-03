@@ -16,6 +16,24 @@ function gui_show(t,duration)
 }
 
 
+function update_logerr()
+{
+   var err=main.getLastRPCerrorMessage();
+   if (err!='')
+   {
+      settext('rpclog',err);
+      $('#rpclog').show();
+      $('#blockheight').hide();
+   }
+   else
+   {
+      settext('rpclog','');
+      $('#rpclog').hide();
+      $('#blockheight').show();
+   }
+}
+
+
 function update_gui()
 {
     settext('transparentVOT',num(totalTransparent,8,true));

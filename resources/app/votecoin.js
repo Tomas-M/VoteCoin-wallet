@@ -280,9 +280,10 @@ function setUpdater(func,time)
 }
 
 
-
 function init()
 {
+   setUpdater(update_logerr,1000); // once every second
+
    $('#progress').show();
    $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
                                  +"<span class='fa fa-cloud-download' style='color: #ddd; font-size: 150px;'></span>"
