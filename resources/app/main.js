@@ -112,7 +112,7 @@ function walletStart()
 {
    console.log('wallet start');
    canQuit=false;
-   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} );
+   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} ).on('exit',(code)=>canQuit=true);
 }
 
 app.on('before-quit', (event) =>
