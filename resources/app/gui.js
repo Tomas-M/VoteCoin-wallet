@@ -43,6 +43,13 @@ function dateShort(t)
 }
 
 
+function localeSubstringMatch(haystack,needle)
+{
+   if (haystack.toLocaleUpperCase().search(needle.toLocaleUpperCase())>=0) return true;
+   return false;
+}
+
+
 function txfiltermatch(tx,filter)
 {
    filter=$.trim(filter);
@@ -67,7 +74,7 @@ function txfiltermatch(tx,filter)
       else return false;
    }
 
-   if (tx.memo && tx.memo.toLocaleUpperCase().search(filter.toLocaleUpperCase())>=0) return true;
+   if (tx.memo && localeSubstringMatch(tx.memo,filter)) return true;
    if (tx.txid.match(filter)) return true;
    return false;
 }
@@ -131,6 +138,8 @@ function update_gui()
                     +"<div class='amount'>"+(transactions[i].amount>0?"+":"")+num(transactions[i].amount,8,true)+" VOT</div>"
              +"</div>";
     }
+
+    if (trans=='') trans='<div class=searchempty>Your search returned empty result...</div>';
 
     var change=sethtml('transactionslist',trans);
     if (change) // only update chart if there are new transactions sent or received
