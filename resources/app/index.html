@@ -75,8 +75,8 @@
         #progressinnertext { font-size: 10px; line-height: 22px; text-align: center; position: absolute; width: calc(100% - 550px); }
         #blockcurrent.active, #blockcurrentheight.active, #rpclog { color: #f7931a; font-weight: bold; }
         #blockcurrentheight { display: none; }
-        #blockheight:hover #blockcurrentheight { display: inline; }
-        #blockheight:hover #blockcurrent { display: none; }
+        #statusbar:hover #blockcurrentheight { display: inline; }
+        #statusbar:hover #blockcurrent { display: none; }
 
         .sendallbtn { margin:0; padding: 0; height: 39px; width: 24px; background-color: #ffffff; color: #000; border:1px solid #ccc; border-radius:0; position: relative; left: -5px; }
         .sendallbtn:hover { background-color: #ccc;  }
@@ -123,7 +123,7 @@
            <div data-toggle="settings" class=menurow><i class="fa fa-cog"></i><span>Settings</span></div>
         </div>
 
-        <div style="position: absolute; bottom: 0px; color: #848089; background-color: #332c3b; padding: 10px; font-size: 15px; line-height: 20px; font-family: Catamaran; width: 330px;" align=center>
+        <div id=statusbar style="position: absolute; bottom: 0px; color: #848089; background-color: #332c3b; padding: 10px; font-size: 15px; line-height: 20px; font-family: Catamaran; width: 330px;" align=center>
           <strong id=connections>0</strong> active connections<br>
           <div id=blockheight>
              <span id=blockcurrentheight class=active>0</span>
