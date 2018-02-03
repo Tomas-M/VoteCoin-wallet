@@ -143,3 +143,14 @@ function makeOrderedArray(obj,sortkeys,idname)
    }
    return sortByKeys(res,sortkeys);
 }
+
+// -----------------------------------------------------------------------------------------
+
+function audio_notify()
+{
+   if ($('#sound').html()=='')
+   {
+      $('#sound').html('<audio autoplay="autoplay"><source src="notify.mp3" type="audio/mpeg" /></audio>');
+      setTimeout(function(){ $('#sound').html(''); },5000); // prevents replaying the notification in the next 5 seconds
+   }
+}

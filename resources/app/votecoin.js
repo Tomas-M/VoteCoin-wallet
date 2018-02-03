@@ -151,6 +151,7 @@ function add_transaction(entry)
    if (ex==-1)
    {
       transactions.push(entry);
+      audio_notify();
       sort_transactions();
       return true;
    }
