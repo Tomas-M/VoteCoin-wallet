@@ -23,6 +23,7 @@ var wallet_port="";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let splash;
 let server;
 let canQuit=true;
 let showExitPrompt=false;
@@ -64,6 +65,7 @@ var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory)
 {
    // Someone tried to run a second instance, we should focus our window.
    if (win) { if (win.isMinimized()) win.restore(); win.focus(); }
+   if (splash) { if (splash.isMinimized()) splash.restore(); splash.focus(); }
 });
 
 if (shouldQuit) { app.quit(); return; }
@@ -97,14 +99,16 @@ function walletStop()
 {
    console.log('wallet stop');
 
-   win = new BrowserWindow({width: 400, height: 100, icon: path.join(__dirname, 'votecoin.ico')})
-   win.setMenu(null);
-   win.loadURL(url.format({
+   splash = new BrowserWindow({width: 400, height: 100, icon: path.join(__dirname, 'votecoin.ico')});
+   splash.setMenu(null);
+   splash.loadURL(url.format({
      pathname: path.join(__dirname, 'wait.html'),
      protocol: 'file:',
      slashes: true
    }));
-   win.on('closed',function(){ canQuit=true; app.quit(); })
+
+   // if user forces splash close, quit. User's responsibility
+   splash.on('closed',function(){ canQuit=true; app.quit(); })
 
    rpc("stop",[],function(){ canQuit=true; app.quit(); },true);
 }
@@ -113,7 +117,7 @@ function walletStart()
 {
    console.log('wallet start');
    canQuit=false;
-   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} ).on('exit',(code)=>canQuit=true);
+   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} ).on('exit',code=>{ if (!win) { canQuit=true; }});
 }
 
 app.on('before-quit', (event) =>

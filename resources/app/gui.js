@@ -24,7 +24,7 @@ function update_logerr()
    var err=main.getLastRPCerrorMessage();
    if (err!='')
    {
-      settext('rpclog',err);
+      settext('rpclog',err.replace("Work queue depth exceeded","Waiting for wallet..."));
       $('#rpclog').show();
       $('#blockheight').hide();
    }
