@@ -103,8 +103,8 @@ function update_gui()
        settext('blockcurrentheight','block #'+blocks);
     }
 
-    // Show a welcome screen until the user has some transaction
-    if (transactions.length==0)
+    // Show a welcome screen until the user has some transaction, or sync is in progress with zero balance
+    if (transactions.length==0 || (totalPrivate+totalTransparent==0 && blocks<totalblocks-2))
     {
        $('#welcomescreen').show();
        $('#totals').hide();
