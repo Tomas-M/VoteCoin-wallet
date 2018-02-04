@@ -154,3 +154,13 @@ function audio_notify()
       setTimeout(function(){ $('#sound').html(''); },5000); // prevents replaying the notification in the next 5 seconds
    }
 }
+
+// -----------------------------------------------------------------------------------------
+
+function sha256(str)  // returns PROMISE, call like this: sha256("string").then(result=>...)
+{
+   var buffer = new TextEncoder("utf-8").encode(str);
+   return crypto.subtle.digest("SHA-256", buffer).then(function (hash) {
+      return btoa(String.fromCharCode(...new Uint8Array(hash)));
+  });
+}
