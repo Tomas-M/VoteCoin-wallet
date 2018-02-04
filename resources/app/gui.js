@@ -3,6 +3,8 @@ const child_process = require('child_process');
 
 function gui_show(t,duration)
 {
+    if ( $('.menurow[data-toggle="'+t+'"]').is('.active') ) return;
+
     $('.container:visible').css('opacity',0);
     setTimeout(function()
     {
