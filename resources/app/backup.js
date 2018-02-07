@@ -32,7 +32,12 @@ function importBtnClick()
    // try to import as transparent key first
    main.rpc('importprivkey',[key,'',true],function(res){ okfunc(); },function(res)
    {
-      // if that failed, try to import it as shielded key
+      // importprivkey goes to failuire if it succeeded, and original request string is passed as param
+      if (res && res.error && res.error.message) alert(res.error.message);
+      else try { res=JSON.parse(res); if (res.method=="importprivkey") okfunc(); } catch(e){ }
+      return;
+
+      // if importing key as a transparent key failed, try to import it as shielded key
       main.rpc('z_importkey',[key],function(res){ okfunc(); },function(res){
          gui_show('backup');
          alert(res.error.message);
@@ -54,7 +59,8 @@ function exportBtnClick()
          for (i=0; i<addresses.length; i++)
          {
             if (addresses[i].privkey) out+=addresses[i].privkey+" # addr="+addresses[i].address+" # "+num(addresses[i].balance,8)+" VOT \n";
-            else out+="\n# Private keys for Shielded addresses\n\n";
+            else out+="\n# Private keys for Shielded addresses are not supported yet\n\n";
+//            else out+="\n# Private keys for Shielded addresses\n\n";
          }
          $('#privkeys').val(out);
          return;
@@ -68,7 +74,8 @@ function exportBtnClick()
 
    for (i in transparent_addresses) addresses.push({'address':i, 'balance':transparent_addresses[i]});
    addresses.push({'address':''});
-   for (i in shielded_addresses) addresses.push({'address':i, 'balance':shielded_addresses[i]});
+// we are not going to support exporting of shielded priv keys since importing back makes troubles yet, blame zcash!
+//   for (i in shielded_addresses) addresses.push({'address':i, 'balance':shielded_addresses[i]});
 
    update_export_address(0);
 }
