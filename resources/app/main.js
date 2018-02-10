@@ -117,7 +117,13 @@ function walletStart()
 {
    console.log('wallet start');
    canQuit=false;
-   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} ).on('exit',code=>{ if (!win) { canQuit=true; }});
+   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} )
+               .on('exit',code=>
+               {
+                  // check log for possible rescan
+
+                  if (!win) { canQuit=true; }
+               });
 }
 
 app.on('before-quit', (event) =>
@@ -131,7 +137,7 @@ app.on('before-quit', (event) =>
 })
 
 
-function rpc(method,params,doneFunc,errorFunc)
+function rpc(method,params,doneFunc,errorFunc,hideErrorMessage)
 {
    if (!params) params=[];
    var data={"method":method, params, id:Math.floor(Math.random()*10000)};
@@ -152,9 +158,9 @@ function rpc(method,params,doneFunc,errorFunc)
 
    var error=function(data)
    {
-      if (data && data.error && data.error.message) lastRPCerr=data.error.message;
+      if (data && data.error && data.error.message && !hideErrorMessage) lastRPCerr=data.error.message;
       walletStart(); // rpc error encountered means wallet is not running. Start it. If wallet was started, no problem
-      if (errorFunc===true) setTimeout(function(){ rpc(method,params,doneFunc,errorFunc); },1000);
+      if (errorFunc===true) setTimeout(function(){ rpc(method,params,doneFunc,errorFunc,hideErrorMessage); },1000);
       else if (errorFunc) errorFunc(data);
    }
 
