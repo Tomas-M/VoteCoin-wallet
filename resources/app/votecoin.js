@@ -17,8 +17,8 @@ var connections=0;
 var blocks=0;
 var totalblocks=0;
 
-var transparent_addresses=storage_load('taddresses',{});;
-var shielded_addresses=storage_load('zaddresses',{});;
+var transparent_addresses=storage_load('taddresses',{});
+var shielded_addresses=storage_load('zaddresses',{});
 
 // Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
