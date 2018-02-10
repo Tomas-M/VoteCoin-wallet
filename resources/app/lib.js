@@ -33,9 +33,9 @@ function storage_load(key,default_value)
 function settext(element,t,active)
 {
    var el=$('#'+element);
+   if (active) el.addClass('active'); else el.removeClass('active');
    if (el.text()==t) return false;
    el.text(t);
-   if (active) el.addClass('active'); else el.removeClass('active');
    return true;
 }
 
