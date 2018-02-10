@@ -274,7 +274,6 @@ function update_addresses()
 }
 
 
-
 function setUpdater(func,time)
 {
    setInterval(func,time);
