@@ -261,11 +261,12 @@ function update_addresses()
 
       main.rpc("z_listaddresses",[],(res)=>
       {
-          for (var i=0; i<res.length; i++)
-          {
-             update_shielded_addr(res[i]);
-             add_shielded_transactions_received(res[i]);
-          }
+         for (var i=0; i<res.length; i++)
+         if (res[i]!=poll_viewkey)
+         {
+            update_shielded_addr(res[i]);
+            add_shielded_transactions_received(res[i]);
+         }
       });
 
       update_gui();
