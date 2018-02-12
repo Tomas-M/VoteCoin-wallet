@@ -242,7 +242,7 @@ function init_rpc_password()
       wallet_user="admin";
       wallet_password=crypto.randomBytes(20).toString('hex')
       wallet_port=6666;
-      fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password);
+      fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password+"\nbanscore=500");
    }
    else
    {
