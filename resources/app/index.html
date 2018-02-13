@@ -127,8 +127,8 @@
         <div id=statusbar style="position: absolute; bottom: 0px; color: #848089; background-color: #332c3b; padding: 10px; font-size: 15px; line-height: 20px; font-family: Catamaran; width: 330px;" align=center>
           <strong id=connections>0</strong> active connections<br>
           <div id=blockheight>
-             <span id=blockcurrentheight class=active>0</span>
-             <span id=blockcurrent class=active>sync 0%</span> / <strong id=blocktotal>0</strong> blocks
+             <span id=blockcurrentheight class=active>block #0</span>
+             <span id=blockcurrent class=active>connecting</span> / <strong id=blocktotal>0</strong> blocks
           </div>
           <div id=rpclog></div>
         </div>
@@ -203,10 +203,15 @@
             </div>
             <input id=sendto type=text placeholder="Send To address">
             <input id=memo type=text placeholder="Memo (optional, only for shielded transactions, visible only to the receiver)">
-            <div style="position: relative">
-               <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
-               <span class="fa fa-caret-down" style="background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 296px; border-left: 1px solid #ddd; pointer-events: none; color: #777;"></span>
-               <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select><br><br>
+            <div>
+               <div style="display: inline-block; white-space: nowrap;">
+                  <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
+               </div>
+               <div style="display: inline-block; position: relative;">
+                  <span class="fa fa-caret-down" style="background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 4px; left: 85px; border-left: 1px solid #ddd; pointer-events: none; color: #777;"></span>
+                  <select id=fee style="width: 120px;"><option>Fee: none</option><option>0.0001</option><option>0.0002</option><option>0.0004</option><option>0.0010</option></select>
+               </div>
+               <br><br>
             </div>
             <button id=sendpayment>Send payment</button>
 
