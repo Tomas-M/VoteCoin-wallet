@@ -181,7 +181,7 @@ function rpc(method,params,doneFunc,errorFunc,hideErrorMessage)
 
        response.on('end',function(e)
        {
-            try { result=JSON.parse(result); } catch(e){ lastRPCerr=result; console.log("error parsing json response: ",e); result=false; }
+            try { result=JSON.parse(result); } catch(e){ lastRPCerr=result; console.log("error parsing json response: ",e); console.log(result); result=false; }
             if (!result || result.error) error(result);
             else if (doneFunc) { console.log(result); doneFunc(result.result); }
        });
