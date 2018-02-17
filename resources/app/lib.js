@@ -164,3 +164,32 @@ function sha256(str)  // returns PROMISE, call like this: sha256("string").then(
       return btoa(String.fromCharCode(...new Uint8Array(hash)));
   });
 }
+
+// -----------------------------------------------------------------------------------------
+
+function upload_file_change()
+{
+   var input = $(this);
+	var label = input.next();
+   var path=input.val();
+   var file=path.split(/[\\\/]/).pop();
+
+   var reset=function()
+   {
+      input.wrap('<form>').closest('form').get(0).reset();
+      input.unwrap();
+      label.html(label.data('label'));
+      $('#logopreview').html('');
+   }
+
+   if (!file.match(/[.](png|jpg|gif)$/i)) reset();
+	else
+      if (this.files && this.files.length>0)
+      {
+         var reader  = new FileReader();
+         reader.addEventListener("load", function () { $('#logopreview').html('<img src="'+reader.result+'" width=220 class=hidden style="border: 1px solid transparent; margin-bottom: 10px;">');  $('#logopreview img').off().on('error',reset).on('load',function(){$(this).show();}); }, false);
+         reader.readAsDataURL(this.files[0]);
+
+         label.html("<i class='fa fa-image'></i> &nbsp;"+htmlspecialchars(file));
+      }
+}

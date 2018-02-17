@@ -20,6 +20,11 @@ var totalblocks=0;
 var transparent_addresses=storage_load('taddresses',{});
 var shielded_addresses=storage_load('zaddresses',{});
 
+var poll_address="zcPGJHo5kdNaDSfotKFnHmyo8U7ywogRvjjHoCoJhsaUC2CFsePNMr1BvMKJ84FZC7H4gpUq2r5xVKS3yk466vYXVgqUvLt";
+var poll_viewkey="ZiVKdM5er1LWQ6Ti7UqE3BdugFCLhuwutwcFRqkoehZe9tVUZrWrojFr2A4A545dVDa7zqHBSAt95Skf1ztPHALqfLTvLY4N3";
+var poll_fee=1;
+var polls=storage_load('polls',[]);
+
 // Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
 for(i in operations)
@@ -306,13 +311,14 @@ function init()
       wait_for_wallet().then(()=>
       {
           isInitialized=true;
+          import_viewing_keys();
           update_addresses();
 
           // init periodic stats updaters
           setUpdater(update_rates,600000); // once per 10 minutes
           setUpdater(update_totals,10000); // every 10 seconds
-          setUpdater(update_stats,2000);  // every 2 seconds
-          setUpdater(update_operation_status,2000);  // every 2 seconds
+          setUpdater(update_stats,5000);  // every 2 seconds
+          setUpdater(update_operation_status,5000);  // every 2 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
           setUpdater(update_transactions,5000);   // every 5 seconds
           setUpdater(update_gui,1000);   // every 1 second
