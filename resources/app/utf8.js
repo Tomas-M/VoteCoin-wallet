@@ -1,3 +1,7 @@
+/*
+    Copyright (c) 2017 VoteCoin team, all rights reserved
+    See LICENSE file for more info
+*/
 
 function hexEncode(str)
 {

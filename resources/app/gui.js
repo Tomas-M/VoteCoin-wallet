@@ -1,3 +1,7 @@
+/*
+    Copyright (c) 2017 VoteCoin team, all rights reserved
+    See LICENSE file for more info
+*/
 
 const child_process = require('child_process');
 

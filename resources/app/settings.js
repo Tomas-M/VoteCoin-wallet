@@ -1,3 +1,7 @@
+/*
+    Copyright (c) 2017 VoteCoin team, all rights reserved
+    See LICENSE file for more info
+*/
 
 var z_track = storage_load('z_track',true);
 $('#ztrack').prop('checked',z_track);
