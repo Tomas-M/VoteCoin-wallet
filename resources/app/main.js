@@ -268,6 +268,28 @@ function openDevelTools()
    win.webContents.openDevTools();
 }
 
+// -----------------------------------------------------------------------------------------
+
+function storage_keyfile(key)
+{
+   return app.getAppPath()+"/settings/"+key.replace(/[^a-zA-Z0-9]/,"_")+".json";
+}
+
+function storage_save(key,valStr)
+{
+   fs.writeFileSync(storage_keyfile(key),valStr);
+}
+
+function storage_load(key,default_value)
+{
+   var val;
+   try { val=fs.readFileSync(storage_keyfile(key)).toString(); } catch(e) { }
+   if (typeof val == "undefined" || val == null) { val=default_value; storage_save(key,val); }
+   return val;
+}
+
+// -----------------------------------------------------------------------------------------
+
 
 init_rpc_password();
 
@@ -277,3 +299,5 @@ exports.download_all_files=download_all_files;
 exports.setTransactionInProgress=setTransactionInProgress;
 exports.openDevelTools=openDevelTools;
 exports.getLastRPCerrorMessage=getLastRPCerrorMessage;
+exports.storage_save=storage_save;
+exports.storage_load=storage_load;

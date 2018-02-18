@@ -3,10 +3,6 @@
     See LICENSE file for more info
 */
 
-
-var {ipcRenderer, remote} = require('electron');
-const main = remote.require("./main.js");
-
 const pick = (O, ...K) => K.reduce((o, k) => (o[k]=O[k], o), {});
 
 var rateVOTBTC=0;

@@ -1,5 +1,5 @@
 
-var z_track = storage_load('z_track');
+var z_track = storage_load('z_track',true);
 $('#ztrack').prop('checked',z_track);
 
 function ztrack_toggle()

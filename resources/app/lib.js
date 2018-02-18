@@ -12,21 +12,8 @@ function JSON_toString(obj)
    return JSON.stringify(obj);
 }
 
-// -----------------------------------------------------------------------------------------
-
-function storage_save(key,val)
-{
-   if (typeof val === "undefined") return;
-   localStorage.setItem(key, JSON_toString(val));
-}
-
-function storage_load(key,default_value)
-{
-   var val=localStorage.getItem(key);
-   if (typeof val == "undefined" || val == null) { val=default_value; storage_save(key,val); }
-   else val=JSON_fromString(val);
-   return val;
-}
+function storage_save(key,val) { return main.storage_save(key,JSON_toString(val)); }
+function storage_load(key,default_value) { return JSON_fromString(main.storage_load(key,JSON_toString(default_value))); }
 
 // -----------------------------------------------------------------------------------------
 

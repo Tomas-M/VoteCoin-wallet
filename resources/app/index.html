@@ -294,6 +294,8 @@
 <script>if (window.module) module = window.module;</script>
 
 <script>
+   var {ipcRenderer, remote} = require('electron');
+   const main = remote.require("./main.js");
    var isInitialized=false;
    var reset_transactions_list=false;
 </script>
