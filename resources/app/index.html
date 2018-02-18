@@ -337,10 +337,15 @@
    $(document).on('keyup','#txfilter',update_gui);
 
    $(document).on('click','#addnewpoll',show_new_poll);
+   $(document).on('mouseenter','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
+   $(document).on('mouseleave','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
+   $(document).on('focus blur','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
    $(document).on('click','#addoption',add_poll_option);
    $(document).on('click','#rmoption',rm_poll_option);
+   $(document).on('click','#startpoll',start_poll);
 
    $(document).on("change","input[type=file]",upload_file_change);
+   $(document).on("change keyup paste","input[type=text], textarea",poll_change);
 
 // change error message invalid zcash address
 // change default port for rpc (in votecoind)
@@ -355,7 +360,6 @@
    $(document).on('mousedown', '#transactionchart',function (e) { $(this).data('down', true).data('x', e.clientX).data('scrollLeft', this.scrollLeft).addClass("dragging"); return false; });
    $(document).on('mouseup',null,function (e) { if ($(e.target).attr('id')!='choosefromlabel') $('#choosefromoptions').slideUp(100); $('#transactionchart').data('down', false).removeClass("dragging"); });
    $(document).on('mousemove',null,function (e) { if ($('#transactionchart').data('down') == true) { $('#transactionchart').get(0).scrollLeft = $('#transactionchart').data('scrollLeft') + $('#transactionchart').data('x') - e.clientX; } });
-
 </script>
 
   </body>

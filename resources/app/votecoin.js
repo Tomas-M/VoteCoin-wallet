@@ -18,7 +18,7 @@ var shielded_addresses=storage_load('zaddresses',{});
 
 var poll_address="zcPGJHo5kdNaDSfotKFnHmyo8U7ywogRvjjHoCoJhsaUC2CFsePNMr1BvMKJ84FZC7H4gpUq2r5xVKS3yk466vYXVgqUvLt";
 var poll_viewkey="ZiVKdM5er1LWQ6Ti7UqE3BdugFCLhuwutwcFRqkoehZe9tVUZrWrojFr2A4A545dVDa7zqHBSAt95Skf1ztPHALqfLTvLY4N3";
-var poll_fee=1;
+var poll_fee=10;
 var polls=storage_load('polls',[]);
 
 // Get all operations, mark leftover ones from previous run as canceled
