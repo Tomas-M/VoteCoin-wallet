@@ -13,6 +13,7 @@ function show_new_poll_help(e)
    {
       var h=$('#helpcontainer').height();
       var help=$(e.target).data('help')||"";
+      if (help=='next') help=$(e.target).next().data('help')||"";
       if (help) help="<div id=helpcontainer><div style='position: relative; top:13px; border-bottom: 1px dashed #666; z-index:1'></div><div align=center><i class='fa fa-info-circle' style='padding: 5px; background-color: #e9e9e9; color: #777; z-index:2; position: relative;'></i></div><div align=justify style='font-size: 14px;'>"+help+"</div></div>";
       else return;
       $('#polloptionhelp').html(help);
@@ -44,7 +45,7 @@ function show_new_poll(ev)
       $('#newvote').show();
       $('#newvote').html(""
                     +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
-                       +"<input id=polltitle type=text placeholder='Poll or campaign title or question' style='font-size: 17px;'>"
+                       +"<input id=polltitle type=text placeholder='Poll or Campaign title or question' style='font-size: 17px;'>"
                        +"<textarea style='font-family: Arial; height: 66px; margin-bottom: 6px;' rows=3 id=polltext placeholder='Description or public note (optional)'></textarea>"
                        +"<div id=options>"
                        +"<input id=option1 type=text placeholder='Option or answer #1'>"
@@ -52,6 +53,7 @@ function show_new_poll(ev)
                        +"<input id=option3 type=text placeholder='Option or answer #3'>"
                        +"<input id=option4 type=text placeholder='Option or answer #4'>"
                        +"<input id=option5 type=text placeholder='Option or answer #5'>"
+                       +"<input id=option6 type=text placeholder='Option or answer #6'>"
                        +"</div>"
 
                        +"<button id=addoption>+ more options</button>&nbsp;<button id=rmoption>- less options</button>"
@@ -72,7 +74,11 @@ function show_new_poll(ev)
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=suggestvot data-help='Suggest default vote size to encourage users to spend certain amount of total VOT on their voting.'>"
-                             +"<option value=1>Suggested vote size 1 VOT<option value=2>Suggested vote size 2 VOT<option value=5>Suggested vote size 5 VOT<option disabled>Custom suggested vote size</select>"
+                             +"<option value=1>Suggested vote size 1 VOT<option value=2>Suggested vote size 2 VOT<option value=5>Suggested vote size 5 VOT<option value=custom>Custom suggested vote size</select>"
+                          +"<div style='position: relative;' class=hidden>"
+                             +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; none; color: #777;' data-help='next'></span>"
+                             +"<input placeholder='10 VOT' type=text style='width: 170px; padding-right: 40px;' id=suggestvot2 data-help='Suggest default vote size to encourage users to spend certain amount of total VOT on their voting.'>"
+                          +"</div>"
                        +"</div><br>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
@@ -82,12 +88,20 @@ function show_new_poll(ev)
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=endblock data-help='When the duration is specified in weeks or months, the system calculates target block height automatically. Only votes confirmed by the target block or earlier are counted towards the final results.'>"
-                              +"<option value="+(totalblocks+bPerDay*7)+">One week duration<option value="+(totalblocks+bPerDay*14)+">Two weeks duration<option value="+(totalblocks+bPerDay*21)+">Three weeks duration<option value="+(totalblocks+bPerDay*30)+">One month duration<option value="+(totalblocks+bPerDay*60)+">Two months duration<option disabled>Custom final block height</select>"
+                              +"<option value="+(totalblocks+bPerDay*7)+">One week duration<option value="+(totalblocks+bPerDay*14)+">Two weeks duration<option value="+(totalblocks+bPerDay*21)+">Three weeks duration<option value="+(totalblocks+bPerDay*30)+">One month duration<option value="+(totalblocks+bPerDay*60)+">Two months duration<option value=custom>Custom final block height</select>"
+                          +"<div style='position: relative;' class=hidden>"
+                             +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; color: #777;' data-help='next'></span>"
+                             +"<input placeholder='"+(totalblocks+bPerDay*7)+"' type=text style='width: 170px; padding-right: 40px;' id=endblock2 data-help='Specify target block height. Only votes confirmed by the target block or earlier are counted towards the final results.'>"
+                          +"</div>"
                        +"</div><br>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=countvotes data-help='Either count all votes received, or specify address from which you distribute votes to your users. In the later case, only votes trackable back to your sending address will be counted towards the results.'>"
-                              +"<option value=''>Count all votes<option value='' disabled>Count only votes you distribute from:<option>"+Object.keys(transparent_addresses).sort(Intl.Collator().compare).join("<option>")+"<option disabled>Custom distribution address</select>"
+                              +"<option value=''>Count all votes<option value=custom>Count only votes you distribute...</select>"
+                          +"<div style='position: relative;' class=hidden>"
+                             +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; color: #777;' data-help='next'></span>"
+                             +"<input placeholder='Your distribution address: t1xyz' type=text style='width: 170px; padding-right: 40px;' id=countvotes2 data-help='Specify address from which you distribute votes to your users. Only votes trackable back to this sending address will be counted towards the results.'>"
+                          +"</div>"
                        +"</div><br>"
                        +"<div><button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, <span id=pollcost>10</span> VOT</button></div>"
                        +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
@@ -139,7 +153,17 @@ function poll_data(genAddr, doneFunc)
       else main.rpc("getnewaddress",[], (addr)=> { addresses.push(addr); push_new_addresses(done); });
    }
 
-   push_new_addresses( ()=>{
+   push_new_addresses( ()=>
+   {
+      var size=$('#suggestvot').val();
+      if (size=='custom') size=$('#suggestvot2').val();
+
+      var end=$('#endblock').val();
+      if (end=='custom') end=$('#endblock2').val();
+
+      var backtrack=$('#countvotes').val();
+      if (backtrack=='custom') backtrack=$('#countvotes2').val();
+
       var data={
          "title":$('#polltitle').val(),
          "note":$('#polltext').val(),
@@ -148,10 +172,11 @@ function poll_data(genAddr, doneFunc)
          "logoname":$('#logoname').text()||"",
          "logoimg":$('#logopreview img').attr('src')||"",
          "logotx":'',
+         'backtrack':$.trim(backtrack),
          "refund":num($('#refundable').val(),0,true),
-         "size":num($('#suggestvot').val(),0,true),
+         "size":num(size,0,true),
          "shuffle":num($('#shuffle').val(),0,true),
-         "end":num($('#endblock').val(),0,true)
+         "end":num(end,0,true)
       }
 
       doneFunc(data);
@@ -207,6 +232,7 @@ function poll_change()
       var memos=memos_generate(data);
       var fee=memos.length*poll_fee;
       $('#pollcost').text(fee);
+      console.log(memos,data);
    })
 }
 
@@ -233,6 +259,7 @@ function start_poll()
       if (data.title=='') return poll_hig("polltitle");
       if (data.opt.length==1) return poll_hig("option2");
       if (data.opt.length==0) return poll_hig("option1");
+      if (data.end<totalblocks) return poll_hig("endblock2");
       var memos=memos_generate(data);
       var pollfee=memos.length*poll_fee;
       var sendfee=0; // 0.0001
@@ -252,8 +279,7 @@ function start_poll()
       // if not found, alert and quit
       if (from=='') return alert("Cannot find any address with sufficient balance of "+(pollfee+sendfee)+" VOT. You may need to group your coins to a single address.");
       var zbalance=shielded_addresses[from]||0;
-console.log(zbalance);
-return;
+
       // get memos with real addresses
       poll_data(true, (data)=>
       {
@@ -262,16 +288,17 @@ return;
          var params=[];
          for(i=0; i<memos.length; i++) params.push({'address':poll_address,'amount':txfee,'memo':memos[i]});
 
-         var payment_success=function(opid)
+         var payment_success=function(opid) // payment was accepted for processing, operation is in progress
          {
-            operations[opid]={'amount':txfee, 'zbalance': zbalance, 'creation_time':now()};
+            operations[opid]={'report_poll_tx':true, 'amount':txfee, 'zbalance': zbalance, 'creation_time':now()};
             update_operation_status();
             update_transactions();
             update_addresses();
-            // wait for confirmation
+            // payment is going to be processed. After it is sent with a txid,
+
          }
 
-         main.rpc("z_sendmany",[from,params,0,sendfee], payment_success, function(e){ console.log(e); alert("Problem publishing poll, please try again"); });
+         main.rpc("z_sendmany",[from,params,0,sendfee], payment_success, function(e){ console.log(e); alert("Problem publishing, please try again. "+e); });
          // mark wallet uncloseable, z_sendmany to poll_address, note operationID, track its success, remember txid for poll, add to polls list
       });
    });
