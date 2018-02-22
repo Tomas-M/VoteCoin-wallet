@@ -261,5 +261,5 @@ function msg(s)
 
 function openURL(url)
 {
-   child_process.execSync('start '+url);
+   child_process.execSync('start '+url.replace(/[&]/g,'^&').replace(/=/g,"^=").replace(/ /g,"+"));
 }
