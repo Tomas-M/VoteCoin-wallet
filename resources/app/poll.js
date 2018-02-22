@@ -150,7 +150,7 @@ function poll_data(genAddr, doneFunc)
    {
       if (addresses.length>=options.length) return done();
       if (!genAddr) { addresses.push("t1FakeAddressXxxxxxxxxxxxxxxxxxxxxxX"); push_new_addresses(done); }
-      else main.rpc("getnewaddress",[], (addr)=> { addresses.push(addr); push_new_addresses(done); });
+      else genNewAddress(false, (addr)=> { addresses.push(addr); push_new_addresses(done); });
    }
 
    push_new_addresses( ()=>
@@ -232,7 +232,6 @@ function poll_change()
       var memos=memos_generate(data);
       var fee=memos.length*poll_fee;
       $('#pollcost').text(fee);
-      console.log(memos,data);
    })
 }
 

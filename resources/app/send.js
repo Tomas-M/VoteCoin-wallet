@@ -3,16 +3,26 @@
     See LICENSE file for more info
 */
 
-function genNewAddress(shielded)
+function genNewAddress(shielded, doneFunc)
 {
     var prefix="";
     if (shielded) prefix="z_";
-    main.rpc(prefix+"getnewaddress","",function(res)
+    main.rpc(prefix+"getnewaddress","",function(addr)
     {
-        var addr=res;
-        show_receiving_address(addr);
-        if (shielded) { shielded_addresses[addr]=0; storage_save("zaddresses",shielded_addresses); }
-        else { transparent_addresses[addr]=0; storage_save("taddresses",transparent_addresses); }
+        if (shielded)
+        {
+           if (typeof shielded_addresses[addr] != "undefined") return genNewAddress(shielded, doneFunc);
+           shielded_addresses[addr]=0;
+           storage_save("zaddresses",shielded_addresses);
+        }
+        else
+        {
+           if (typeof transparent_addresses[addr] != "undefined") return genNewAddress(shielded, doneFunc);
+           transparent_addresses[addr]=0;
+           storage_save("taddresses",transparent_addresses);
+        }
+
+        doneFunc(addr);
     },true)
 }
 

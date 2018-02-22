@@ -323,8 +323,8 @@
 
    $(document).on('click','.menurow',function() { if (isInitialized) gui_show($(this).data('toggle')); });
 
-   $(document).on('click','#getnewaddress',function(){ genNewAddress(false); });
-   $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true); });
+   $(document).on('click','#getnewaddress',function(){ genNewAddress(false, show_receiving_address); });
+   $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true, show_receiving_address); });
    $(document).on('click','#sendpayment',function(){ sendpayment(); });
    $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$.trim($(this).data('txid'))); });
    $(document).on('click','.sendallbtn',function(){ maxSendAmount(); });
