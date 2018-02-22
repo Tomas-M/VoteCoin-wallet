@@ -13,9 +13,8 @@ function hexEncode(str)
 function hexDecode(hex)
 {
 	 if (hex=='' || typeof hex == "undefined") return '';
-    hex=hex.replace(/0+$/,"");
     if (hex.substr(0,2).toUpperCase().match(/^F5|^F6/)) return '';
 
 	 var byteArray=hex.match(/(.{1,2})/g).map(h=>parseInt(h, 16));
-	 return new TextDecoder('utf-8').decode(new Uint8Array(byteArray));
+	 return new TextDecoder('utf-8').decode(new Uint8Array(byteArray)).replace(/\0+$/,'');
 }
