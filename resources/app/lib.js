@@ -41,6 +41,7 @@ function sethtml(element,h)
 function num(n,precision,strip)
 {
    if (!precision) precision=0;
+   if (typeof n == "string") n=n.replace(/,/,'.');
    n=parseFloat(n);
    if (isNaN(n)) n=0;
    n=n.toFixed(precision);
@@ -133,6 +134,20 @@ function makeOrderedArray(obj,sortkeys,idname)
    }
    return sortByKeys(res,sortkeys);
 }
+
+function array_shuffle(array)
+{
+   var count = array.length, rand, temp;
+   while(count)
+   {
+      rand=Math.random() * count-- | 0;
+      temp=array[count];
+      array[count]=array[rand];
+      array[rand]=temp;
+   }
+   return array;
+}
+
 
 // -----------------------------------------------------------------------------------------
 

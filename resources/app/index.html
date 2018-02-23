@@ -21,6 +21,15 @@
         .hidden { display: none; }
         .nocustom { cursor: pointer !important; }
 
+        .social {  padding: 10px;  font-size: 20px;  width: 32px;  text-align: center;  text-decoration: none;  margin: 2px 2px; }
+        .social:first-child { margin-left: 0; }
+        .social:last-child { margin-right: 0; }
+        .social:hover { opacity: 0.7; cursor: pointer; }
+        .fa-facebook {  background: #3B5998;  color: white;}
+        .fa-twitter {  background: #55ACEE;  color: white;}
+        .fa-google {  background: #dd4b39;  color: white;}
+        .fa-linkedin {  background: #007bb5;  color: white;}
+
         .menu { margin-top: 40px; border-bottom: 1px solid #1e1924;  }
         .menu .menurow { user-select: none;letter-spacing: 1px; color: #fff; font-size: 25px; font-family: catamaran; border-top: 1px solid #1e1924;}
         .menu .menurow i { cursor: pointer; padding: 15px 10px 15px 25px;background-color: #282230;border-left: 5px solid #282230;width: 45px; display: inline-block;}
@@ -118,11 +127,19 @@
         #helppoll { background-color: transparent; border: 0; color: #444; }
         #rmoption.hover { color: #000; }
         #options input { display: block; }
-        #countvotes2, #suggestvot2, #endblock2 { margin-bottom: 6px; }
+        #countvotes2, #suggestvot2, #endblock2, #pollsize2 { margin-bottom: 6px; }
 
         .searchempty { padding: 12px; }
         #choosefromlabel { cursor: pointer; margin-bottom: 1px; }
         #sendto { margin-top: 9px; }
+
+        .polloptiondrag { -webkit-appearance: none; padding: 2px; width: calc(100% - 10px); height: 32px; background: #d3d3d3; outline: none; opacity: 0.7; transition: opacity .2s; }
+        .polloptiondrag:hover {  opacity: 1;  cursor: ew-resize; }
+        .polloptiondrag::-webkit-slider-thumb { -webkit-appearance: none; border-radius: 3px; width: 32px; height: 32px; background: #f7931a; background-image: url('img/drag.png'); background-size:32px; background-repeat: no-repeat; }
+        .polloptiontitle { margin-left: 5px; }
+        .polloptionsval { margin-right: 5px;}
+
+
 
         .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
         .settingshelp { text-align: justify; }
@@ -167,7 +184,6 @@
          </div>
 
          <div id=dashboard class=container>
-
             <div id=welcomescreen class=hidden>
                <i class="fa fa-rocket" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Up and running!</span>
                <br><br><br>
@@ -255,12 +271,17 @@
          </div>
 
          <div id=vote class=container>
+            <div id=pollprogress class=hidden style="width: 100%; text-align:center; height: 100%; position: absolute; z-index:100; top:0; left:0; background-color: rgba(51, 44, 59, 0.8);">
+               <div style='color: #ddd;'>
+                  <div style='margin-bottom: 40px; margin-top: 240px'><span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span></div><span id=pollprogressmsg>Please wait ...</span>
+               </div>
+            </div>
             <button id=addnewpoll style="position: absolute; right: 30px;">+ Add poll or elections</button>
             <h1><i class="fa fa-bar-chart"></i>Vote</h1>
-            <input id=pollfilter type=text class=search placeholder=" &#128269;  Search polls and elections">
             <div id=votelist>
-               <br><br>Voting functionality is a work in progress and will be added in one of the next releases of VoteCoin wallet.
+               <br><br>In order to see a poll or campaign, enter its ID below:<br><br>
             </div>
+            <input id=pollfilter type=text class=search placeholder=" &#128269;  Enter ID of poll or campaign">
             <div id=newvote></div>
 
          </div>
@@ -275,6 +296,8 @@
          </div>
 
          <div id=settings class=container>
+
+
             <h2><input id=ztrack type=checkbox class=settingscheck><label for=ztrack> Track shielded transactions</label></h2>
             <div class=settingshelp>If checked, VoteCoin wallet will remember all shielded transactions,
                even those sent from a shielded address to another shielded address, and it will show them in the list of transactions.</div>
@@ -331,6 +354,7 @@
    $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).text()); });
    $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); setAddressFrom($(this).parent().prev().prev().text()); });
    $(document).on('click','#tradesatoshi',function(){ openURL("https://tradesatoshi.com/Exchange/?market=VOT_BTC"); });
+   $(document).on('click','.social',function(e){ openURL($(this).data('url')); e.preventDefault(); });
    $(document).on('focus','#choosefromlabel',function(e){ $(this).blur(); $('#choosefromoptions').slideDown(100); });
    $(document).on('mousedown','#choosefromlabel',function(e){ e.preventDefault(); $('#choosefromoptions').slideToggle(100); });
    $(document).on('mousedown','#choosefromoptions tr',function(e){ setTimeout(function(){setAddressFrom(e);},200); });
@@ -344,14 +368,16 @@
    $(document).on('focus blur','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
    $(document).on('click','#addoption',add_poll_option);
    $(document).on('click','#rmoption',rm_poll_option);
-   $(document).on('click','#startpoll',start_poll);
+   $(document).on('click','#startpoll',poll_start);
 
    $(document).on("change","input[type=file]",upload_file_change);
    $(document).on("change keyup paste","input[type=text], textarea",poll_change);
 
-   $(document).on("change",'#countvotes, #suggestvot, #endblock', function(ev) { var t=$(this); t.hide(); t.prev().hide(); t.next().show(); t.next().find('input').focus(); })
+   $(document).on("change",'#countvotes, #suggestvot, #endblock, #pollsize', function(ev) { var t=$(this); if (t.val()!='custom') return; t.hide(); t.prev().hide(); t.next().show(); t.next().find('input').focus(); })
    $(document).on("click",'.nocustom', function(ev) { var t=$(this).parent().prev(); t.val(t.find('option:first').val()).show().prev().show(); t.next().hide(); })
 
+   $(document).on("input",'.polloptiondrag',poll_drag);
+   $(document).on("input",'#pollfilter',function(){ var txid=$.trim($(this).val()); if (txid) poll_show(txid); });
 // change error message invalid zcash address
 // change default port for rpc (in votecoind)
 // addr balance stats http://explorer.votecoin.site/insight-api-zcash/addr/t1Up..../?noTxList=1
@@ -364,7 +390,7 @@
    $(document).on('keyup','', function(e){ if (e.keyCode==116) location.reload(); if (e.keyCode==123) main.openDevelTools(); });
    $(document).on('mousedown', '#transactionchart',function (e) { $(this).data('down', true).data('x', e.clientX).data('scrollLeft', this.scrollLeft).addClass("dragging"); return false; });
    $(document).on('mouseup',null,function (e) { if ($(e.target).attr('id')!='choosefromlabel') $('#choosefromoptions').slideUp(100); $('#transactionchart').data('down', false).removeClass("dragging"); });
-   $(document).on('mousemove',null,function (e) { if ($('#transactionchart').data('down') == true) { $('#transactionchart').get(0).scrollLeft = $('#transactionchart').data('scrollLeft') + $('#transactionchart').data('x') - e.clientX; } });
+   $(document).on('mousemove','#transactionchart',function (e) { if ($('#transactionchart').data('down') == true) { $('#transactionchart').get(0).scrollLeft = $('#transactionchart').data('scrollLeft') + $('#transactionchart').data('x') - e.clientX; } });
 </script>
 
   </body>

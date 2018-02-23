@@ -22,28 +22,36 @@ function show_new_poll_help(e)
    }
 }
 
-function show_new_poll(ev)
-{
-   var btn=$(this);
-   if (btn.data('prevtext')) // clicking on Cancel button
-   {
-      btn.html(btn.data('prevtext')).removeClass('cancel');
-      btn.data('prevtext','');
 
+function poll_dashboard(show)
+{
+   if (show)
+   {
       $('#pollfilter').show();
       $('#votelist').show();
       $('#newvote').hide();
+      $('#addnewpoll').html($('#addnewpoll').data('prevtext')).removeClass('cancel').data('prevtext','');
    }
-   else // clicking on New poll button
+   else
    {
-      btn.data('prevtext',btn.html());
-      btn.html('<span class="fa fa-times"></span> Cancel').addClass('cancel');
-      var bPerDay=1440/2.5; // average blocks per day
-
       $('#pollfilter').hide();
       $('#votelist').hide();
       $('#newvote').show();
-      $('#newvote').html(""
+
+      $('#addnewpoll').data('prevtext',$('#addnewpoll').html());
+      $('#addnewpoll').html('<span class="fa fa-long-arrow-left"></span> &nbsp;back').addClass('cancel');
+   }
+}
+
+
+function show_new_poll(ev)
+{
+   var btn=$(this);
+   if (btn.data('prevtext')) return poll_dashboard(true); // click on back button
+
+   poll_dashboard(false);
+   var bPerDay=1440/2.5; // average blocks per day
+   $('#newvote').html(""
                     +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
                        +"<input id=polltitle type=text placeholder='Poll or Campaign title or question' style='font-size: 17px;'>"
                        +"<textarea style='font-family: Arial; height: 66px; margin-bottom: 6px;' rows=3 id=polltext placeholder='Description or public note (optional)'></textarea>"
@@ -66,11 +74,13 @@ function show_new_poll(ev)
                           +"<input type=file id=polllogo><label data-help='Using a logo image is optional. Choose a small image file from disk. Make sure its width is 220 pixels. File size affects the costs, so you should optimize your image before publishing. Reasonable size is ~ 2 KB. Transparent background is recommended.'"
                              +" for='polllogo' style='width: 202px; font-size: 14px; line-height: 19px;' class=forfile data-label='<i class=\"fa fa-image\"></i> &nbsp;Choose a logo (220px)'><i class='fa fa-image'></i> &nbsp;Choose a logo (220px)</label>"
                        +"</div><br>"
+                  +"<div class=hidden>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 185px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=refundable data-help='Refund is not guaranteed by the protocol. This setting only indicates whether the publisher (you) promises to refund votes (either losing or all or none) when the poll or campaign is over, if certain criteria is met (specified in public note).'>"
                              +"<option value=0>Non-refundable votes<option value=1>Refundable losing votes<option value=2>Refundable all votes</select>"
                        +"</div><br>"
+                  +"</div>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=suggestvot data-help='Suggest default vote size to encourage users to spend certain amount of total VOT on their voting.'>"
@@ -107,8 +117,8 @@ function show_new_poll(ev)
                        +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
                     +"</div>"
                  );
-      $('#polltitle').focus();
-   }
+
+   $('#polltitle').focus();
 }
 
 
@@ -116,7 +126,7 @@ function add_poll_option()
 {
     var el=$('#options');
     var i=el.find('input').length+1;
-    $("<input style='display: none; opacity: 0;' id=option"+i+" type=text placeholder='Option or answer "+i+"'>").appendTo(el).slideDown(100).fadeTo(200,1);
+    $("<input style='display: none; opacity: 0;' id=option"+i+" type=text placeholder='Option or answer #"+i+"'>").appendTo(el).slideDown(100).fadeTo(200,1);
     if (i>2) $('#rmoption').fadeIn(); else $('#rmoption').fadeOut();
 }
 
@@ -167,16 +177,16 @@ function poll_data(genAddr, doneFunc)
       var data={
          "title":$('#polltitle').val(),
          "note":$('#polltext').val(),
-         "opt":options,
-         "adr":addresses,
-         "logoname":$('#logoname').text()||"",
-         "logoimg":$('#logopreview img').attr('src')||"",
-         "logotx":'',
+         "options":options,
+         "addresses":addresses,
+         "logo_name":$('#logoname').text()||"",
+         "logo_src":$('#logopreview img').attr('src')||"",
+         "logo_txid":'',
          'backtrack':$.trim(backtrack),
          "refund":num($('#refundable').val(),0,true),
          "size":num(size,0,true),
          "shuffle":num($('#shuffle').val(),0,true),
-         "end":num(end,0,true)
+         "endblock":num(end,0,true)
       }
 
       doneFunc(data);
@@ -217,9 +227,9 @@ function upload_file_change()
 
 function memos_generate(data)
 {
-   var memos=JSON_toString(data);
+   var memos=hexEncode(JSON_toString(data));
    memos=memos.match(/(.{1,510})/g);
-   for (var i=0; i<memos.length; i++) memos[i]="F5"+hexEncode(String.fromCharCode(i))+hexEncode(memos[i]);
+   for (var i=0; i<memos.length; i++) memos[i]="F5"+hexEncode(String.fromCharCode(i))+memos[i];
    return memos;
 }
 
@@ -243,22 +253,27 @@ function poll_hig(el)
    setTimeout(function(){ inp.css({'border-color':'', 'box-shadow':'none'}); },1000);
 }
 
-
-function start_poll_log(msg,ico)
+function poll_progress_show(msg)
 {
-   $('#makepolllog').append("<div><i class='fa fa-"+ico+"'></i> "+msg+"</div>");
+   $('#pollprogressmsg').text(msg);
+   $('#pollprogress').fadeIn(100);
+}
+
+function poll_progress_hide()
+{
+   $('#pollprogress').fadeOut(100);
 }
 
 
-function start_poll()
+function poll_start()
 {
    // calculate poll size (memos) with fake addresses to estimate fee
    poll_data(false, (data)=>
    {
       if (data.title=='') return poll_hig("polltitle");
-      if (data.opt.length==1) return poll_hig("option2");
-      if (data.opt.length==0) return poll_hig("option1");
-      if (data.end<totalblocks) return poll_hig("endblock2");
+      if (data.options.length==1) return poll_hig("option2");
+      if (data.options.length==0) return poll_hig("option1");
+      if (data.endblock<totalblocks) return poll_hig("endblock2");
       var memos=memos_generate(data);
       var pollfee=memos.length*poll_fee;
       var sendfee=0; // 0.0001
@@ -273,11 +288,9 @@ function start_poll()
       // find suitable outgoing address with sufficient balance.
       var from="", i;
       if (from=='') for(i in transparent_addresses) if (transparent_addresses[i]>=pollfee+sendfee) { from=i; break; }
-      if (from=='') for(i in shielded_addresses) if (shielded_addresses[i]>=pollfee+sendfee) { from=i; break; }
 
       // if not found, alert and quit
-      if (from=='') return alert("Cannot find any address with sufficient balance of "+(pollfee+sendfee)+" VOT. You may need to group your coins to a single address.");
-      var zbalance=shielded_addresses[from]||0;
+      if (from=='') return alert("Cannot find any Transparent address with sufficient balance of "+(pollfee+sendfee)+" VOT. You may need to group your coins to a single Transparent address and try again.");
 
       // get memos with real addresses
       poll_data(true, (data)=>
@@ -289,7 +302,8 @@ function start_poll()
 
          var payment_success=function(opid) // payment was accepted for processing, operation is in progress
          {
-            operations[opid]={'report_poll_tx':true, 'amount':txfee, 'zbalance': zbalance, 'creation_time':now()};
+            poll_progress_show("Publishing, please wait...");
+            operations[opid]={'report_poll_tx':true, 'amount':pollfee, 'zbalance': 0, 'creation_time':now()};
             update_operation_status();
             update_transactions();
             update_addresses();
@@ -303,13 +317,165 @@ function start_poll()
    });
 }
 
-/*
 
-main.rpc("gettransaction",["c2f2185704ffd8c756d8858b35128d86d7ba094af66fd175ec87d8a9be71d84c"],function(e){
-   main.rpc("getblock",[e.blockhash],function(b){
-      main.rpc("z_listreceivedbyaddress",[poll_address,-b.height],function(c){
-         console.log(c);
-      });
-   });
-});
+function poll_save(txid,data)
+{
+   polls[txid]=data;
+   storage_save("polls",polls);
+}
+
+
+function poll_load(txid,doneFunc)
+{
+   if (polls[txid]) return doneFunc(polls[txid]);
+   poll_progress_show("Loading data...");
+
+   main.rpc("gettransaction",[txid],function(e)
+   {
+      if (e.blockhash)
+      main.rpc("getblock",[e.blockhash],function(b)
+      {
+         if (b.height)
+         main.rpc("z_listreceivedbyaddress",[poll_address,-b.height],function(alltxs)
+         {
+            poll_progress_hide();
+            var memos=[], i;
+            for (i=0; i<alltxs.length; i++) if (alltxs[i].txid==txid) memos.push(alltxs[i].memo);
+            memos.sort(function(a,b){ a=a.substr(2,2); b=b.substr(2,2); if (a>b) return 1; if (b>a) return -1; return 0; });
+            for (i=0; i<memos.length; i++) memos[i]=hexDecode(memos[i].substr(4));
+            var data=JSON_fromString(memos.join(""));
+
+            if (data.logo_txid.match(/^[a-z0-9]+$/i))
+               poll_load(data.logo_txid,function(ret)
+               {
+                  data.logo_src=ret.logo_src;
+                  data.logo_name=ret.logo_name;
+                  poll_save(txid,data);
+                  doneFunc(data);
+               });
+            else
+            {
+               poll_save(txid,data);
+               doneFunc(data);
+            }
+         },poll_progress_hide); else poll_progress_hide();
+      },poll_progress_hide); else poll_progress_hide();
+   },poll_progress_hide );
+}
+
+
+function poll_drag()
+{
+   // elements
+   var t=$(this);
+   if (!t.hasClass('polloptiondrag'))
+   {
+      var random = Math.floor(Math.random()*$('.polloptiondrag').length);
+      t=$('.polloptiondrag').eq(random);
+   }
+
+   var all=$('.polloptiondrag:not(#'+t.attr('id')+')');
+
+
+   var max=t.attr('max');
+   var current=t.val();
+   var rest=max-current;
+   var totalvot=$('#pollsize').val();
+   if (totalvot=="custom") totalvot=num($('#pollsize2').val(),8);
+
+   // split rest between all, preserving their current proportions
+   var sum=0;
+   all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
+   all.each((ix,el)=>{ var e=$(el); var n=e.val()*rest/sum; if (isNaN(n)) n=Math.ceil(rest/all.length); e.val(Math.floor(n)); e.prev().prev().text(num(e.val()/max*totalvot*100,0,true)+"%") });
+   sum=0;
+   all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
+   t.prev().prev().text(num((max-sum)/max*totalvot*100,0,true)+"%");
+   t.val(max-sum);
+}
+
+
+function poll_show(txid)
+{
+   $('#newvote').html('');
+   poll_load(txid,function(data)
+   {
+      var i;
+      var max=100000000;
+      var url='http://pollex.votecoin.site/'+data.txid;
+      var title='VoteCoin+Poll+Explorer';
+
+      var options="";
+      poll_dashboard(false);
+
+      var ix=[];
+      for (i=0; i<data.options.length; i++) if (data.options[i] && data.addresses[i]) ix.push(i);
+      if (data.shuffle) array_shuffle(ix);
+
+      for (i=0; i<ix.length; i++)
+        options+="<div style='float: right;' class=polloptionsval></div><div class=polloptiontitle>"+htmlspecialchars(data.options[ix[i]])+"</div>"
+               +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"><br>";
+
+      $('#newvote').html(""
+/*
+   "addresses":addresses,
+   "logo_name":
+   "logo_src":
+   "logo_txid":'',
+   'backtrack':$.trim(backtrack),
+   "refund":
+   "size":
+   "shuffle":
+   "end":
 */
+                    +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
+                       +"<div style='font-family: Arial; font-size: 27px;'>"+htmlspecialchars(data.title)+"</div>"
+                       +"<div style='margin-top: 30px;'>"+options+"</div>"
+                       +"<div style='font-family: Arial; margin-bottom: 6px; margin-top: 40px; margin-bottom: 20px;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
+                    +"</div>"
+
+                    +"<div style='display: inline-block; vertical-align: top; width: 222px;'>"
+
+                        +"<div style='display: inline-block; overflow: hidden; margin-left: 1px; margin-top: 34px;' align=center>"
+                           +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fa fa-facebook"></a>'
+                           +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fa fa-twitter"></a>'
+                           +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fa fa-google"></a>'
+                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fa fa-linkedin"></a>'
+                       +"</div>"
+
+                       +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
+                          +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
+                          +"<select style='width: 222px;' id=pollsize data-help='Your total vote size.'>"
+                             +"<option value='"+num(data.size,0,true)+"'>Your vote size: "+num(data.size,0,true)+" VOT<option value=custom>Custom vote size...</select>"
+                          +"<div style='position: relative;' class=hidden>"
+                             +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; none; color: #777;' data-help='next'></span>"
+                             +"<input placeholder='"+num(data.size,0,true)+" VOT' type=text style='width: 170px; padding-right: 40px;' id=pollsize2 data-help='Custom vote size.'>"
+                          +"</div>"
+                       +"</div><br>"
+
+                       +"<div style='display: inline-block; overflow: hidden;'>"
+                         +"<img id=logopreview style='border: 1px solid transparent; width: 220px;'>"
+                       +"</div><br><br>"
+
+                      +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
+                    +"</div>"
+
+
+     );
+
+     // if logo image is present, load it
+     if (data.logo_src && data.logo_src.match(/^data:/)) $('#logopreview').attr('src',data.logo_src);
+
+     // set default values for all options proportionally
+     $('.polloptiondrag').val(max/ix.length);
+     poll_drag();
+     $('#newvote').css('opacity',0).delay(400).css('opacity',1);
+   });
+}
+
+
+function poll_success(txid)
+{
+   poll_progress_hide();
+   my_pollids[txid]=true;
+   poll_show(txid);
+}

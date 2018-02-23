@@ -19,7 +19,8 @@ var shielded_addresses=storage_load('zaddresses',{});
 var poll_address="zcPGJHo5kdNaDSfotKFnHmyo8U7ywogRvjjHoCoJhsaUC2CFsePNMr1BvMKJ84FZC7H4gpUq2r5xVKS3yk466vYXVgqUvLt";
 var poll_viewkey="ZiVKdM5er1LWQ6Ti7UqE3BdugFCLhuwutwcFRqkoehZe9tVUZrWrojFr2A4A545dVDa7zqHBSAt95Skf1ztPHALqfLTvLY4N3";
 var poll_fee=10;
-var polls=storage_load('polls',[]);
+var polls=storage_load('polls',{});
+var my_pollids=storage_load('my_pollids',{});
 
 // Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
@@ -98,6 +99,12 @@ function update_operation_status()
                if (!ret.error)
                {
                   operations[opid].txid=ret.result.txid;
+                  if (operations[opid].report_poll_tx)
+                  {
+                     delete operations[opid].report_poll_tx;
+                     poll_progress_hide();
+                     poll_success(ret.result.txid);
+                  }
 
                   if (isShielded(ret.params.amounts[0].address)) // we're sending to Z address, tx may not be in list, memo definitely is not
                   if (z_track)
