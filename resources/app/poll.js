@@ -325,7 +325,7 @@ function poll_save(txid,data)
 
 function poll_load(txid,doneFunc,waitmsg)
 {
-   if (polls[txid]) return doneFunc(polls[txid]);
+   if (polls[txid]) { poll_progress_hide(); return doneFunc(polls[txid]); }
    if (!waitmsg) waitmsg="Loading data...";
    poll_progress_show(waitmsg);
 
@@ -408,6 +408,13 @@ function poll_drag()
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
    t.prev().prev().text(num((max-sum)/max*100,0,true)+"%");
    t.val(max-sum);
+}
+
+
+function poll_show_withprogress(txid)
+{
+   poll_progress_show("Loading data...");
+   setTimeout(function(){ poll_show(txid); },500);
 }
 
 
@@ -512,7 +519,7 @@ function poll_id()
 
    if (txid.match(/^[0-9a-f]{64}$/i)) // transaction id
    {
-      poll_show(txid);
+      poll_show_withprogress(txid);
       return;
    }
 
@@ -523,7 +530,7 @@ function poll_id()
          if (hash)
          main.rpc("getblock",[hash],function(block){
             var tx=block.tx[parseInt(bix[2])];
-            if (tx) poll_show(tx);
+            if (tx) poll_show_withprogress(tx);
          });
       });
    }
