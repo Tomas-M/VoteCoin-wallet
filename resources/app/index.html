@@ -129,6 +129,14 @@
         #options input { display: block; }
         #countvotes2, #suggestvot2, #endblock2, #pollsize2 { margin-bottom: 6px; }
 
+        .end1, .end2, .end3 { color: #777; display: inline-block; line-height: 32px; text-align: center; width: 60px; height: 50px; font-size: 30px; overflow: hidden; }
+        .end1, .end2 { padding-right: 8px; border-right: 1px dashed #777; }
+        .end2, .end3 { margin-left: 9px; }
+
+        .end1b, .end2b, .end3b { display: inline-block; width: 60px; text-align: center; position: relative; top: -22px;  letter-spacing: 2px; font-size: 15px; }
+        .end1b, .end2b { padding-right: 8px; border-right: 1px solid transparent; }
+        .end2b, .end3b { margin-left: 9px; }
+
         .searchempty { padding: 12px; }
         #choosefromlabel { cursor: pointer; margin-bottom: 1px; }
         #sendto { margin-top: 9px; }
@@ -377,7 +385,9 @@
    $(document).on("click",'.nocustom', function(ev) { var t=$(this).parent().prev(); t.val(t.find('option:first').val()).show().prev().show(); t.next().hide(); })
 
    $(document).on("input",'.polloptiondrag',poll_drag);
-   $(document).on("input keypress",'#pollfilter',poll_id);
+   $(document).on("keyup",'#pollfilter',function(e){ if (e.keyCode==13) poll_id.call(this); } );
+   $(document).on("input",'#pollfilter',poll_id);
+
 // change error message invalid zcash address
 // change default port for rpc (in votecoind)
 // addr balance stats http://explorer.votecoin.site/insight-api-zcash/addr/t1Up..../?noTxList=1

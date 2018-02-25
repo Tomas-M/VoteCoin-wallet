@@ -432,17 +432,6 @@ function poll_show(txid)
         options+="<div style='float: right;' class=polloptionsval></div><div class=polloptiontitle>"+htmlspecialchars(data.options[ix[i]])+"</div>"
                +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"><br>";
 
-/*
-   "addresses":addresses,
-   "logo_name":
-   "logo_src":
-   "logo_txid":'',
-   'backtrack':$.trim(backtrack),
-   "refund":
-   "size":
-   "shuffle":
-   "end":
-*/
       var votesize_precision=num(data.size,8,true).split(".")[2];
       if (votesize_precision) votesize_precision=votesize_precision.length; else votesize_precision=0;
       $('#newvote').html(""
@@ -452,18 +441,12 @@ function poll_show(txid)
                        +"<div style='font-family: Arial; margin-bottom: 6px; margin-top: 40px; margin-bottom: 20px;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
                     +"</div>"
 
-                    +"<div style='display: inline-block; vertical-align: top; width: 222px;'>"
+                    +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 100px;'>"
 
-                    +"<div><button style='width: 222px;' id=dovote data-help='Vote now. This action costs the total amount of VOT listed above.'><i class='fa fa-play'></i> &nbsp;Vote now</button></div>"
-
-/*
-                        +"<div style='display: inline-block; overflow: hidden; margin-left: 1px; margin-top: 34px;' align=center>"
-                           +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fa fa-facebook"></a>'
-                           +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fa fa-twitter"></a>'
-                           +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fa fa-google"></a>'
-                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fa fa-linkedin"></a>'
+                       +"<div style='display: inline-block; overflow: hidden;'>"
+                         +"<img id=logopreview style='border: 1px solid transparent; width: 220px; max-height: 220px;'>"
                        +"</div>"
-*/
+
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=pollsize data-help='Size of your vote is the total amount of VOT you are willing to spend on this voting.'>"
@@ -474,14 +457,29 @@ function poll_show(txid)
                           +"</div>"
                        +"</div><br>"
 
-                       +"<div>"
-                          +"Ends in:<br><div style='font-size: 20px;'>1d 7h</div>"
+                       +"<div align=center>"
+                          +"<div>"
+                          +"<div class=end1>07</div><div class=end2>07</div><div class=end3>07</div>"
+                          +"</div>"
+                          +"<div class=end1b>days</div><div class=end2b>hours</div><div class=end3b>mins</div>"
                        +"</div>"
 
-                       +"<div style='display: inline-block; overflow: hidden;'>"
-                         +"<img id=logopreview style='border: 1px solid transparent; width: 220px;'>"
+                       +"<div><button style='width: 222px;' id=dovote data-help='Vote now. This action costs the total amount of VOT listed above.'><i class='fa fa-play'></i> &nbsp;Vote now</button></div>"
+
+
+                        +"<div style='display: inline-block; overflow: hidden; margin-left: 1px;' align=center>"
+                           +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fa fa-facebook"></a>'
+                           +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fa fa-twitter"></a>'
+                           +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fa fa-google"></a>'
+                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fa fa-linkedin"></a>'
                        +"</div>"
 
+
+/*
+   height/ix
+   'backtrack':$.trim(backtrack),
+   "refund":
+*/
 
                       +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
 
@@ -509,12 +507,12 @@ function poll_success(txid)
 
 function poll_id()
 {
-   var txid=$.trim($(this).val());
+   var t=$(this);
+   var txid=$.trim(t.val());
 
    if (txid.match(/^[0-9a-f]{64}$/i)) // transaction id
    {
       poll_show(txid);
-      $(this).val('');
       return;
    }
 
