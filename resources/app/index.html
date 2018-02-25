@@ -377,7 +377,7 @@
    $(document).on("click",'.nocustom', function(ev) { var t=$(this).parent().prev(); t.val(t.find('option:first').val()).show().prev().show(); t.next().hide(); })
 
    $(document).on("input",'.polloptiondrag',poll_drag);
-   $(document).on("input",'#pollfilter',function(){ var txid=$.trim($(this).val()); if (txid) poll_show(txid); });
+   $(document).on("input keypress",'#pollfilter',poll_id);
 // change error message invalid zcash address
 // change default port for rpc (in votecoind)
 // addr balance stats http://explorer.votecoin.site/insight-api-zcash/addr/t1Up..../?noTxList=1

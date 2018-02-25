@@ -18,6 +18,7 @@ function gui_show(t,duration)
         $('#'+t).show().css('opacity',0).fadeTo(1,1);
         if (t=='send') $('#sendto').focus();
         if (t=='dashboard') $('#txfilter').focus();
+        if (t=='vote') $('#pollfilter').focus();
         $('#right div').scrollTop(0);
     },100);
 }

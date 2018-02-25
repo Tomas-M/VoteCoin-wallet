@@ -74,13 +74,11 @@ function show_new_poll(ev)
                           +"<input type=file id=polllogo><label data-help='Using a logo image is optional. Choose a small image file from disk. Make sure its width is 220 pixels. File size affects the costs, so you should optimize your image before publishing. Reasonable size is ~ 2 KB. Transparent background is recommended.'"
                              +" for='polllogo' style='width: 202px; font-size: 14px; line-height: 19px;' class=forfile data-label='<i class=\"fa fa-image\"></i> &nbsp;Choose a logo (220px)'><i class='fa fa-image'></i> &nbsp;Choose a logo (220px)</label>"
                        +"</div><br>"
-                  +"<div class=hidden>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 185px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=refundable data-help='Refund is not guaranteed by the protocol. This setting only indicates whether the publisher (you) promises to refund votes (either losing or all or none) when the poll or campaign is over, if certain criteria is met (specified in public note).'>"
                              +"<option value=0>Non-refundable votes<option value=1>Refundable losing votes<option value=2>Refundable all votes</select>"
                        +"</div><br>"
-                  +"</div>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=suggestvot data-help='Suggest default vote size to encourage users to spend certain amount of total VOT on their voting.'>"
@@ -325,13 +323,22 @@ function poll_save(txid,data)
 }
 
 
-function poll_load(txid,doneFunc)
+function poll_load(txid,doneFunc,waitmsg)
 {
    if (polls[txid]) return doneFunc(polls[txid]);
-   poll_progress_show("Loading data...");
+   if (!waitmsg) waitmsg="Loading data...";
+   poll_progress_show(waitmsg);
 
    main.rpc("gettransaction",[txid],function(e)
    {
+       // transaction exists but is unconfirmed
+      if (e.txid==txid && e.confirmations==0)
+      {
+          setTimeout(function(){ poll_load(txid,doneFunc,"Waiting for confirmation..."); },1000);
+          return;
+      }
+
+      // transaction has a confirming block
       if (e.blockhash)
       main.rpc("getblock",[e.blockhash],function(b)
       {
@@ -339,13 +346,24 @@ function poll_load(txid,doneFunc)
          main.rpc("z_listreceivedbyaddress",[poll_address,-b.height],function(alltxs)
          {
             poll_progress_hide();
-            var memos=[], i;
+            var memos=[], i, ix;
             for (i=0; i<alltxs.length; i++) if (alltxs[i].txid==txid) memos.push(alltxs[i].memo);
             memos.sort(function(a,b){ a=a.substr(2,2); b=b.substr(2,2); if (a>b) return 1; if (b>a) return -1; return 0; });
             for (i=0; i<memos.length; i++) memos[i]=hexDecode(memos[i].substr(4));
             var data=JSON_fromString(memos.join(""));
 
-            if (data.logo_txid.match(/^[a-z0-9]+$/i))
+            // sanity checks
+            if (!data.options || data.options.length<2) return; // each poll must have at least two options
+            if (!data.addresses || data.addresses.length!=data.options.length) return; // each poll must have as many addresses as options
+            if (!data.title) return; // each poll must have title
+
+            // find transaction index in confirming block
+            for (ix=0; ix<b.tx.length; ix++) if (b.tx[ix]==txid) break;
+            data.height=b.height;
+            data.ix=ix;
+
+            // reusable txid for logo
+            if (data.logo_txid && data.logo_txid.match(/^[a-z0-9]{64}$/i))
                poll_load(data.logo_txid,function(ret)
                {
                   data.logo_src=ret.logo_src;
@@ -360,7 +378,7 @@ function poll_load(txid,doneFunc)
             }
          },poll_progress_hide); else poll_progress_hide();
       },poll_progress_hide); else poll_progress_hide();
-   },poll_progress_hide );
+   },poll_progress_hide,true);
 }
 
 
@@ -376,20 +394,19 @@ function poll_drag()
 
    var all=$('.polloptiondrag:not(#'+t.attr('id')+')');
 
-
    var max=t.attr('max');
    var current=t.val();
    var rest=max-current;
-   var totalvot=$('#pollsize').val();
-   if (totalvot=="custom") totalvot=num($('#pollsize2').val(),8);
+//   var totalvot=$('#pollsize').val();
+//   if (totalvot=="custom") totalvot=num($('#pollsize2').val(),8);
 
    // split rest between all, preserving their current proportions
    var sum=0;
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
-   all.each((ix,el)=>{ var e=$(el); var n=e.val()*rest/sum; if (isNaN(n)) n=Math.ceil(rest/all.length); e.val(Math.floor(n)); e.prev().prev().text(num(e.val()/max*totalvot*100,0,true)+"%") });
+   all.each((ix,el)=>{ var e=$(el); var n=e.val()*rest/sum; if (isNaN(n)) n=Math.ceil(rest/all.length); e.val(Math.floor(n)); e.prev().prev().text(num(e.val()/max*100,0,true)+"%") });
    sum=0;
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
-   t.prev().prev().text(num((max-sum)/max*totalvot*100,0,true)+"%");
+   t.prev().prev().text(num((max-sum)/max*100,0,true)+"%");
    t.val(max-sum);
 }
 
@@ -415,7 +432,6 @@ function poll_show(txid)
         options+="<div style='float: right;' class=polloptionsval></div><div class=polloptiontitle>"+htmlspecialchars(data.options[ix[i]])+"</div>"
                +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"><br>";
 
-      $('#newvote').html(""
 /*
    "addresses":addresses,
    "logo_name":
@@ -427,6 +443,9 @@ function poll_show(txid)
    "shuffle":
    "end":
 */
+      var votesize_precision=num(data.size,8,true).split(".")[2];
+      if (votesize_precision) votesize_precision=votesize_precision.length; else votesize_precision=0;
+      $('#newvote').html(""
                     +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
                        +"<div style='font-family: Arial; font-size: 27px;'>"+htmlspecialchars(data.title)+"</div>"
                        +"<div style='margin-top: 30px;'>"+options+"</div>"
@@ -435,31 +454,38 @@ function poll_show(txid)
 
                     +"<div style='display: inline-block; vertical-align: top; width: 222px;'>"
 
+                    +"<div><button style='width: 222px;' id=dovote data-help='Vote now. This action costs the total amount of VOT listed above.'><i class='fa fa-play'></i> &nbsp;Vote now</button></div>"
+
+/*
                         +"<div style='display: inline-block; overflow: hidden; margin-left: 1px; margin-top: 34px;' align=center>"
                            +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fa fa-facebook"></a>'
                            +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fa fa-twitter"></a>'
                            +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fa fa-google"></a>'
                            +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fa fa-linkedin"></a>'
                        +"</div>"
-
+*/
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
-                          +"<select style='width: 222px;' id=pollsize data-help='Your total vote size.'>"
-                             +"<option value='"+num(data.size,0,true)+"'>Your vote size: "+num(data.size,0,true)+" VOT<option value=custom>Custom vote size...</select>"
+                          +"<select style='width: 222px;' id=pollsize data-help='Size of your vote is the total amount of VOT you are willing to spend on this voting.'>"
+                             +"<option value='"+num(data.size,votesize_precision,true)+"'>Size of your vote: "+num(data.size,votesize_precision,true)+" VOT<option value='"+num(data.size*2,votesize_precision,true)+"'>Size of your vote: "+num(data.size*2,votesize_precision,true)+" VOT<option value='"+num(data.size*10,votesize_precision,true)+"'>Size of your vote: "+num(data.size*10,votesize_precision,true)+" VOT<option value=custom>Custom size...</select>"
                           +"<div style='position: relative;' class=hidden>"
                              +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; none; color: #777;' data-help='next'></span>"
-                             +"<input placeholder='"+num(data.size,0,true)+" VOT' type=text style='width: 170px; padding-right: 40px;' id=pollsize2 data-help='Custom vote size.'>"
+                             +"<input placeholder='"+num(data.size,votesize_precision,true)+" VOT' type=text style='width: 170px; padding-right: 40px;' id=pollsize2 data-help='Custom vote size.'>"
                           +"</div>"
                        +"</div><br>"
 
+                       +"<div>"
+                          +"Ends in:<br><div style='font-size: 20px;'>1d 7h</div>"
+                       +"</div>"
+
                        +"<div style='display: inline-block; overflow: hidden;'>"
                          +"<img id=logopreview style='border: 1px solid transparent; width: 220px;'>"
-                       +"</div><br><br>"
+                       +"</div>"
+
 
                       +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
+
                     +"</div>"
-
-
      );
 
      // if logo image is present, load it
@@ -475,7 +501,33 @@ function poll_show(txid)
 
 function poll_success(txid)
 {
-   poll_progress_hide();
    my_pollids[txid]=true;
+   poll_progress_show("Waiting for confirmation...");
    poll_show(txid);
+}
+
+
+function poll_id()
+{
+   var txid=$.trim($(this).val());
+
+   if (txid.match(/^[0-9a-f]{64}$/i)) // transaction id
+   {
+      poll_show(txid);
+      $(this).val('');
+      return;
+   }
+
+   var bix=txid.match(/^([0-9]+)[-@#/:.]([0-9]+)$/);
+   if (bix) // block id - tx index
+   {
+      main.rpc("getblockhash",[parseInt(bix[1])],function(hash){
+         if (hash)
+         main.rpc("getblock",[hash],function(block){
+            var tx=block.tx[parseInt(bix[2])];
+            if (tx) poll_show(tx);
+         });
+      });
+   }
+
 }
