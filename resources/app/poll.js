@@ -32,6 +32,7 @@ function poll_dashboard(show)
       $('#newvote').hide();
       $('#addnewpoll').html($('#addnewpoll').data('prevtext')).removeClass('cancel').data('prevtext','');
       $('#actionbutton').html('');
+      $('#voteid').text('');
    }
    else
    {
@@ -503,6 +504,7 @@ function poll_show(txid)
                     +"</div>"
      );
 
+     $('#voteid').text("#"+data.height+"#"+data.ix);
      $('#actionbutton').html("<button style='width: 222px;' id=dovote data-help='Vote now. This action costs the total amount of VOT listed above.'><i class='fa fa-play'></i> &nbsp;Vote now</button>");
 
      // if logo image is present, load it
