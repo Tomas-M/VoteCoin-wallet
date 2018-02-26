@@ -31,13 +31,13 @@ function poll_dashboard(show)
       $('#votelist').show();
       $('#newvote').hide();
       $('#addnewpoll').html($('#addnewpoll').data('prevtext')).removeClass('cancel').data('prevtext','');
+      $('#actionbutton').html('');
    }
    else
    {
       $('#pollfilter').hide();
       $('#votelist').hide();
       $('#newvote').show();
-
       $('#addnewpoll').data('prevtext',$('#addnewpoll').html());
       $('#addnewpoll').html('<span class="fa fa-long-arrow-left"></span> &nbsp;back').addClass('cancel');
    }
@@ -111,12 +111,13 @@ function show_new_poll(ev)
                              +"<input placeholder='Your distribution address: t1xyz' type=text style='width: 170px; padding-right: 40px;' id=countvotes2 data-help='Specify address from which you distribute votes to your users. Only votes trackable back to this sending address will be counted towards the results.'>"
                           +"</div>"
                        +"</div><br>"
-                       +"<div><button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, <span id=pollcost>10</span> VOT</button></div>"
                        +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
                     +"</div>"
                  );
 
    $('#polltitle').focus();
+   $('#actionbutton').html("<button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, <span id=pollcost>10</span> VOT</button>");
+   $('#actionbutton button').trigger('mouseenter');
 }
 
 
@@ -442,17 +443,13 @@ function poll_show(txid)
       var votesize_precision=num(data.size,8,true).split(".")[2];
       if (votesize_precision) votesize_precision=votesize_precision.length; else votesize_precision=0;
       $('#newvote').html(""
+                    +"<div style='font-size: 27px; margin-bottom: 10px;'>"+htmlspecialchars(data.title)+"</div>"
                     +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
-                       +"<div style='font-family: Arial; font-size: 27px;'>"+htmlspecialchars(data.title)+"</div>"
-                       +"<div style='margin-top: 30px;'>"+options+"</div>"
-                       +"<div style='font-family: Arial; margin-bottom: 6px; margin-top: 40px; margin-bottom: 20px;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
+                       +"<div>"+options+"</div>"
+                       +"<div style='margin-bottom: 6px; margin-top: 20px; margin-bottom: 20px;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
                     +"</div>"
 
-                    +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 100px;'>"
-
-                       +"<div style='display: inline-block; overflow: hidden;'>"
-                         +"<img id=logopreview style='border: 1px solid transparent; width: 220px; max-height: 220px;'>"
-                       +"</div>"
+                    +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 20px;'>"
 
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
@@ -471,8 +468,23 @@ function poll_show(txid)
                           +"<div class=end1b>days</div><div class=end2b>hours</div><div class=end3b>mins</div>"
                        +"</div>"
 
-                       +"<div><button style='width: 222px;' id=dovote data-help='Vote now. This action costs the total amount of VOT listed above.'><i class='fa fa-play'></i> &nbsp;Vote now</button></div>"
+                       +(data.refund==2?
+                          "<div id=helpcontainer><div style='position: relative; top:13px; border-bottom: 1px dashed #666; z-index:1'></div>"
+                          +"<div align=center><i class='fa fa-retweet' style='padding: 5px; background-color: #e9e9e9; color: #777; z-index:2; position: relative; top: -2px;'></i></div>"
+                          +"<div align=justify style='font-size: 13px; line-height: 17px;'>Organizer of this poll or campaign promises to refund losing votes. This is not guaranteed by the protocol, so you need "
+                          +"to trust the organizer to keep their promise.</div>"
+                       :'')
 
+                       +(data.refund==1?
+                          "<div id=helpcontainer><div style='position: relative; top:13px; border-bottom: 1px dashed #666; z-index:1'></div>"
+                          +"<div align=center><i class='fa fa-retweet' style='padding: 5px; background-color: #e9e9e9; color: #777; z-index:2; position: relative; top: -2px;'></i></div>"
+                          +"<div align=justify style='font-size: 13px; line-height: 17px;'>Organizer of this poll or campaign promises to refund all votes if certain conditions are met. "
+                          +"Remember that this is not guaranteed by the protocol, so you need to trust the organizer to keep their promise.</div>"
+                       :'')
+
+                       +"<div style='display: inline-block; overflow: hidden; margin-top: 30px;'>"
+                         +"<img id=logopreview style='border: 1px solid transparent; width: 220px; max-height: 220px;'>"
+                       +"</div>"
 
                         +"<div style='display: inline-block; overflow: hidden; margin-left: 1px;' align=center>"
                            +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fa fa-facebook"></a>'
@@ -485,13 +497,13 @@ function poll_show(txid)
 /*
    height/ix
    'backtrack':$.trim(backtrack),
-   "refund":
 */
 
-                      +"<br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
-
+                      +"<br><br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
                     +"</div>"
      );
+
+     $('#actionbutton').html("<button style='width: 222px;' id=dovote data-help='Vote now. This action costs the total amount of VOT listed above.'><i class='fa fa-play'></i> &nbsp;Vote now</button>");
 
      // if logo image is present, load it
      if (data.logo_src && data.logo_src.match(/^data:/)) $('#logopreview').attr('src',data.logo_src);

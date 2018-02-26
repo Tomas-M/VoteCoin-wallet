@@ -114,13 +114,15 @@
         button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; font-size: 14px; letter-spacing: 1px; }
         button:hover { background-color: #2ba7ff; cursor: pointer; }
         button:active { background-color: #1197ff; cursor: pointer; }
-        button.cancel { background-color: #ccc; color: #444; border-color: #bbb; }
+        button.cancel { background-color: #ccc; color: #444; border-color: #bbb; margin-right: 17px; width: 110px !important; }
         button.cancel:active, button.cancel:focus { background-color: #bbb; }
         input[type=checkbox]+label { line-height: 30px; }
 
         input[type=file] {	width: 0.1px;	height: 0.1px;	opacity: 0;	overflow: hidden;	position: absolute;	z-index: -1;}
         label.forfile { border: 1px solid #ccc; background-color: #efefef !important; padding: 9px; margin-bottom: 6px; display: inline-block; border-radius: 3px; cursor: pointer; }
 
+        #actionbutton { display: inline-block; }
+        #actionbutton:empty { display: none; }
         #addnewpoll { transition: background-color .3s ease-in-out, border-color .3s ease-in-out; }
         #addoption { background-color: transparent; border:0; padding: 0px; padding-left: 10px; height: 20px; color: #2ab6ff; }
         #rmoption { padding: 0px; height: 20px; line-height: 15px; background-color: transparent; border: 0; color: #444; margin-left: 10px; }
@@ -284,7 +286,10 @@
                   <div style='margin-bottom: 40px; margin-top: 240px'><span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span></div><span id=pollprogressmsg>Please wait ...</span>
                </div>
             </div>
-            <button id=addnewpoll style="position: absolute; right: 30px;">+ Add poll or elections</button>
+            <div style="position: absolute; right: 30px;">
+               <button id=addnewpoll style="display: inline-block; width: 222px;">+ Add poll or campaign</button>
+               <div id=actionbutton></div>
+            </div>
             <h1><i class="fa fa-bar-chart"></i>Vote</h1>
             <div id=votelist>
                <br><br>In order to see a poll or campaign, enter its ID below:<br><br>
@@ -371,9 +376,9 @@
    $(document).on('keyup','#txfilter',update_gui);
 
    $(document).on('click','#addnewpoll',show_new_poll);
-   $(document).on('mouseenter','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label, .nocustom',show_new_poll_help);
-   $(document).on('mouseleave','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label, .nocustom',show_new_poll_help);
-   $(document).on('focus blur','#newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
+   $(document).on('mouseenter','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label, .nocustom',show_new_poll_help);
+   $(document).on('mouseleave','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label, .nocustom',show_new_poll_help);
+   $(document).on('focus blur','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
    $(document).on('click','#addoption',add_poll_option);
    $(document).on('click','#rmoption',rm_poll_option);
    $(document).on('click','#startpoll',poll_start);
