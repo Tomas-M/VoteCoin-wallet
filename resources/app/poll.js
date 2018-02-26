@@ -336,7 +336,7 @@ function poll_load(txid,doneFunc,waitmsg)
        // transaction exists but is unconfirmed
       if (e.txid==txid && e.confirmations==0)
       {
-          setTimeout(function(){ poll_load(txid,doneFunc,"Waiting for confirmation..."); },1000);
+          setTimeout(function(){ poll_load(txid,doneFunc,"Waiting for confirmation..."); },5000);
           return;
       }
 
@@ -438,16 +438,16 @@ function poll_show(txid)
       if (data.shuffle) array_shuffle(ix);
 
       for (i=0; i<ix.length; i++)
-        options+="<div style='float: right;' class=polloptionsval></div><div class=polloptiontitle>"+htmlspecialchars(data.options[ix[i]])+"</div>"
-               +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"><br>";
+        options+="<div style='position: relative;'><div style='color: #f7931a; font-weight: bold; position: absolute; right: 0; bottom: 50px;' class=polloptionsval></div><div class=polloptiontitle style='width: calc(100% - 50px);'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
+               +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"></div><br>";
 
       var votesize_precision=num(data.size,8,true).split(".")[2];
       if (votesize_precision) votesize_precision=votesize_precision.length; else votesize_precision=0;
       $('#newvote').html(""
-                    +"<div style='font-size: 27px; margin-bottom: 10px;'>"+htmlspecialchars(data.title)+"</div>"
+                    +"<div style='font-size: 27px; margin-bottom: 10px; word-wrap: break-word;'>"+htmlspecialchars(data.title)+"</div>"
                     +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
                        +"<div>"+options+"</div>"
-                       +"<div style='margin-bottom: 6px; margin-top: 20px; margin-bottom: 20px;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
+                       +"<div style='margin-bottom: 6px; margin-top: 20px; margin-bottom: 20px; word-wrap: break-word;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
                     +"</div>"
 
                     +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 20px;'>"
@@ -469,18 +469,17 @@ function poll_show(txid)
                           +"<div class=end1b>days</div><div class=end2b>hours</div><div class=end3b>mins</div>"
                        +"</div>"
 
-                       +(data.refund==2?
-                          "<div id=helpcontainer><div style='position: relative; top:13px; border-bottom: 1px dashed #666; z-index:1'></div>"
-                          +"<div align=center><i class='fa fa-retweet' style='padding: 5px; background-color: #e9e9e9; color: #777; z-index:2; position: relative; top: -2px;'></i></div>"
-                          +"<div align=justify style='font-size: 13px; line-height: 17px;'>Organizer of this poll or campaign promises to refund losing votes. This is not guaranteed by the protocol, so you need "
-                          +"to trust the organizer to keep their promise.</div>"
-                       :'')
-
                        +(data.refund==1?
                           "<div id=helpcontainer><div style='position: relative; top:13px; border-bottom: 1px dashed #666; z-index:1'></div>"
                           +"<div align=center><i class='fa fa-retweet' style='padding: 5px; background-color: #e9e9e9; color: #777; z-index:2; position: relative; top: -2px;'></i></div>"
-                          +"<div align=justify style='font-size: 13px; line-height: 17px;'>Organizer of this poll or campaign promises to refund all votes if certain conditions are met. "
-                          +"Remember that this is not guaranteed by the protocol, so you need to trust the organizer to keep their promise.</div>"
+                          +"<div align=justify style='font-size: 13px; line-height: 17px;'>Organizer of this poll or campaign promises to refund losing votes. This is not enforced by the protocol, so you need to decide if you trust the organizer to keep their promise.</div>"
+                       :'')
+
+                       +(data.refund==2?
+                          "<div id=helpcontainer><div style='position: relative; top:13px; border-bottom: 1px dashed #666; z-index:1'></div>"
+                          +"<div align=center><i class='fa fa-retweet' style='padding: 5px; background-color: #e9e9e9; color: #777; z-index:2; position: relative; top: -2px;'></i></div>"
+                          +"<div align=justify style='font-size: 13px; line-height: 17px;'>Organizer of this poll or campaign promises to refund all votes, when certain conditions are met. "
+                          +"Remember that this is not enforced by the protocol, so you need to decide if you trust the organizer to keep their promise.</div>"
                        :'')
 
                        +"<div style='display: inline-block; overflow: hidden; margin-top: 30px;'>"
@@ -537,7 +536,7 @@ function poll_id()
       return;
    }
 
-   var bix=txid.match(/^([0-9]+)[-@#/:.]([0-9]+)$/);
+   var bix=txid.match(/^#*([0-9]+)[-@#/:.]([0-9]+)$/);
    if (bix) // block id - tx index
    {
       main.rpc("getblockhash",[parseInt(bix[1])],function(hash){
