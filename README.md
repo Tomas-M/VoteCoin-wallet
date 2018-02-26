@@ -2,6 +2,7 @@
 
 Warning: this is a pre-alpha development tree of VoteCoin GUI wallet for Windows.
 Things are expected to be broken. Use at your own risk.
+Do not use master branch under any circumstances. Use releases instead.
 
 # How to start:
 
