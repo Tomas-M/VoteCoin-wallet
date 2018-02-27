@@ -222,8 +222,8 @@ function upload_file_change()
             $('#logopreview').html('<img src="'+reader.result+'" width=220 class=hidden style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');
             $('#logopreview img').off().on('error',reset).on('load',function()
             {
-               if (this.naturalWidth>220) { reset(); alert('Image width must be less or equal 220px'); return; }
-               if (this.naturalHeight>220) { reset(); alert('Image height must be less or equal 220px'); return; }
+               if (this.naturalWidth>220) { reset(); alert('Selected image is too big. Image width must be equal or less than 220px'); return; }
+               if (this.naturalHeight>220) { reset(); alert('Selected image is too big. Image height must be equal or less than 220px'); return; }
                $(this).show();
             });
             poll_change.call(this);
