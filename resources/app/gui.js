@@ -195,6 +195,19 @@ function update_gui()
     for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     sethtml('walletaddresses',(addressesT!=''?"<br><h2><i class='fa fa-user' style='margin-right: 10px;'></i></h2>"+addressesT:"")+(addressesS!=''?"<br><h2><i class='fa fa-shield' style='margin-right: 10px;'></i></h2>"+addressesS:""));
+
+    var votelist='';
+    var allpolls=makeOrderedArray(polls,['height','ix'],'txid');
+    for (i=0; i<allpolls.length; i++)
+    {
+       var poll=allpolls[i];
+       votelist+='<div class=votelistrow data-polltx="'+poll.txid+'">';
+       votelist+='<div class=votelistid>#'+poll.height+'#'+poll.ix+'</div>';
+       votelist+='<div class=votelisttitle>'+htmlspecialchars(poll.title)+'</div>';
+       votelist+='</div>';
+    }
+
+    sethtml('votelist',votelist);
 }
 
 function setAddressFrom(ev)

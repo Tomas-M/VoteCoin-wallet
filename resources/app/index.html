@@ -63,14 +63,35 @@
 
         .addresslistrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .addresslistrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
-        .addressbuttons { display: none; text-align: right; width: 30px; margin-bottom: 5px; }
-        .addressbalance { text-align: right; width: 170px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
         .addresslabel { width: calc(100% - 200px); overflow: auto; overflow-y:hidden; cursor:pointer; }
+        .addressbalance { text-align: right; width: 170px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
+        .addressbuttons { display: none; text-align: right; width: 30px; margin-bottom: 5px; }
         .addressbuttons .fa-upload { cursor:pointer; }
         .addresslistrow:last-child { border-bottom: 0; }
 
-        .addressbalance::-webkit-scrollbar-thumb, .operationstatus::-webkit-scrollbar-thumb, .operationamount::-webkit-scrollbar-thumb, .addresslabel::-webkit-scrollbar-thumb, .operationtime::-webkit-scrollbar-thumb {  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #aaa 5px, #aaa 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
-        .addressbalance::-webkit-scrollbar, .operationstatus::-webkit-scrollbar, .operationamount::-webkit-scrollbar, .addresslabel::-webkit-scrollbar, .operationtime::-webkit-scrollbar { width: 0; height: 13px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #d7d7d7 5px, #d7d7d7 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
+        .votelistrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
+        .votelistrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
+        .votelistid { width: 110px; padding-left: 5px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
+        .votelisttitle { width: calc(100% - 200px); overflow: auto; overflow-y:hidden; cursor:pointer; }
+        .votelistbuttons { display: none; text-align: right; width: 30px; margin-bottom: 5px; }
+        .votelistresult { text-align: right; width: 170px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
+        .votelistrow:last-child { border-bottom: 0; }
+
+        .addressbalance::-webkit-scrollbar-thumb,
+        .operationstatus::-webkit-scrollbar-thumb,
+        .operationamount::-webkit-scrollbar-thumb,
+        .addresslabel::-webkit-scrollbar-thumb,
+        .operationtime::-webkit-scrollbar-thumb,
+        .votelisttitle::-webkit-scrollbar-thumb
+        {  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #aaa 5px, #aaa 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
+
+        .addressbalance::-webkit-scrollbar,
+        .operationstatus::-webkit-scrollbar,
+        .operationamount::-webkit-scrollbar,
+        .addresslabel::-webkit-scrollbar,
+        .operationtime::-webkit-scrollbar,
+        .votelisttitle::-webkit-scrollbar
+        { width: 0; height: 13px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #d7d7d7 5px, #d7d7d7 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
 
         #transactionchart { margin-top: 40px; white-space: nowrap; height: 150px; direction: rtl; overflow: hidden; }
         .chartbar { background-color: #f7931a; min-height: 5px; min-width: 10px; max-width: 20px; display: inline-block; border: 1px solid #e9e9e9; cursor: default; }
@@ -291,12 +312,13 @@
                <div id=actionbutton></div>
             </div>
             <h1><i class="fa fa-bar-chart"></i>Vote <span id=voteid style="color: #888; margin-left: 20px;"></span></h1>
-            <div id=votelist>
+            <div id=votesearch>
                <br><br>In order to see a poll or campaign, enter its ID below:<br><br>
+               <input id=pollfilter type=text class=search placeholder=" &#128269;  Enter ID of poll or campaign">
+               <br><br>
             </div>
-            <input id=pollfilter type=text class=search placeholder=" &#128269;  Enter ID of poll or campaign">
+            <div id=votelist></div>
             <div id=newvote></div>
-
          </div>
 
          <div id=backup class=container>
@@ -382,6 +404,7 @@
    $(document).on('click','#addoption',add_poll_option);
    $(document).on('click','#rmoption',rm_poll_option);
    $(document).on('click','#startpoll',poll_start);
+   $(document).on('click','.votelisttitle',function(){ poll_id($(this).parent().data('polltx')); })
 
    $(document).on("change","input[type=file]",upload_file_change);
    $(document).on("change keyup paste","input[type=text], textarea",poll_change);
@@ -390,8 +413,8 @@
    $(document).on("click",'.nocustom', function(ev) { var t=$(this).parent().prev(); t.val(t.find('option:first').val()).show().prev().show(); t.next().hide(); })
 
    $(document).on("input",'.polloptiondrag',poll_drag);
-   $(document).on("keyup",'#pollfilter',function(e){ if (e.keyCode==13) poll_id.call(this); } );
-   $(document).on("input",'#pollfilter',poll_id);
+   $(document).on("keyup",'#pollfilter',function(e){ if (e.keyCode==13) poll_id($(this).val()); } );
+   $(document).on("input",'#pollfilter',function() { poll_id($(this).val()); } );
 
 // change error message invalid zcash address
 // change default port for rpc (in votecoind)

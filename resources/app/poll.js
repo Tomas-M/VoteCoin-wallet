@@ -29,6 +29,7 @@ function poll_dashboard(show)
    {
       $('#pollfilter').show();
       $('#votelist').show();
+      $('#votesearch').show();
       $('#newvote').hide();
       $('#addnewpoll').html($('#addnewpoll').data('prevtext')).removeClass('cancel').data('prevtext','');
       $('#actionbutton').html('');
@@ -38,6 +39,7 @@ function poll_dashboard(show)
    {
       $('#pollfilter').hide();
       $('#votelist').hide();
+      $('#votesearch').hide();
       $('#newvote').show();
       $('#addnewpoll').data('prevtext',$('#addnewpoll').html());
       $('#addnewpoll').html('<span class="fa fa-long-arrow-left"></span> &nbsp;back').addClass('cancel');
@@ -215,7 +217,7 @@ function upload_file_change()
       if (this.files && this.files.length>0)
       {
          var reader  = new FileReader();
-         reader.addEventListener("load", function () { $('#logopreview').html('<img src="'+reader.result+'" width=220 class=hidden style="border: 1px solid transparent; margin-bottom: 10px;">');  $('#logopreview img').off().on('error',reset).on('load',function(){$(this).show();}); poll_change(); }, false);
+         reader.addEventListener("load", function () { $('#logopreview').html('<img src="'+reader.result+'" width=220 class=hidden style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');  $('#logopreview img').off().on('error',reset).on('load',function(){$(this).show();}); poll_change(); }, false);
          reader.readAsDataURL(this.files[0]);
 
          label.html("<i class='fa fa-image'></i> &nbsp;<span id=logoname>"+htmlspecialchars(file)+"</span>");
@@ -525,10 +527,9 @@ function poll_success(txid)
 }
 
 
-function poll_id()
+function poll_id(txid)
 {
-   var t=$(this);
-   var txid=$.trim(t.val());
+   txid=$.trim(txid);
 
    if (txid.match(/^[0-9a-f]{64}$/i)) // transaction id
    {
