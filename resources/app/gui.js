@@ -208,7 +208,58 @@ function update_gui()
     }
 
     sethtml('votelist',votelist);
+    update_gui_polldate();
 }
+
+
+function dayscounter(secs)
+{
+   var ret=[];
+   ret.years=Math.floor(secs/(86400*365)); secs=secs-ret.years*86400*365;
+   ret.months=Math.floor(secs/(86400*30)); secs=secs-ret.months*86400*30;
+   ret.weeks=Math.floor(secs/(86400*7)); secs=secs-ret.weeks*86400*7;
+   ret.days=Math.floor(secs/86400); secs=secs-ret.days*86400;
+   ret.hours=Math.floor(secs/3600); secs=secs-ret.hours*3600;
+   ret.minutes=Math.floor(secs/60);
+   return ret;
+}
+
+
+function update_gui_polldate()
+{
+   var dates=[];
+   var datelabels=[]
+   var diff=$('#endtimer').data('endblock')-totalblocks;
+   if (diff>0)
+   {
+      diff=dayscounter(diff*2.5*60);
+      if (diff.years>0) { dates=[diff.years, diff.months, diff.weeks]; datelabels=['years','mons','weeks']; }
+      else if (diff.months>0) { dates=[diff.months, diff.weeks, diff.days]; datelabels=['mons','weeks','days']; }
+      else if (diff.weeks>0) { dates=[diff.weeks, diff.days, diff.hours]; datelabels=['weeks','days','hours']; }
+      else if (diff.days>0) { dates=[diff.days, diff.hours, diff.minutes]; datelabels=['days','hours','mins']; }
+      else if (diff.hours>0) { dates=['~~', diff.hours, diff.minutes]; datelabels=['--','hours','mins']; }
+      else { dates=['~~', '~~', diff.minutes]; datelabels=['--','--','mins']; }
+
+      $('.end1').text((dates[0]<10?'0':'')+dates[0]);
+      $('.end2').text((dates[1]<10?'0':'')+dates[1]);
+      $('.end3').text((dates[2]<10?'0':'')+dates[2]);
+      $('.end1b').text(datelabels[0]);
+      $('.end2b').text(datelabels[1]);
+      $('.end3b').text(datelabels[2]);
+   }
+   else
+   {
+      $('.end1').text('~~');
+      $('.end2').text('~~');
+      $('.end3').text('~~');
+      $('.end1b').text('--');
+      $('.end2b').text('--');
+      $('.end3b').text('--');
+      $('#dovote').prop('disabled',true).text("Voting has ended");
+   }
+}
+
+
 
 function setAddressFrom(ev)
 {

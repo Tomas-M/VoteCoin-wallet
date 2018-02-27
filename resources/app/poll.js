@@ -429,7 +429,7 @@ function poll_show(txid)
    {
       var i;
       var max=100000000;
-      var url='http://pollex.votecoin.site/'+data.txid;
+      var url='http://pollex.votecoin.site/'+data.height+":"+data.ix;
       var title='VoteCoin+Poll+Explorer';
 
       var options="";
@@ -443,7 +443,7 @@ function poll_show(txid)
         options+="<div style='position: relative;'><div style='color: #f7931a; font-weight: bold; position: absolute; right: 0; bottom: 50px;' class=polloptionsval></div><div class=polloptiontitle style='width: calc(100% - 50px);'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
                +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"></div><br>";
 
-      var votesize_precision=num(data.size,8,true).split(".")[2];
+      var votesize_precision=num(data.size,8,true).split(".")[1];
       if (votesize_precision) votesize_precision=votesize_precision.length; else votesize_precision=0;
       $('#newvote').html(""
                     +"<div style='font-size: 27px; margin-bottom: 10px; word-wrap: break-word;'>"+htmlspecialchars(data.title)+"</div>"
@@ -457,14 +457,14 @@ function poll_show(txid)
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=pollsize data-help='Size of your vote is the total amount of VOT you are willing to spend on this voting.'>"
-                             +"<option value='"+num(data.size,votesize_precision,true)+"'>Size of your vote: "+num(data.size,votesize_precision,true)+" VOT<option value='"+num(data.size*2,votesize_precision,true)+"'>Size of your vote: "+num(data.size*2,votesize_precision,true)+" VOT<option value='"+num(data.size*10,votesize_precision,true)+"'>Size of your vote: "+num(data.size*10,votesize_precision,true)+" VOT<option value=custom>Custom size...</select>"
+                             +"<option value='"+num(data.size,votesize_precision)+"'>Size of your vote: "+num(data.size,votesize_precision)+" VOT<option value='"+num(data.size*2,votesize_precision)+"'>Size of your vote: "+num(data.size*2,votesize_precision)+" VOT<option value='"+num(data.size*10,votesize_precision)+"'>Size of your vote: "+num(data.size*10,votesize_precision)+" VOT<option value=custom>Custom size...</select>"
                           +"<div style='position: relative;' class=hidden>"
                              +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; none; color: #777;' data-help='next'></span>"
-                             +"<input placeholder='"+num(data.size,votesize_precision,true)+" VOT' type=text style='width: 170px; padding-right: 40px;' id=pollsize2 data-help='Custom vote size.'>"
+                             +"<input placeholder='"+num(data.size,votesize_precision)+" VOT' type=text style='width: 170px; padding-right: 40px;' id=pollsize2 data-help='Custom vote size.'>"
                           +"</div>"
                        +"</div><br>"
 
-                       +"<div align=center>"
+                       +"<div align=center id=endtimer data-endblock='"+num(data.endblock,0)+"'>"
                           +"<div>"
                           +"<div class=end1>07</div><div class=end2>07</div><div class=end3>07</div>"
                           +"</div>"
@@ -495,12 +495,6 @@ function poll_show(txid)
                            +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fa fa-linkedin"></a>'
                        +"</div>"
 
-
-/*
-   height/ix
-   'backtrack':$.trim(backtrack),
-*/
-
                       +"<br><br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
                     +"</div>"
      );
@@ -515,6 +509,7 @@ function poll_show(txid)
      $('.polloptiondrag').val(max/ix.length);
      poll_drag();
      $('#newvote').css('opacity',0).delay(400).css('opacity',1);
+     update_gui_polldate();
    });
 }
 

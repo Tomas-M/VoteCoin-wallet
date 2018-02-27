@@ -135,6 +135,7 @@
         button { background-color: #2ab6ff; color: #ffffff; border: 1px solid #2ab6ff; height: 48px; padding: 10px 20px 10px 20px; margin-bottom: 10px; border-radius: 3px;  outline: none; font-size: 14px; letter-spacing: 1px; }
         button:hover { background-color: #2ba7ff; cursor: pointer; }
         button:active { background-color: #1197ff; cursor: pointer; }
+        button:disabled { background-color: #ccc; color: #444; border-color: #bbb; }
         button.cancel { background-color: #ccc; color: #444; border-color: #bbb; margin-right: 17px; width: 110px !important; }
         button.cancel:active, button.cancel:focus { background-color: #bbb; }
         input[type=checkbox]+label { line-height: 30px; }
@@ -412,7 +413,7 @@
    $(document).on("change",'#countvotes, #suggestvot, #endblock, #pollsize', function(ev) { var t=$(this); if (t.val()!='custom') return; t.hide(); t.prev().hide(); t.next().show(); t.next().find('input').focus(); })
    $(document).on("click",'.nocustom', function(ev) { var t=$(this).parent().prev(); t.val(t.find('option:first').val()).show().prev().show(); t.next().hide(); })
 
-   $(document).on("input",'.polloptiondrag',poll_drag);
+   $(document).on("input",'.polloptiondrag, #pollsize2',poll_drag);
    $(document).on("keyup",'#pollfilter',function(e){ if (e.keyCode==13) poll_id($(this).val()); } );
    $(document).on("input",'#pollfilter',function() { poll_id($(this).val()); } );
 
