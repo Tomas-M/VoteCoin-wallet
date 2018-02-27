@@ -138,7 +138,7 @@ function rm_poll_option()
     var el=$('#options');
     var i=el.find('input').length;
     if (i<=2) return;
-    el.find('input').last().fadeTo(200,0,function(){ $(this).slideUp(100,function(){ $(this).remove(); poll_change(); }); });
+    el.find('input').last().fadeTo(200,0,function(){ $(this).slideUp(100,function(){ $(this).remove(); poll_change.call(this); }); });
     if (i>3) $('#rmoption').fadeIn(); else $('#rmoption').fadeOut();
 }
 
@@ -217,13 +217,23 @@ function upload_file_change()
       if (this.files && this.files.length>0)
       {
          var reader  = new FileReader();
-         reader.addEventListener("load", function () { $('#logopreview').html('<img src="'+reader.result+'" width=220 class=hidden style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');  $('#logopreview img').off().on('error',reset).on('load',function(){$(this).show();}); poll_change(); }, false);
+         reader.addEventListener("load", function ()
+         {
+            $('#logopreview').html('<img src="'+reader.result+'" width=220 class=hidden style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');
+            $('#logopreview img').off().on('error',reset).on('load',function()
+            {
+               if (this.naturalWidth>220) { reset(); alert('Image width must be less or equal 220px'); return; }
+               if (this.naturalHeight>220) { reset(); alert('Image height must be less or equal 220px'); return; }
+               $(this).show();
+            });
+            poll_change.call(this);
+         }, false);
          reader.readAsDataURL(this.files[0]);
 
          label.html("<i class='fa fa-image'></i> &nbsp;<span id=logoname>"+htmlspecialchars(file)+"</span>");
       }
 
-   poll_change();
+   poll_change.call(this);
 }
 
 
@@ -238,7 +248,11 @@ function memos_generate(data)
 
 function poll_change()
 {
+   var t=$(this);
+   if (t.closest('#newvote').length>0) return poll_drag();
+
    // calculate poll size (memos) with fake addresses to estimate fee
+   if (t.closest('#newvote').length>0)
    poll_data(false, (data)=>
    {
       var memos=memos_generate(data);
@@ -392,6 +406,7 @@ function poll_drag()
    var t=$(this);
    if (!t.hasClass('polloptiondrag'))
    {
+      if ($('.polloptiondrag').length<1) return;
       var random = Math.floor(Math.random()*$('.polloptiondrag').length);
       t=$('.polloptiondrag').eq(random);
    }
@@ -453,9 +468,9 @@ function poll_show(txid)
 
       for (i=0; i<ix.length; i++)
         options+="<div style='position: relative;'>"
-                    +"<div style='font-size: 12px; position: absolute; right: 0; bottom: 39px;'></div>"
+                    +"<div style='font-size: 12px; position: absolute; right: 0; bottom: 39px; background-color: #e9e9e9; z-index:3; padding: 5px 0 0 5px;'></div>"
                     +"<div style='color: #fff; letter-spacinag: 0; font-size: 9px; pointer-events: none; position: absolute; left: 0; bottom: 18px;' class=polloptionsval></div>"
-                    +"<div class=polloptiontitle style='width: calc(100% - 50px); position: relative; top: -1px;'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
+                    +"<div class=polloptiontitle style='width: calc(100% - 100px); position: relative; top: -1px;'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
                     +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+">"
                  +"</div><br>";
 
@@ -468,7 +483,7 @@ function poll_show(txid)
                        +"<div style='margin-bottom: 6px; margin-top: 20px; margin-bottom: 20px; word-wrap: break-word;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
                     +"</div>"
 
-                    +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 20px;'>"
+                    +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 9px;'>"
 
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
