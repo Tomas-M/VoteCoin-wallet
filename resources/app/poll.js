@@ -401,16 +401,28 @@ function poll_drag()
    var max=t.attr('max');
    var current=t.val();
    var rest=max-current;
-//   var totalvot=$('#pollsize').val();
-//   if (totalvot=="custom") totalvot=num($('#pollsize2').val(),8);
+   var totalvot=$('#pollsize').val();
+   if (totalvot=="custom") totalvot=num($('#pollsize2').val(),8);
+   var precision=4;
 
    // split rest between all, preserving their current proportions
    var sum=0;
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
-   all.each((ix,el)=>{ var e=$(el); var n=e.val()*rest/sum; if (isNaN(n)) n=Math.ceil(rest/all.length); e.val(Math.floor(n)); e.prev().prev().text(num(e.val()/max*100,0,true)+"%") });
+   all.each(function(ix,el)
+   {
+      var e=$(el); var n=e.val()*rest/sum; if (isNaN(n)) n=Math.ceil(rest/all.length);
+      e.val(Math.floor(n));
+      var perc=e.prev().prev();
+      perc.text(num(n/max*100,0,true)+"%");
+      perc.css('left',((e.width()-32)*n/max+21-perc.width()/2)+'px');
+      perc.prev().text(num(totalvot*n/max,precision)+" VOT");
+   });
    sum=0;
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
-   t.prev().prev().text(num((max-sum)/max*100,0,true)+"%");
+   var perc=t.prev().prev();
+   perc.text(num((max-sum)/max*100,0,true)+"%")
+   perc.css('left',((t.width()-32)*(max-sum)/max+21-perc.width()/2)+'px');
+   perc.prev().text(num(totalvot*(max-sum)/max,precision)+" VOT");
    t.val(max-sum);
 }
 
@@ -440,8 +452,12 @@ function poll_show(txid)
       if (data.shuffle) array_shuffle(ix);
 
       for (i=0; i<ix.length; i++)
-        options+="<div style='position: relative;'><div style='color: #f7931a; font-weight: bold; position: absolute; right: 0; bottom: 50px;' class=polloptionsval></div><div class=polloptiontitle style='width: calc(100% - 50px);'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
-               +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+"></div><br>";
+        options+="<div style='position: relative;'>"
+                    +"<div style='font-size: 12px; position: absolute; right: 0; bottom: 50px;'></div>"
+                    +"<div style='color: #fff; letter-spacing: 0; font-size: 11px; pointer-events: none; position: absolute; left: 0; bottom: 23px;' class=polloptionsval></div>"
+                    +"<div class=polloptiontitle style='width: calc(100% - 50px);'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
+                    +"<input id=option"+i+" data-address='"+htmlspecialchars(data.addresses[ix[i]])+"' class=polloptiondrag type=range min=0 max="+max+">"
+                 +"</div><br>";
 
       var votesize_precision=num(data.size,8,true).split(".")[1];
       if (votesize_precision) votesize_precision=votesize_precision.length; else votesize_precision=0;
