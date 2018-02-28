@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="css/font-awesome.min.css">
-    <link href="css/catamaran.css" rel="stylesheet">
-    <link href="css/roboto.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/fa-brands.min.css">
+    <link rel="stylesheet" href="css/fa-solid.min.css">
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+    <link rel="stylesheet" href="css/catamaran.css">
+    <link rel="stylesheet" href="css/roboto.css">
 
 <!--
     Copyright (c) 2017 VoteCoin team, all rights reserved
@@ -25,7 +27,7 @@
         .social:first-child { margin-left: 0; }
         .social:last-child { margin-right: 0; }
         .social:hover { opacity: 0.7; cursor: pointer; }
-        .fa-facebook {  background: #3B5998;  color: white;}
+        .fa-facebook-f {  background: #3B5998;  color: white;}
         .fa-twitter {  background: #55ACEE;  color: white;}
         .fa-google {  background: #dd4b39;  color: white;}
         .fa-linkedin {  background: #007bb5;  color: white;}
@@ -152,6 +154,7 @@
         #rmoption.hover { color: #000; }
         #options input { display: block; }
         #countvotes2, #suggestvot2, #endblock2, #pollsize2 { margin-bottom: 6px; }
+        #newvote .fa-image { position: relative; top: 1px; }
 
         .end1, .end2, .end3 { color: #777; display: inline-block; line-height: 32px; text-align: center; width: 60px; height: 50px; font-size: 30px; overflow: hidden; }
         .end1, .end2 { padding-right: 8px; border-right: 1px dashed #777; }
@@ -171,7 +174,14 @@
         .polloptiontitle { margin-left: 5px; word-wrap: break-word; }
         .polloptionsval { margin-right: 5px;}
 
-
+        .newpolltype { border-radius: 5px; cursor: pointer; text-align: center; width: 100px;  height: 150px; display: inline-block; margin: 0px; padding: 20px 25px 20px 25px; }
+        .newpolltype .fa { cursor: pointer; color: #aaaaaa; font-size: 60px; padding:20px;  }
+        .newpolltype span { cursor: pointer; display: block; color: #666; }
+        .newpolltype .fa-chart-bar { padding: 20px 21px 20px 19px; }
+        .newpolltype .fa-chart-pie { padding: 22px 19px 18px 21px; }
+        .newpolltype .fa-money { padding: 20px 21px 20px 19px; }
+        .newpolltype:hover .fa { color: #666; }
+        .newpolltype:hover span { color: #000; }
 
         .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
         .settingshelp { text-align: justify; }
@@ -188,7 +198,7 @@
            <div data-toggle="dashboard" class="menurow"><i class="fa fa-home"></i><span>Dashboard</span></div>
            <div data-toggle="send" class=menurow><i class="fa fa-upload"></i><span>Send</span></div>
            <div data-toggle="receive" class=menurow><i class="fa fa-download"></i><span>Receive</span></div>
-           <div data-toggle="vote" class=menurow><i class="fa fa-bar-chart"></i><span>Vote</span></div>
+           <div data-toggle="vote" class=menurow><i class="fa fa-chart-bar"></i><span>Vote</span></div>
            <div data-toggle="backup" class=menurow><i class="fa fa-life-ring"></i><span>Backup</span></div>
            <div data-toggle="settings" class=menurow><i class="fa fa-cog"></i><span>Settings</span></div>
         </div>
@@ -273,7 +283,7 @@
             <input id=memo type=text placeholder="Memo (optional, only for shielded transactions, visible only to the receiver)">
             <div>
                <div style="display: inline-block; white-space: nowrap;">
-                  <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
+                  <input id=amount type=text placeholder="Amount" style="width: 100px;"><button class=sendallbtn title="set max amount"><span class="fa fa-angle-double-up" style="color: #777;"></span></button><input type=text disabled=disabled style="width: 40px; text-align: center; position: relative; left: -6px; border-radius: 0 3px 3px 0;" value=VOT>
                </div>
                <div style="display: inline-block; position: relative;">
                   <span class="fa fa-caret-down" style="background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 4px; left: 85px; border-left: 1px solid #ddd; pointer-events: none; color: #777;"></span>
@@ -294,7 +304,7 @@
                <div style="width: 50%; float: left;">
                   <button id=getnewaddress style="width: 100%; text-align: left;"><i class="fa fa-user"></i>&nbsp;&nbsp;Transparent address</button>
                   <div id=taddrbox></div>
-                  <button id=zgetnewaddress style="width: 100%; text-align: left;"><i class="fa fa-shield"></i>&nbsp;&nbsp;Shielded address</button>
+                  <button id=zgetnewaddress style="width: 100%; text-align: left;"><i class="fa fa-shield-alt"></i>&nbsp;&nbsp;Shielded address</button>
                   <div id=zaddrbox></div>
                </div>
             </div>
@@ -312,10 +322,18 @@
                <button id=addnewpoll style="display: inline-block; width: 222px;">+ Add poll or campaign</button>
                <div id=actionbutton></div>
             </div>
-            <h1><i class="fa fa-bar-chart"></i>Vote <span id=voteid style="color: #888; margin-left: 20px;"></span></h1>
+            <h1><i class="fa fa-chart-bar"></i>Vote <span id=voteid style="color: #888; margin-left: 20px;"></span></h1>
             <div id=votesearch>
                <br><br>In order to see a poll or campaign, enter its ID below:<br><br>
                <input id=pollfilter type=text class=search placeholder=" &#128269;  Enter ID of poll or campaign">
+               <br><br>
+               <div align=center>
+                  <div class=newpolltype><i class="fa fa-chart-bar"></i><span>Staked<br>Poll</span></div>
+                  <div class=newpolltype><i class="fa fa-chart-pie"></i><span>Decision<br>Funding</span></div>
+                  <div class=newpolltype><i class="fa fa-archive"></i><span>Public<br>Elections</span></div>
+                  <div class=newpolltype><i class="fa fa-money-bill-alt"></i><span>Crowd<br>Funding</span></div>
+                  <div class=newpolltype><i class="fa fa-futbol"></i><span>Sports<br>Betting</span></div>
+               </div>
                <br><br>
             </div>
             <div id=votelist></div>

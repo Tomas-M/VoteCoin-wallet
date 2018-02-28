@@ -42,7 +42,7 @@ function poll_dashboard(show)
       $('#votesearch').hide();
       $('#newvote').show();
       $('#addnewpoll').data('prevtext',$('#addnewpoll').html());
-      $('#addnewpoll').html('<span class="fa fa-long-arrow-left"></span> &nbsp;back').addClass('cancel');
+      $('#addnewpoll').html('<span class="fa fa-long-arrow-alt-left"></span> &nbsp;back').addClass('cancel');
    }
 }
 
@@ -520,10 +520,10 @@ function poll_show(txid)
                        +"</div>"
 
                         +"<div style='display: inline-block; overflow: hidden; margin-left: 1px;' align=center>"
-                           +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fa fa-facebook"></a>'
-                           +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fa fa-twitter"></a>'
-                           +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fa fa-google"></a>'
-                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fa fa-linkedin"></a>'
+                           +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fab fa-facebook-f"></a>'
+                           +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fab fa-twitter"></a>'
+                           +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fab fa-google"></a>'
+                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fab fa-linkedin"></a>'
                        +"</div>"
 
                       +"<br><br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"

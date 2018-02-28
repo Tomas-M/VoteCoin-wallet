@@ -149,7 +149,7 @@ function update_gui()
        var confirmtime=blocktime; if (!confirmtime) confirmtime=transactions[i].time;
        trans+="<div class='transactionrow "+transactions[i].category+"'>"
                     +"<div class=date title='"+humanReadableDate(confirmtime)+"'>"+dateShort(confirmtime)+"</div>"
-                    +"<div class=confirmed><i class='fa fa-"+(!blocktime?"clock-o":"check")+"' style='margin-left: 0px; font-size: 14px;'></i><i class='fa fa-"+(transactions[i].address?"user":"shield")+"' style='margin-left: 8px; opacity: 0.6; font-size: 14px;'></i></div>"
+                    +"<div class=confirmed><i class='fa fa-"+(!blocktime?"clock":"check")+"' style='margin-left: 0px; font-size: 14px;'></i><i class='fa fa-"+(transactions[i].address?"user":"shield-alt")+"' style='margin-left: 8px; opacity: 0.6; font-size: 14px;'></i></div>"
                     +"<div class=transid data-txid='"+transactions[i].txid+"' "+(memo?'title="'+transactions[i].txid+'"><span class=memotext>'+memo+"</span>":">"+transactions[i].txid)+"</div>"
                     +"<div class='amount'>"+(transactions[i].amount>0?"+":"")+num(transactions[i].amount,8,true)+" VOT</div>"
              +"</div>";
@@ -183,7 +183,7 @@ function update_gui()
        ops="<div class=operationrow>"
               +"<div class=operationtime title='"+humanReadableDate(operationsAr[i].creation_time)+"'>"+timeAgo(operationsAr[i].creation_time)+"</div>"
               +"<div class=operationamount>"+num(operationsAr[i].amount,8,true)+" VOT</div>"
-              +"<div class=operationicon><i class='fa fa-"+(!operationsAr[i].status || operationsAr[i].status.match(/queued|executing/)?'clock-o':(operationsAr[i].status.match(/failed|canceled/)?'exclamation-circle':'check'))+"'></i></div>"
+              +"<div class=operationicon><i class='fa fa-"+(!operationsAr[i].status || operationsAr[i].status.match(/queued|executing/)?'clock':(operationsAr[i].status.match(/failed|canceled/)?'exclamation-circle':'check'))+"'></i></div>"
               +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status.replace(/^executing/,"executing, please wait..."))+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
            +"</div>"+ops;
     }
@@ -194,7 +194,7 @@ function update_gui()
     var addressesS='';
     for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
-    sethtml('walletaddresses',(addressesT!=''?"<br><h2><i class='fa fa-user' style='margin-right: 10px;'></i></h2>"+addressesT:"")+(addressesS!=''?"<br><h2><i class='fa fa-shield' style='margin-right: 10px;'></i></h2>"+addressesS:""));
+    sethtml('walletaddresses',(addressesT!=''?"<br><h2><i class='fa fa-user' style='margin-right: 10px;'></i></h2>"+addressesT:"")+(addressesS!=''?"<br><h2><i class='fa fa-shield-alt' style='margin-right: 10px;'></i></h2>"+addressesS:""));
 
     var votelist='';
     var allpolls=makeOrderedArray(polls,['height','ix'],'txid');
