@@ -295,7 +295,7 @@ function init()
 
    $('#progress').show();
    $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
-                                 +"<span class='fa fa-cloud-download' style='color: #ddd; font-size: 150px;'></span>"
+                                 +"<span class='fa fa-cloud-download-alt' style='color: #ddd; font-size: 150px;'></span>"
                               +"</div>"
                               +"Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
 
