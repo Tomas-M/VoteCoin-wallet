@@ -38,6 +38,7 @@
         .menu .menurow span { cursor: pointer; font-size: 20px; display: inline-block; height: 42px; vertical-align: top; width: calc(100% - 110px); text-align: left; padding-top: 13px; padding-bottom: 0px; padding-left: 25px;  }
         .menu .menurow.active i { background-color: #1e1924; border-left: 5px solid #f7931a; }
         .menu .menurow.active span { background-color: #282130; }
+        .menu .fa-sliders-h { padding: 15px 11px 15px 24px !important; }
 
         #transactionslist { margin-top: 20px; }
         #sound { z-index: -100; position: absolute; opacity: 0; width: 1px; height: 1px; }
@@ -74,10 +75,11 @@
         .votelistrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .votelistrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .votelistid { width: 110px; padding-left: 5px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
-        .votelisttitle { width: calc(100% - 200px); overflow: auto; overflow-y:hidden; cursor:pointer; }
-        .votelistbuttons { display: none; text-align: right; width: 30px; margin-bottom: 5px; }
-        .votelistresult { text-align: right; width: 170px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
+        .votelisttitle { width: calc(100% - 210px); overflow: auto; overflow-y:hidden; cursor:pointer; }
+        .votelistbuttons { width: 90px;  margin-bottom: 5px; padding-left: 6px; overflow: auto; overflow-y:hidden; color: #777;}
         .votelistrow:last-child { border-bottom: 0; }
+        .votelistrow:hover div { background-color: #ddd; }
+        .votelistbuttons:hover { color: #000; cursor: pointer; }
 
         .addressbalance::-webkit-scrollbar-thumb,
         .operationstatus::-webkit-scrollbar-thumb,
@@ -178,8 +180,8 @@
         .newpolltype .fa { cursor: pointer; color: #aaaaaa; font-size: 60px; padding:20px;  }
         .newpolltype span { cursor: pointer; display: block; color: #666; }
         .newpolltype .fa-chart-bar { padding: 20px 21px 20px 19px; }
-        .newpolltype .fa-chart-pie { padding: 22px 19px 18px 21px; }
-        .newpolltype .fa-money { padding: 20px 21px 20px 19px; }
+        .newpolltype .fa-chart-pie { padding: 22px 22px 18px 18px; }
+        .newpolltype .fa-money-bill-alt { padding: 20px 27px 20px 13px; }
         .newpolltype:hover .fa { color: #666; }
         .newpolltype:hover span { color: #000; }
 
@@ -198,7 +200,7 @@
            <div data-toggle="dashboard" class="menurow"><i class="fa fa-home"></i><span>Dashboard</span></div>
            <div data-toggle="send" class=menurow><i class="fa fa-upload"></i><span>Send</span></div>
            <div data-toggle="receive" class=menurow><i class="fa fa-download"></i><span>Receive</span></div>
-           <div data-toggle="vote" class=menurow><i class="fa fa-chart-bar"></i><span>Vote</span></div>
+           <div data-toggle="vote" class=menurow><i class="fa fa-sliders-h"></i><span>Vote</span></div>
            <div data-toggle="backup" class=menurow><i class="fa fa-life-ring"></i><span>Backup</span></div>
            <div data-toggle="settings" class=menurow><i class="fa fa-cog"></i><span>Settings</span></div>
         </div>
@@ -322,7 +324,7 @@
                <button id=addnewpoll style="display: inline-block; width: 222px;">+ Add poll or campaign</button>
                <div id=actionbutton></div>
             </div>
-            <h1><i class="fa fa-chart-bar"></i>Vote <span id=voteid style="color: #888; margin-left: 20px;"></span></h1>
+            <h1><i class="fa fa-sliders-h"></i>Vote <span id=voteid style="color: #888; margin-left: 20px;"></span></h1>
             <div id=votesearch>
                <br><br>In order to see a poll or campaign, enter its ID below:<br><br>
                <input id=pollfilter type=text class=search placeholder=" &#128269;  Enter ID of poll or campaign">

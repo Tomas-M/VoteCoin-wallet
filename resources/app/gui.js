@@ -204,6 +204,8 @@ function update_gui()
        votelist+='<div class=votelistrow data-polltx="'+poll.txid+'">';
        votelist+='<div class=votelistid>#'+poll.height+'#'+poll.ix+'</div>';
        votelist+='<div class=votelisttitle>'+htmlspecialchars(poll.title)+'</div>';
+       votelist+='<div class=votelistbuttons><i class="fa fa-search"></i> results</div>';
+
        votelist+='</div>';
     }
 
