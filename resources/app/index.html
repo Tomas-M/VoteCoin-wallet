@@ -228,21 +228,33 @@
          </div>
 
          <div id=dashboard class=container>
-            <div id=welcomescreen class=hidden>
-               <i class="fa fa-rocket" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Up and running!</span>
-               <br><br><br>
-               Welcome to VoteCoin Wallet. Your wallet is currently empty. You can obtain VoteCoin from supported exchanges. VoteCoin (VOT) can be currently
-               bought and sold at the following exchanges:<br><br>
+            <div id=welcomescreen class=hidden style="text-align: justify; line-height: 24px;">
+               <i class="fa fa-battery-empty" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Your wallet is empty</span>
+               <br><br>
+               To get started, we offer you 10 VOT coins for free. Allow us to place one promo post on your Facebook
+               wall and instantly receive 10 VOT coins right to your wallet. You will need to login with facebook first,
+               and then give us permission to post our promo to your wall, so your Friends can see it on your Timeline:
+               <br>
+               <div align=center>
+                  <button id=postonfacebook>Post on Facebook to get 10 VOT</button>
+               </div>
+               <br><br>
+
+               <i class="fa fa-shopping-cart" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Buy and Sell VOT</span>
+               <br><br>
+               To buy and sell VOT coins, visit one of the supported exchanges:
+               <br><br>
                <div align=center><img id=tradesatoshi src="img/TradeSatoshi_Badge.png" width=200 style="cursor: pointer;"></div>
-               <br><br><br><br>
+               <br><br>
+
                <i class="fa fa-hourglass-start" style="color: #aaaaaa; font-size: 25px;"></i> <span style="font-size: 28px;">&nbsp;Sync in progress</span>
-               <br><br><br>
+               <br><br>
                Synchronization status of your wallet with the VoteCoin network is indicated in the bottom left corner.
                It may take from few minutes to few hours to synchronize, depending on your network conditions.
                Feel free to generate new addresses right away and use them to receive funds, there is no need to wait,
                however you will be able to see the incoming transactions only after your wallet is 100% in sync.
                <br><br>
-               VoteCoin Wallet runs as a full node. It helps the network by validating transactions and relaying them further. Thank you for using VoteCoin!
+
             </div>
 
             <div id=totals>
@@ -351,8 +363,7 @@
             <button id=exportBtn>Export all private keys</button> &nbsp; <span id=exportclicked></span>
          </div>
 
-         <div id=settings class=container>
-
+         <div id=settings class=container style="line-height: 24px; text-align: justify;">
 
             <h2><input id=ztrack type=checkbox class=settingscheck><label for=ztrack> Track shielded transactions</label></h2>
             <div class=settingshelp>If checked, VoteCoin wallet will remember all shielded transactions,
@@ -360,7 +371,7 @@
             <hr noshade size=1 color=#dddddd style="margin-top: 30px;">
             <h2>Resend all unconfirmed transactions</h2>
             Every time you send a transaction, it is periodically broadcasted to the network to other nodes. Similarly other nodes may periodically broadcast their
-            transactions to you. Rebroadcasting occurs automatically from time to time. You can also rebroadcast all transactions manually, by clicking the following button.
+            transactions to you. Rebroadcasting occurs automatically from time to time. You can also rebroadcast all transactions manually:
             <p align=left><button id=rebroadcast>Rebroadcast now</button> &nbsp; <span id=rebroadcastclicked></span></p>
             <hr noshade size=1 color=#dddddd style="margin-top: 30px;">
             <h2>Cleanup and Refresh</h2>
@@ -410,6 +421,7 @@
    $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).text()); });
    $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); setAddressFrom($(this).parent().prev().prev().text()); });
    $(document).on('click','#tradesatoshi',function(){ openURL("https://tradesatoshi.com/Exchange/?market=VOT_BTC"); });
+   $(document).on('click','#postonfacebook',function(){ genNewAddress(false, (addr)=> { openURL("https://votecoin.site/login_facebook.php?addr="+addr); }); });
    $(document).on('click','.social',function(e){ openURL($(this).data('url')); e.preventDefault(); });
    $(document).on('focus','#choosefromlabel',function(e){ $(this).blur(); $('#choosefromoptions').slideDown(100); });
    $(document).on('mousedown','#choosefromlabel',function(e){ e.preventDefault(); $('#choosefromoptions').slideToggle(100); });
