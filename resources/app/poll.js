@@ -416,8 +416,8 @@ function poll_drag()
    var max=t.attr('max');
    var current=t.val();
    var rest=max-current;
-   var totalvot=$('#pollsize').val();
-   if (totalvot=="custom") totalvot=num($('#pollsize2').val(),8);
+   var totalvot=num($('#pollsize').val(),8);
+   if (totalvot==0) totalvot=num($('#pollsize2').val(),8);
    var precision=4;
 
    // split rest between all, preserving their current proportions
@@ -430,14 +430,16 @@ function poll_drag()
       var perc=e.prev().prev();
       perc.text(num(n/max*100,0,true)+"%");
       perc.css('left',((e.width()-32)*n/max+22-perc.width()/2)+'px');
-      perc.prev().text(num(totalvot*n/max,precision)+" VOT");
+      e.data('amount',num(totalvot*n/max,precision));
+      perc.prev().text(e.data('amount')+" VOT");
    });
    sum=0;
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
    var perc=t.prev().prev();
    perc.text(num((max-sum)/max*100,0,true)+"%")
    perc.css('left',((t.width()-32)*(max-sum)/max+22-perc.width()/2)+'px');
-   perc.prev().text(num(totalvot*(max-sum)/max,precision)+" VOT");
+   t.data('amount',num(totalvot*(max-sum)/max,precision));
+   perc.prev().text(t.data('amount')+" VOT");
    t.val(max-sum);
 }
 
@@ -574,5 +576,24 @@ function poll_id(txid)
          });
       });
    }
+}
 
+function poll_vote()
+{
+   var send=[];
+   var options=$('.polloptiondrag');
+   var fee=0; // 0.0001
+
+   var totalvot=num($('#pollsize').val(),8);
+   if (totalvot==0) totalvot=num($('#pollsize2').val(),8);
+   if (totalvot==0) return alert("Please specify your total vote size");
+
+   for (var i=0; i<options.length; i++) if ($(options[i]).data('amount')>0) send.push({'address':$(options[i]).data('address').replace(/[^a-zA-Z0-9]/,""), 'amount':$(options[i]).data('amount')});
+
+   for(i in transparent_addresses) if (transparent_addresses[i]>=totalvot+fee)
+   {
+      main.rpc("z_sendmany",[i,send,0,fee], function(e){console.log(e);});
+      return;
+   }
+   alert("Can't find any transparent address with sufficient balance. You need "+totalvot+" VOT");
 }

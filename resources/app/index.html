@@ -438,6 +438,7 @@
    $(document).on('click','#rmoption',rm_poll_option);
    $(document).on('click','#startpoll',poll_start);
    $(document).on('click','.votelisttitle',function(){ poll_id($(this).parent().data('polltx')); })
+   $(document).on('click','#dovote',poll_vote)
 
    $(document).on("change","input[type=file]",upload_file_change);
    $(document).on("change keyup paste","input[type=text], textarea, select",poll_change);
