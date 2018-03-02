@@ -19,6 +19,7 @@ const crypto = require("crypto");
 var wallet_password="";
 var wallet_user="";
 var wallet_port="";
+var wallet_startup_params=[];
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -118,11 +119,23 @@ function walletStart()
 {
    console.log('wallet start');
    canQuit=false;
-   server = spawn(app.getAppPath()+'/votecoind.exe', [], {detached:true, stdio:'ignore', cwd:app.getAppPath()} )
+   server = spawn(app.getAppPath()+'/votecoind.exe', wallet_startup_params, {detached:true, stdio:'ignore', cwd:app.getAppPath()} )
                .on('exit',code=>
                {
-                  // check log for possible rescan
-
+                  if (code!=0)
+                  {
+                     // check log for possible rescan
+                     var logfile=app.getAppPath()+"/VoteCoin/debug.log";
+                     try {
+                        var log=fs.readFileSync(logfile).toString().split("\n").slice(-300).join("\n");
+                        if (log.match(/ERROR:/g).length>3 && log.match(/Shutdown: done/g).length>3)
+                        {
+                           try { fs.unlinkSync(logfile+".log"); } catch(e) {}
+                           try { fs.renameSync(logfile,logfile+".log"); } catch(e) {}
+                           wallet_startup_params=['-reindex'];
+                        }
+                     } catch (e) {}
+                  }
                   if (!win) { canQuit=true; }
                });
 }
