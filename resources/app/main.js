@@ -14,6 +14,7 @@ const spawn = require('child_process').spawn;
 const process = require('process');
 const fs = require('fs');
 const crypto = require("crypto");
+const os = require('os');
 
 // global variables, will be needed later
 var wallet_password="";
@@ -97,6 +98,50 @@ app.on('activate', () => {
   }
 })
 
+// -----------------------------------------------------------------------------------
+
+function mkdir(path)
+{
+   try { fs.mkdirSync(path); } catch(e) {}
+   return path;
+}
+
+function daemon_exe()
+{
+   if (process.platform == 'win32') return "votecoind.exe";
+   if (process.platform == 'linux') return "votecoind";
+   if (process.platform == 'darwin') return "votecoind";
+}
+
+function daemon_path()
+{
+   if (process.platform == 'win32') return mkdir(app.getAppPath());
+   if (process.platform == 'linux') return mkdir(app.getAppPath());
+   if (process.platform == 'darwin') return mkdir(app.getAppPath());
+}
+
+function daemon_data_path()
+{
+   if (process.platform == 'win32') return mkdir(app.getAppPath()+"/VoteCoin");
+   if (process.platform == 'linux') return mkdir(os.homedir()+"/.votecoin");
+   if (process.platform == 'darwin') return mkdir(os.homedir()+"/Library/Application Support/VoteCoin");
+}
+
+function settings_path()
+{
+   if (process.platform == 'win32') return mkdir(app.getAppPath()+"/settings");
+   if (process.platform == 'linux') return mkdir(os.homedir()+"/.votecoin/settings");
+   if (process.platform == 'darwin') return mkdir(os.homedir()+"/Library/Application Support/VoteCoin/settings");
+}
+
+function zksnark_path()
+{
+   if (process.platform == 'win32') return mkdir(app.getAppPath()+"/zkSNARK");
+   if (process.platform == 'linux') return mkdir(os.homedir()+"/.zcash-params");
+   if (process.platform == 'darwin') return mkdir(os.homedir()+"/Library/Application Support/ZcashParams");
+}
+
+
 function walletStop()
 {
    console.log('wallet stop');
@@ -119,13 +164,13 @@ function walletStart()
 {
    console.log('wallet start');
    canQuit=false;
-   server = spawn(app.getAppPath()+'/votecoind.exe', wallet_startup_params, {detached:true, stdio:'ignore', cwd:app.getAppPath()} )
+   server = spawn(daemon_path()+'/'+daemon_exe(), wallet_startup_params, {detached:true, stdio:'ignore', cwd:daemon_path()} )
                .on('exit',code=>
                {
                   if (code!=0)
                   {
                      // check log for possible rescan
-                     var logfile=app.getAppPath()+"/VoteCoin/debug.log";
+                     var logfile=daemon_data_path()+"/debug.log";
                      try {
                         var log=fs.readFileSync(logfile).toString().split("\n").slice(-300).join("\n");
                         if (log.match(/ERROR:/g).length>3 && log.match(/Shutdown: done/g).length>3)
@@ -232,8 +277,8 @@ function downloadFile(host,port,path,targetFile,size,progressFunc,doneFunc)
 
 var downloads=
 [
-   {host:'z.cash',port:443,path:"/downloads/sprout-verifying.key",target:app.getAppPath()+'/zkSNARK/sprout-verifying.key', size: 1449},
-   {host:'z.cash',port:443,path:"/downloads/sprout-proving.key",target:app.getAppPath()+'/zkSNARK/sprout-proving.key', size: 910173851}
+   {host:'z.cash',port:443,path:"/downloads/sprout-verifying.key",target:zksnark_path()+'/sprout-verifying.key', size: 1449},
+   {host:'z.cash',port:443,path:"/downloads/sprout-proving.key",target:zksnark_path()+'/sprout-proving.key', size: 910173851}
 ]
 
 function download_all_files(progressFunc,doneFunc)
@@ -250,12 +295,12 @@ function download_all_files(progressFunc,doneFunc)
 
 function init_rpc_password()
 {
-   var confpath=app.getAppPath()+'/VoteCoin/votecoin.conf';
+   var confpath=daemon_data_path()+'/votecoin.conf';
    if (!fs.existsSync(confpath))
    {
       wallet_user="admin";
       wallet_password=crypto.randomBytes(20).toString('hex')
-      wallet_port=6665;
+      wallet_port=6664;
       fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password+"\nbanscore=500\nbantime=60");
    }
    else
@@ -286,7 +331,7 @@ function openDevelTools()
 
 function storage_keyfile(key)
 {
-   return app.getAppPath()+"/settings/"+key.replace(/[^a-zA-Z0-9]/,"_")+".json";
+   return settings_path()+"/"+key.replace(/[^a-zA-Z0-9]/,"_")+".json";
 }
 
 function storage_save(key,valStr)
