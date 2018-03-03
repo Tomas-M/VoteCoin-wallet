@@ -301,6 +301,15 @@ function show_progress(pct)
    }
 }
 
+function scrollTop(animation)
+{
+   if (animation)
+      $('#right div').animate({scrollTop:0}, 500, 'swing');
+   else
+      $('#right div').scrollTop(0);
+}
+
+
 function show_receiving_address(addr)
 {
    var el=$('#'+(addr.length>60?"z":"t")+'addrbox');
@@ -310,7 +319,7 @@ function show_receiving_address(addr)
    el.find('textarea').val(addr).css('height',addr.length>60?'48px':'17px').select();
    $('#qrcode').show();
    qrcode.makeCode(addr);
-   $('#right div').animate({scrollTop:0}, 500, 'swing');
+   scrollTop(true);
 }
 
 function download_progress(file,size,bytes)

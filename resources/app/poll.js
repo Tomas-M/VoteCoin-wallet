@@ -34,6 +34,7 @@ function poll_dashboard(show)
       $('#addnewpoll').html($('#addnewpoll').data('prevtext')).removeClass('cancel').data('prevtext','');
       $('#actionbutton').html('');
       $('#voteid').text('');
+      scrollTop();
    }
    else
    {
@@ -434,6 +435,7 @@ function poll_drag()
       e.data('amount',num(totalvot*n/max,precision));
       perc.prev().text(e.data('amount')+" VOT");
    });
+
    sum=0;
    all.each((ix,el)=>{ sum+=parseInt($(el).val()); });
    var perc=t.prev().prev();
@@ -544,6 +546,7 @@ function poll_show(txid)
      poll_drag();
      $('#newvote').css('opacity',0).delay(400).css('opacity',1);
      update_gui_polldate();
+     scrollTop();
    });
 }
 
