@@ -199,7 +199,8 @@ function poll_data(genAddr, doneFunc)
 
 function upload_file_change()
 {
-   var input = $(this);
+   var t=this;
+   var input = $(t);
 	var label = input.next();
    var path=input.val();
    var file=path.split(/[\\\/]/).pop();
@@ -214,7 +215,7 @@ function upload_file_change()
 
    if (!file.match(/[.](png|jpg|gif)$/i)) reset();
 	else
-      if (this.files && this.files.length>0)
+      if (t.files && t.files.length>0)
       {
          var reader  = new FileReader();
          reader.addEventListener("load", function ()
@@ -226,14 +227,14 @@ function upload_file_change()
                if (this.naturalHeight>220) { reset(); alert('Selected image is too big. Image height must be equal or less than 220px'); return; }
                $(this).show();
             });
-            poll_change.call(this);
+            poll_change.call(t);
          }, false);
-         reader.readAsDataURL(this.files[0]);
+         reader.readAsDataURL(t.files[0]);
 
          label.html("<i class='fa fa-image'></i> &nbsp;<span id=logoname>"+htmlspecialchars(file)+"</span>");
       }
 
-   poll_change.call(this);
+   poll_change.call(t);
 }
 
 
@@ -249,7 +250,7 @@ function memos_generate(data)
 function poll_change()
 {
    var t=$(this);
-   if (t.closest('#newvote').length>0) return poll_drag();
+   if (t.closest('#newvote').find('input[type="range"]').length>0) return poll_drag();
 
    // calculate poll size (memos) with fake addresses to estimate fee
    if (t.closest('#newvote').length>0)
