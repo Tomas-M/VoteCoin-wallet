@@ -259,7 +259,7 @@ function poll_change()
    {
       var memos=memos_generate(data);
       var fee=memos.length*poll_fee;
-      $('#pollcost').text(fee);
+      $('#pollcost').text(num(fee,0));
    })
 }
 
