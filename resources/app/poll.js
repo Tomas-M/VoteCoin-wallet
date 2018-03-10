@@ -509,7 +509,7 @@ function poll_show(txid)
 
                        +"<div align=center id=endtimer data-endblock='"+num(data.endblock,0)+"'>"
                           +"<div>"
-                          +"<div class=end1>07</div><div class=end2>07</div><div class=end3>07</div>"
+                          +"<div class=end1></div><div class=end2></div><div class=end3></div>"
                           +"</div>"
                           +"<div class=end1b>days</div><div class=end2b>hours</div><div class=end3b>mins</div>"
                        +"</div>"
