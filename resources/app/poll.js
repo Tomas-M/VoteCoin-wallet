@@ -187,7 +187,7 @@ function poll_data(genAddr, doneFunc)
          "logo_txid":'',
          'backtrack':$.trim(backtrack),
          "refund":num($('#refundable').val(),0,true),
-         "size":num(size,0,true),
+         "size":num(size,8,true),
          "shuffle":num($('#shuffle').val(),0,true),
          "endblock":num(end,0,true)
       }
