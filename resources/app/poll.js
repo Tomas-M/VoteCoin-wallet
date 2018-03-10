@@ -461,7 +461,7 @@ function poll_show(txid)
    {
       var i;
       var max=100000000;
-      var url='http://pollex.votecoin.site/'+data.height+":"+data.ix;
+      var url='http://pollexplorer.votecoin.site/'+data.height+":"+data.ix;
       var title='VoteCoin+Poll+Explorer';
 
       var options="";
