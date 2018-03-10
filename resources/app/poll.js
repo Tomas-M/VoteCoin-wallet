@@ -493,7 +493,14 @@ function poll_show(txid)
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
                           +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
                           +"<select style='width: 222px;' id=pollsize data-help='Size of your vote is the total amount of VOT you are willing to spend on this voting.'>"
-                             +"<option value='"+num(data.size,votesize_precision)+"'>Size of your vote: "+num(data.size,votesize_precision)+" VOT<option value='"+num(data.size*2,votesize_precision)+"'>Size of your vote: "+num(data.size*2,votesize_precision)+" VOT<option value='"+num(data.size*10,votesize_precision)+"'>Size of your vote: "+num(data.size*10,votesize_precision)+" VOT<option value=custom>Custom size...</select>"
+                             +(
+                                data.size!=0?
+                                  "<option value='"+num(data.size,votesize_precision)+"'>Size of your vote: "+num(data.size,votesize_precision)+" VOT"
+                                  +"<option value='"+num(data.size*2,votesize_precision)+"'>Size of your vote: "+num(data.size*2,votesize_precision)+" VOT"
+                                  +"<option value='"+num(data.size*10,votesize_precision)+"'>Size of your vote: "+num(data.size*10,votesize_precision)+" VOT"
+                                  :"<option>Size of your vote"
+                               )
+                              +"<option value=custom>Custom size...</select>"
                           +"<div style='position: relative;' class=hidden>"
                              +"<span class='fa fa-times nocustom' style='background-color: #ffffff; padding: 6px 9px 6px 9px; position: absolute; top: 5px; left: 187px; border-left: 1px solid #ddd; none; color: #777;' data-help='next'></span>"
                              +"<input placeholder='"+num(data.size,votesize_precision)+" VOT' type=text style='width: 170px; padding-right: 40px;' id=pollsize2 data-help='Custom vote size.'>"
