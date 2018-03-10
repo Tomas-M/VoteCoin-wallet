@@ -472,7 +472,7 @@ function poll_show(txid)
       if (data.shuffle) array_shuffle(ix);
 
       for (i=0; i<ix.length; i++)
-        options+="<div style='position: relative;'>"
+        options+="<div style='position: relative;' data-backtrack='"+htmlspecialchars(data.backtrack)+"'>"
                     +"<div style='font-size: 12px; position: absolute; right: 0; bottom: 39px; background-color: #e9e9e9; z-index:3; padding: 5px 0 0 5px;'></div>"
                     +"<div style='color: #fff; letter-spacinag: 0; font-size: 9px; pointer-events: none; position: absolute; left: 0; bottom: 18px;' class=polloptionsval></div>"
                     +"<div class=polloptiontitle style='width: calc(100% - 100px); position: relative; top: -1px;'>"+htmlspecialchars(data.options[ix[i]])+"</div>"
