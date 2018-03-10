@@ -20,7 +20,7 @@ const os = require('os');
 var wallet_password="";
 var wallet_user="";
 var wallet_port="";
-var wallet_startup_params=[];
+var wallet_startup_params=['-experimentalfeatures','-zmergetoaddress','-txindex'];
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -177,7 +177,7 @@ function walletStart()
                         {
                            try { fs.unlinkSync(logfile+".log"); } catch(e) {}
                            try { fs.renameSync(logfile,logfile+".log"); } catch(e) {}
-                           wallet_startup_params=['-reindex'];
+                           wallet_startup_params.push(['-reindex']);
                         }
                      } catch (e) {}
                   }
@@ -242,7 +242,7 @@ function rpc(method,params,doneFunc,errorFunc,hideErrorMessage)
        {
             try { result=JSON.parse(result); } catch(e){ lastRPCerr=result; console.log("error parsing json response: ",e); console.log(result); result=false; }
             if (!result || result.error) error(result);
-            else if (doneFunc) { console.log(result); doneFunc(result.result); }
+            else if (doneFunc) { doneFunc(result.result); }
        });
 
     }).on("error", function(e) {
@@ -301,7 +301,7 @@ function init_rpc_password()
       wallet_user="admin";
       wallet_password=crypto.randomBytes(20).toString('hex')
       wallet_port=6664;
-      fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password+"\nbanscore=500\nbantime=60");
+      fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password+"\nbanscore=500\nbantime=60\nrpcworkqueue=80");
    }
    else
    {
