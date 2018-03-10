@@ -204,12 +204,11 @@ function update_gui()
     for (i=0; i<allpolls.length; i++)
     {
        var poll=allpolls[i];
-       votelist+='<div class=votelistrow data-polltx="'+poll.txid+'">';
-       votelist+='<div class=votelistid>#'+poll.height+'#'+poll.ix+'</div>';
-       votelist+='<div class=votelisttitle>'+htmlspecialchars(poll.title)+'</div>';
-       votelist+='<div class=votelistbuttons><i class="fa fa-search"></i> results</div>';
-
-       votelist+='</div>';
+       votelist='<div class=votelistrow data-polltx="'+poll.txid+'">'
+         +'<div class=votelistid>#'+poll.height+'#'+poll.ix+'</div>'
+         +'<div class=votelisttitle>'+htmlspecialchars(poll.title)+'</div>'
+         +'<div class=votelistbuttons><i class="fa fa-sliders-h" style="cursor:pointer;"></i> vote &nbsp; &nbsp; <i class="fa fa-search" style="cursor:pointer;"></i> results</div>'
+         +'</div>'+votelist;
     }
 
     sethtml('votelist',votelist);
