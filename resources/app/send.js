@@ -81,23 +81,12 @@ function sendpayment()
 
      if (from=='t') // auto-select transparent FROM address
      {
-        // if TO address is transparent, just use sendtoaddress rpc
-        if (isTransparent(to))
+        for(i in transparent_addresses) if (transparent_addresses[i]>=amount+fee)
         {
-            main.rpc("settxfee", [fee], function(res) {
-               main.rpc("sendtoaddress",[to,amount,"","",false], payment_success,payment_failure);
-            }, function(err){ payment_failure("Could not set tx fee to "+fee); });
+           main.rpc("z_sendmany",[i,[param],0,fee], payment_success,payment_failure);
+           return;
         }
-        else
-        {
-           // else if TO address is shielded, we may need to find best suitable FROM t address manually by balance.
-           for(i in transparent_addresses) if (transparent_addresses[i]>=amount+fee)
-           {
-              main.rpc("z_sendmany",[i,[param],0,fee], payment_success,payment_failure);
-              return;
-           }
-           payment_failure("Can't find any transparent address with sufficient balance.");
-        }
+        payment_failure("Can't find any transparent address with sufficient balance.");
      }
      else
      if (from=='z') // auto-select shielded FROM address
