@@ -589,22 +589,119 @@ function poll_id(txid)
    }
 }
 
-function poll_vote()
+function poll_vote(totalvot,fee,fromAddress)
 {
+   var i;
    var send=[];
    var options=$('.polloptiondrag');
-   var fee=0; // 0.0001
 
+   for (i=0; i<options.length; i++) if ($(options[i]).data('amount')>0) send.push({'address':$(options[i]).data('address').replace(/[^a-zA-Z0-9]/,""), 'amount':$(options[i]).data('amount')});
+
+   for(i in transparent_addresses) if (transparent_addresses[i]>=totalvot+fee && (!fromAddress || i==fromAddress) )
+   {
+      poll_progress_show("Vote in progress...");
+      main.rpc("z_sendmany",[i,send,0,fee], poll_results);
+      return;
+   }
+   alert("Can't find any transparent address with sufficient balance. You need "+(totalvot+fee)+" VOT");
+}
+
+
+function poll_vote_backtrack()
+{
    var totalvot=num($('#pollsize').val(),8);
    if (totalvot==0) totalvot=num($('#pollsize2').val(),8);
    if (totalvot==0) return alert("Please specify your total vote size");
+   var fee=0; // 0.0001
 
-   for (var i=0; i<options.length; i++) if ($(options[i]).data('amount')>0) send.push({'address':$(options[i]).data('address').replace(/[^a-zA-Z0-9]/,""), 'amount':$(options[i]).data('amount')});
-
-   for(i in transparent_addresses) if (transparent_addresses[i]>=totalvot+fee)
+   var backtrack=$('.polloptiondrag').first().parent().data('backtrack');
+   if (backtrack!='')
    {
-      main.rpc("z_sendmany",[i,send,0,fee], function(e){console.log(e);});
-      return;
+      poll_progress_show("Searching for sending address...");
+      find_trackable_address(backtrack,totalvot+fee,function(addr)
+      {
+         if (!addr) { poll_progress_hide(); setTimeout(function(){ alert("This voting only accepts coins distributed by the organizer. Such coins were not found in your wallet. Required is "+num(totalvot+fee,8,true)+" VOT, which you receive from "+backtrack);},500); }
+         else poll_vote(totalvot,fee,addr);
+      })
    }
-   alert("Can't find any transparent address with sufficient balance. You need "+totalvot+" VOT");
+   else
+      poll_vote(totalvot,fee);
+}
+
+
+function poll_results(txid)
+{
+   poll_progress_show("Loading results...");
+   setTimeout(function() // just for effect
+   {
+      $.get("http://pollexplorer.votecoin.site/api/",{"method":"results","txid":txid},function(res)
+      {
+         res=JSON_fromString(res);
+
+         var labels="";
+         var data=[];
+         var ix,i,ii=0;
+         var total=0;
+         var items=0;
+         var col,val;
+
+         var chartColors=[];
+         var borders=[];
+         var colors=['#ff755c','#ff4181','#3b8bc0','#4eb9ff','#85c250','#c9d467','#ffce47','#ffb14e'];
+//         var colors=[ '#61c478','#4da338','#76ce38','#d9ec38','#fbe739','#f3af2f','#ee7b28','#ea3a22','#cf4384','#bb6bce','#935bcd','#8b7aeb','#899ee8','#3982d2','#a6d9fd','#75b6d2','#93dadc' ];
+
+
+         for(i in res) { total+=parseFloat(res[i]); items++; }
+
+         for(i in res)
+         {
+            ix=polls[txid]['addresses'].indexOf(i);
+            val=num(res[i]/total*100,0);
+            col=colors[Math.floor(ii*(colors.length/items)) % colors.length];
+            labels+="<div id=chartlabel"+ii+">"
+                       +"<div style='width: 15px; height: 15px; background-color: "+col+"; margin-right: 5px; position: relative; top: 2px; display: inline-block'></div>"
+                       +"<div style='display: inline-block; height: 15px; line-height: 15px;'>"+num(res[i],8,true)+" VOT ("+val+"%)</div>"
+                       +"<div style='font-size: 12px; line-height: 15px; margin-top: 3px;'>"+htmlspecialchars(polls[txid]['options'][ix])+"</div>"
+                   +"</div><br>";
+            data.push(val);
+            chartColors.push(col);
+            borders.push('#e9e9e9');
+            ii++;
+         }
+
+// if (items==0) no votes received, print message instead
+         $('#newvote').html(''
+            +'<div style="font-size: 27px; margin-bottom: 10px; word-wrap: break-word;">'+polls[txid]['title']+'</div>'
+            +'<div style="float: left; width: calc(100% - 300px); margin: 30px; "><canvas id="votechart" width="400" height="400"></canvas></div>'
+            +'<div style="float: left; width: 222px; margin-left: 18px; word-wrap: break-word;" id=chartlabels>'+labels+'</div>');
+         scrollTop();
+
+         var ctx = document.getElementById("votechart");
+         var myPie = new Chart(ctx,
+         {
+           type: 'doughnut',
+           options: {
+              animation: {animateRotate:false, animateScale:true}, cutoutPercentage: 50, title: { display: false}, tooltips: {enabled:false}, legend: { display: false } },
+              data: { datasets: [{ label: "", data: data, backgroundColor: chartColors, borderColor: borders, borderWidth: 1 }] }
+         });
+
+         ctx.onmousemove = function(evt)
+         {
+            var el = myPie.getElementsAtEvent(evt);
+            var ix;
+            if (el[0]) ix=el[0]._index;
+            if (typeof ix != "undefined")
+            {
+               $('#chartlabels').children().removeClass('hovered');
+               $('#chartlabel'+ix).addClass('hovered');
+               // highlight index ix!
+            }
+         }
+
+         poll_progress_hide();
+         poll_dashboard(false);
+         $('#actionbutton').html("<button style='width: 222px;' id=vote>Voting still active</button>");
+
+      }).fail(poll_progress_hide);
+   },500);
 }

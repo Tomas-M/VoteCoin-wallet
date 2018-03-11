@@ -169,3 +169,37 @@ function sha256(str)  // returns PROMISE, call like this: sha256("string").then(
       return btoa(String.fromCharCode(...new Uint8Array(hash)));
   });
 }
+
+// -----------------------------------------------------------------------------------------
+
+Chart.plugins.register({
+   afterDatasetsDraw: function(chart) {
+      var ctx = chart.ctx;
+
+      chart.data.datasets.forEach(function(dataset, i) {
+         var meta = chart.getDatasetMeta(i);
+         if (!meta.hidden) {
+            meta.data.forEach(function(element, index) {
+               // Draw the text in black, with the specified font
+               ctx.fillStyle = 'rgb(50, 50, 50)';
+
+               var fontSize = 14;
+               var fontStyle = 'bold';
+               var fontFamily = 'Roboto';
+               ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+
+               // Just naively convert to string for now
+               var dataString = dataset.data[index].toString()+"%";
+
+               // Make sure alignment settings are correct
+               ctx.textAlign = 'center';
+               ctx.textBaseline = 'middle';
+
+               var padding = 5;
+               var position = element.tooltipPosition();
+               if (dataset.data[index]>=4) ctx.fillText(dataString, position.x, position.y );
+            });
+         }
+      });
+   }
+});

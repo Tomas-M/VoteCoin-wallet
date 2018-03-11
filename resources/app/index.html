@@ -75,11 +75,11 @@
         .votelistrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .votelistrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
         .votelistid { width: 110px; padding-left: 5px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
-        .votelisttitle { width: calc(100% - 210px); overflow: auto; overflow-y:hidden; cursor:pointer; }
-        .votelistbuttons { width: 90px;  margin-bottom: 5px; padding-left: 6px; overflow: auto; overflow-y:hidden; color: #777;}
+        .votelisttitle { width: calc(100% - 300px); overflow: auto; overflow-y:hidden; cursor:pointer; }
+        .votelistbuttons { width: 180px;  margin-bottom: 5px; padding-right: 10px; text-align: right; overflow: auto; overflow-y:hidden; color: #777; }
         .votelistrow:last-child { border-bottom: 0; }
         .votelistrow:hover div { background-color: #ddd; }
-        .votelistbuttons:hover { color: #000; cursor: pointer; }
+        .votelistbuttons:hover { color: #000; cursor: pointer !important; }
 
         .addressbalance::-webkit-scrollbar-thumb,
         .operationstatus::-webkit-scrollbar-thumb,
@@ -396,6 +396,7 @@
    var reset_transactions_list=false;
 </script>
 
+<script src=chart.min.js></script>
 <script src=lib.js></script>
 <script src=gui.js></script>
 <script src=send.js></script>
@@ -404,6 +405,7 @@
 <script src=settings.js></script>
 <script src=votecoin.js></script>
 <script src=backup.js></script>
+<script src=backtrack.js></script>
 <script src=poll.js></script>
 
 <script>
@@ -438,7 +440,8 @@
    $(document).on('click','#rmoption',rm_poll_option);
    $(document).on('click','#startpoll',poll_start);
    $(document).on('click','.votelisttitle',function(){ poll_id($(this).parent().data('polltx')); })
-   $(document).on('click','#dovote',poll_vote)
+   $(document).on('click','.votelistbuttons',function(){ poll_results($(this).parent().data('polltx')); })
+   $(document).on('click','#dovote',poll_vote_backtrack)
 
    $(document).on("change","input[type=file]",upload_file_change);
    $(document).on("change keyup paste","input[type=text], textarea, select",poll_change);
@@ -450,12 +453,6 @@
    $(document).on("keyup",'#pollfilter',function(e){ if (e.keyCode==13) poll_id($(this).val()); } );
    $(document).on("input",'#pollfilter',function() { poll_id($(this).val()); } );
    $(window).on("resize",poll_drag);
-
-// change error message invalid zcash address
-// change default port for rpc (in votecoind)
-// addr balance stats http://explorer.votecoin.site/insight-api-zcash/addr/t1Up..../?noTxList=1
-
-   // settings click events
 
    $(document).on('click','#ztrack', ztrack_toggle);
    $(document).on('click','#rebroadcast', resend_mempool_transactions);
