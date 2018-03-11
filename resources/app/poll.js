@@ -672,9 +672,22 @@ function poll_results(txid)
 // if (items==0) no votes received, print message instead
          $('#newvote').html(''
             +'<div style="font-size: 27px; margin-bottom: 10px; word-wrap: break-word;">'+polls[txid]['title']+'</div>'
-            +'<div style="float: left; width: calc(100% - 300px); margin: 30px; "><canvas id="votechart" width="400" height="400"></canvas></div>'
-            +'<div style="float: left; width: 222px; margin-left: 18px; word-wrap: break-word;" id=chartlabels>'+labels+'</div>');
+            +'<div style="float: left; width: calc(100% - 340px); margin: 50px; margin-top: 20px; "><canvas id="votechart" width="400" height="400"></canvas></div>'
+            +'<div style="float: left; width: 222px; margin-left: 18px; word-wrap: break-word;" id=chartlabels>'
+               +labels
+               +(polls[txid].endblock>blocks?
+               "<div align=center id=endtimer data-endblock='"+num(polls[txid].endblock,0)+"' style='margin-top: 30px;'>"
+                  +"<div>"
+                  +"<div class=end1></div><div class=end2></div><div class=end3></div>"
+                  +"</div>"
+                  +"<div class=end1b>days</div><div class=end2b>hours</div><div class=end3b>mins</div>"
+               +"</div>"
+               :"")
+            +'</div>'
+
+         );
          scrollTop();
+         update_gui_polldate();
 
          var ctx = document.getElementById("votechart");
          var myPie = new Chart(ctx,
