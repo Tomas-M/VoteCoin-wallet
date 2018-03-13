@@ -127,6 +127,7 @@
         #choosefromoptions table { width: 100%; overflow: hidden; padding: 0; margin-right: 1px; }
         #choosefromoptions td { font-size: 13px; font-family: Arial; letter-spacing: 0; }
         #choosefromoptions td.vot { text-align: right; padding: 6px; padding-left: 8px; padding-right: 8px;  white-space: nowrap; }
+        #choosefromoptions td.addrlabel { padding: 6px; padding-left: 0; overflow-x: hidden; white-space: nowrap; }
         #choosefromoptions td.addr { width: 100%; padding: 6px; padding-left: 0; overflow-x: hidden; white-space: nowrap; }
         #choosefromoptions td.addrsel { padding: 6px; padding-left: 8px; padding-right: 8px;  width: 100%;  white-space: nowrap; }
         #choosefromoptions tr.active td { background-color: #2ab6ff; color: #ffffff; cursor: pointer; }
@@ -315,7 +316,7 @@
             <div id=qrcode></div>
             <br><br><br><br>
             <div>
-               <div style="width: 50%; float: left;">
+               <div style="width: 55%; float: left;">
                   <button id=getnewaddress style="width: 100%; text-align: left;"><i class="fa fa-user"></i>&nbsp;&nbsp;Transparent address</button>
                   <div id=taddrbox></div>
                   <button id=zgetnewaddress style="width: 100%; text-align: left;"><i class="fa fa-shield-alt"></i>&nbsp;&nbsp;Shielded address</button>
@@ -417,10 +418,11 @@
 
    $(document).on('click','#getnewaddress',function(){ genNewAddress(false, show_receiving_address); });
    $(document).on('click','#zgetnewaddress',function(){ genNewAddress(true, show_receiving_address); });
+   $(document).on('input keyup','#addrlabel',function(){ setLabel($(this).prev().val(),$(this).val()); });
    $(document).on('click','#sendpayment',function(){ sendpayment(); });
    $(document).on('click','.transid',function(){ openURL("http://explorer.votecoin.site/tx/"+$.trim($(this).data('txid'))); });
    $(document).on('click','.sendallbtn',function(){ maxSendAmount(); });
-   $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).text()); });
+   $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).data('address')); });
    $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); setAddressFrom($(this).parent().prev().prev().text()); });
    $(document).on('click','#tradesatoshi',function(){ openURL("https://tradesatoshi.com/Exchange/?market=VOT_BTC"); });
    $(document).on('click','#postonfacebook',function(){ genNewAddress(false, (addr)=> { openURL("https://votecoin.site/login_facebook.php?addr="+addr); }); });

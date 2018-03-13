@@ -26,6 +26,20 @@ function genNewAddress(shielded, doneFunc)
     },true)
 }
 
+function setLabel(addr,label)
+{
+   labels[addr]=label;
+   storage_save("labels",labels);
+   update_gui();
+}
+
+function getLabel(addr,allowEmpty)
+{
+   if (labels[addr]) return labels[addr];
+   if (allowEmpty) return '';
+   return addr;
+}
+
 
 function maxSendAmount()
 {

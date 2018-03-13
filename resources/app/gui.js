@@ -172,8 +172,8 @@ function update_gui()
     var from=$('#choosefrom').val();
     var fromaddr="";
 
-    for(var i in transparent_addresses) if (transparent_addresses[i]!=0) fromaddr+='<tr data-value="'+i+'"><td class=vot>'+num(transparent_addresses[i],8)+' VOT &nbsp;-</td><td class=addr>'+i+'</td></tr>';
-    for(var i in shielded_addresses) if (shielded_addresses[i]!=0) fromaddr+='<tr data-value="'+i+'"><td class=vot>'+num(shielded_addresses[i],8)+' VOT &nbsp;-</td><td class=addr>'+i+'</td></tr>';
+    for(var i in transparent_addresses) if (transparent_addresses[i]!=0) fromaddr+='<tr data-value="'+i+'"><td class=vot>'+num(transparent_addresses[i],8)+' VOT &nbsp;-</td><td class=addrlabel>'+htmlspecialchars(getLabel(i,true))+'</td><td class=addr>-&nbsp; '+i+'</td></tr>';
+    for(var i in shielded_addresses) if (shielded_addresses[i]!=0) fromaddr+='<tr data-value="'+i+'"><td class=vot>'+num(shielded_addresses[i],8)+' VOT &nbsp;-</td><td class=addrlabel>'+htmlspecialchars(getLabel(i,true))+'</td><td class=addr>-&nbsp; '+i+'</td></tr>';
     if (fromaddr!='') fromaddr="<table cellspacing=0 cellpadding=0>"+fromaddr+"</table>"
     sethtml('choosefromaddresses',fromaddr);
     setAddressFrom(from);
@@ -195,8 +195,8 @@ function update_gui()
 
     var addressesT='';
     var addressesS='';
-    for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
-    for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address'>"+i+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
+    for (i in transparent_addresses) if (transparent_addresses[i]!=0) addressesT+="<div class=addresslistrow><div class=addresslabel title='Receive to this address' data-address='"+i+"'>"+htmlspecialchars(getLabel(i))+"</div> <div class=addressbalance>"+num(transparent_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
+    for (i in shielded_addresses) if (shielded_addresses[i]!=0) addressesS+="<div class=addresslistrow><div class=addresslabel title='Receive to this address' data-address='"+i+"'>"+htmlspecialchars(getLabel(i))+"</div> <div class=addressbalance>"+num(shielded_addresses[i],8)+" VOT</div><div class=addressbuttons><i title='Send from this address' class='fa fa-upload'></i></div></div>";
     sethtml('walletaddresses',(addressesT!=''?"<br><h2><i class='fa fa-user' style='margin-right: 10px;'></i></h2>"+addressesT:"")+(addressesS!=''?"<br><h2><i class='fa fa-shield-alt' style='margin-right: 10px;'></i></h2>"+addressesS:""));
 
     var votelist='';
@@ -315,10 +315,13 @@ function scrollTop(animation)
 function show_receiving_address(addr)
 {
    var el=$('#'+(addr.length>60?"z":"t")+'addrbox');
+   var label=labels[addr];
    $('#taddrbox').html('');
    $('#zaddrbox').html('');
-   el.html("<textarea style='width: calc(100% - 20px);'></textarea>");
-   el.find('textarea').val(addr).css('height',addr.length>60?'48px':'17px').select();
+   el.html("<textarea style='width: calc(100% - 22px);'></textarea><textarea placeholder='set new label (optional)' id=addrlabel style='width: calc(100% - 22px); margin-top: -10px;'></textarea>");
+   el.find('textarea:last').val(getLabel(addr,true));
+   el.find('textarea:first').val(addr).css('height',addr.length>60?'32px':'17px').select();
+
    $('#qrcode').show();
    qrcode.makeCode(addr);
    scrollTop(true);

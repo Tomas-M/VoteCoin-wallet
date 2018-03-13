@@ -15,6 +15,7 @@ var totalblocks=0;
 
 var transparent_addresses=storage_load('taddresses',{});
 var shielded_addresses=storage_load('zaddresses',{});
+var labels=storage_load('labels',{});
 
 var poll_address="zcPGJHo5kdNaDSfotKFnHmyo8U7ywogRvjjHoCoJhsaUC2CFsePNMr1BvMKJ84FZC7H4gpUq2r5xVKS3yk466vYXVgqUvLt";
 var poll_viewkey="ZiVKdM5er1LWQ6Ti7UqE3BdugFCLhuwutwcFRqkoehZe9tVUZrWrojFr2A4A545dVDa7zqHBSAt95Skf1ztPHALqfLTvLY4N3";
