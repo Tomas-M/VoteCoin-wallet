@@ -120,7 +120,7 @@ function show_new_poll(ev)
                  );
 
    $('#polltitle').focus();
-   $('#actionbutton').html("<button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, <span id=pollcost>10</span> VOT</button>");
+   $('#actionbutton').html("<button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, <span id=pollcost>1</span> VOT</button>");
    $('#actionbutton button').trigger('mouseenter');
 }
 
