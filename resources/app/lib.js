@@ -156,7 +156,7 @@ function audio_notify()
    if ($('#sound').html()=='')
    {
       $('#sound').html('<audio autoplay="autoplay"><source src="notify.mp3" type="audio/mpeg" /></audio>');
-      setTimeout(function(){ $('#sound').html(''); },5000); // prevents replaying the notification in the next 5 seconds
+      setTimeout(function(){ $('#sound').html(''); },3000); // prevents replaying the notification in the next 3 seconds
    }
 }
 

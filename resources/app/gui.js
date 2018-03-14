@@ -138,12 +138,12 @@ function update_gui()
     }
 
     var filter=$('#txfilter').val();
-    var trans=""; var i;
+    var trans=""; var i; var n=0;
     for (i=0; i<transactions.length; i++)
     if (txfiltermatch(transactions[i],filter))
     {
        var memo=htmlspecialchars(transactions[i].memo);
-       if (i>20) break;
+       if (++n>20) break;
        var blocktime=transactions[i].blocktime;
 
        var confirmtime=blocktime; if (!confirmtime) confirmtime=transactions[i].time;
@@ -180,14 +180,16 @@ function update_gui()
 
     var ops="";
     var operationsAr=makeOrderedArray(operations,['creation_time']);
+    var status;
 
     for (i in operationsAr)
     {
+       status=operationsAr[i].status||"";
        ops="<div class=operationrow>"
               +"<div class=operationtime title='"+humanReadableDate(operationsAr[i].creation_time)+"'>"+timeAgo(operationsAr[i].creation_time)+"</div>"
               +"<div class=operationamount>"+num(operationsAr[i].amount,8,true)+" VOT</div>"
-              +"<div class=operationicon><i class='fa fa-"+(!operationsAr[i].status || operationsAr[i].status.match(/queued|executing/)?'clock':(operationsAr[i].status.match(/failed|canceled/)?'exclamation-circle':'check'))+"'></i></div>"
-              +"<div class=operationstatus>"+(operationsAr[i].error?operationsAr[i].status+" - "+operationsAr[i].error.message:operationsAr[i].status.replace(/^executing/,"executing, please wait..."))+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
+              +"<div class=operationicon><i class='fa fa-"+(!status || status.match(/queued|executing/)?'clock':(status.match(/failed|canceled/)?'exclamation-circle':'check'))+"'></i></div>"
+              +"<div class=operationstatus>"+(operationsAr[i].error?status+" - "+operationsAr[i].error.message:status.replace(/^executing/,"executing, please wait..."))+(operationsAr[i].txid?" - <span class=transid data-txid='"+operationsAr[i].txid+"'>txid</span>":"")+"</div>"
            +"</div>"+ops;
     }
 
