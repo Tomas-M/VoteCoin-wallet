@@ -162,7 +162,7 @@ function update_gui()
     {
         var chart=""; var i,max=0;
 
-        for (i=Math.min(transactions.length-1,50); i>=0; i--) max=transactions[i].amount>max?transactions[i].amount:max;
+        for (i=Math.min(transactions.length-1,50); i>=0; i--) max=Math.abs(transactions[i].amount)>max?Math.abs(transactions[i].amount):max;
         for (i=Math.min(transactions.length-1,50); i>=0; i--) chart='<div title="'+humanReadableDate(transactions[i].blocktime||transactions[i].time)+'\n'+UCfirst(transactions[i].category)+" "+num(Math.abs(transactions[i].amount,8))
            +' VOT" class="chartbar '+(transactions[i].amount<0?'minus':'')+'" style="width: calc('+(100/transactions.length)+'% - 2px); '
            +' height: '+Math.ceil(Math.abs(transactions[i].amount)/max*150)+'px"></div>'+chart;
