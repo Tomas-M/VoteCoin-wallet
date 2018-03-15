@@ -16,12 +16,15 @@ var totalblocks=0;
 var transparent_addresses=storage_load('taddresses',{});
 var shielded_addresses=storage_load('zaddresses',{});
 var labels=storage_load('labels',{});
+var votes={}; // pending votes, until they are confirmed
 
+var wallet_seq="123";
 var poll_address="zcPGJHo5kdNaDSfotKFnHmyo8U7ywogRvjjHoCoJhsaUC2CFsePNMr1BvMKJ84FZC7H4gpUq2r5xVKS3yk466vYXVgqUvLt";
 var poll_viewkey="ZiVKdM5er1LWQ6Ti7UqE3BdugFCLhuwutwcFRqkoehZe9tVUZrWrojFr2A4A545dVDa7zqHBSAt95Skf1ztPHALqfLTvLY4N3";
 var poll_fee=1;
 var polls=storage_load('polls',{});
 var my_pollids=storage_load('my_pollids',{});
+var myPie;
 
 // Get all operations, mark leftover ones from previous run as canceled
 var operations=storage_load('operations',{});
@@ -100,11 +103,19 @@ function update_operation_status()
                if (!ret.error)
                {
                   operations[opid].txid=ret.result.txid;
-                  if (operations[opid].report_poll_tx)
+                  if (operations[opid].create_poll_tx)
                   {
-                     delete operations[opid].report_poll_tx;
+                     delete operations[opid].create_poll_tx;
                      poll_progress_hide();
                      poll_success(ret.result.txid);
+                  }
+
+                  var result_poll_tx=operations[opid].result_poll_tx;
+                  if (result_poll_tx)
+                  {
+                     delete operations[opid].result_poll_tx;
+                     votes[opid].txid=ret.result.txid;
+                     poll_results(result_poll_tx);
                   }
 
                   if (isShielded(ret.params.amounts[0].address)) // we're sending to Z address, tx may not be in list, memo definitely is not
@@ -178,19 +189,34 @@ function sort_transactions()
    storage_save("transactions",transactions);
 }
 
+
 function update_unconfirmed_transactions()
 {
    for (var i=0; i<transactions.length; i++)
    if (!transactions[i].blocktime)
    (function(tr)
    {
-      main.rpc("gettransaction",[tr.txid,true],(res)=>
+      main.rpc("gettransaction",[tr.txid,false],(res)=>
       {
          tr.blocktime=res.blocktime;
+         update_voteheight(res.txid,res.blockhash);
          sort_transactions();
       });
    })(transactions[i]);
 }
+
+
+function update_voteheight(txid,blockhash)
+{
+   if (blockhash)
+   main.rpc("getblock",[blockhash],function(res)
+   {
+      for (var i in votes)
+         if (votes[i].txid==txid)
+            votes[i].height=res.height;
+   })
+}
+
 
 function update_transactions(start) // load all T transactions into array
 {
@@ -283,6 +309,18 @@ function update_addresses()
 }
 
 
+function checkNewVersion()
+{
+   $.get("https://votecoin.site/version.php",{},function(ret){
+      ret=JSON_fromString(ret);
+      if (ret.seq>wallet_seq)
+      {
+         if (confirm(ret.message)) openURL(ret.download);
+      }
+   })
+}
+
+
 function setUpdater(func,time)
 {
    setInterval(func,time);
@@ -317,6 +355,7 @@ function init()
           isInitialized=true;
           import_viewing_keys();
           update_addresses();
+          poll_dashboard(true);
 
           // init periodic stats updaters
           setUpdater(update_rates,600000); // once per 10 minutes
@@ -328,6 +367,8 @@ function init()
           setUpdater(update_gui,1000);   // every 1 second
 
           gui_show('dashboard');
+
+          setTimeout(function(){setUpdater(checkNewVersion,600000); },2000);// once per hour
       })
    });
 }

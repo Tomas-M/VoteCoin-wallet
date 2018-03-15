@@ -74,12 +74,13 @@
 
         .votelistrow { white-space: nowrap; margin-bottom: 4px; border-bottom: 1px solid #d7d7d7; position: relative; }
         .votelistrow div { display: inline-block; height: 45px; vertical-align: top; line-height: 45px; }
-        .votelistid { width: 110px; padding-left: 5px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
-        .votelisttitle { width: calc(100% - 300px); overflow: auto; overflow-y:hidden; cursor:pointer; }
-        .votelistbuttons { width: 180px;  margin-bottom: 5px; padding-right: 10px; text-align: right; overflow: auto; overflow-y:hidden; color: #777; }
+        .votelistid { width: 130px; padding-left: 10px; margin-bottom: 5px; overflow: auto; overflow-y:hidden; }
+        .votelisttitle { width: calc(100% - 320px); overflow: auto; overflow-y:hidden; }
+        .votelistbuttons span { width: 90px; display: inline-block; margin-bottom: 5px; padding-right: 10px; text-align: right; overflow: auto; overflow-y:hidden; color: #777; }
+        .votelistbuttons span:first-child { width: 70px;}
         .votelistrow:last-child { border-bottom: 0; }
         .votelistrow:hover div { background-color: #ddd; }
-        .votelistbuttons:hover { color: #000; cursor: pointer !important; }
+        .votelistbuttons span:hover { color: #000; cursor: pointer !important; }
 
         .addressbalance::-webkit-scrollbar-thumb,
         .operationstatus::-webkit-scrollbar-thumb,
@@ -177,14 +178,17 @@
         .polloptiontitle { margin-left: 5px; word-wrap: break-word; }
         .polloptionsval { margin-right: 5px;}
 
-        .newpolltype { border-radius: 5px; cursor: pointer; text-align: center; width: 100px;  height: 150px; display: inline-block; margin: 0px; padding: 20px 25px 20px 25px; }
-        .newpolltype .fa { cursor: pointer; color: #aaaaaa; font-size: 60px; padding:20px;  }
-        .newpolltype span { cursor: pointer; display: block; color: #666; }
+        .newpolltype { border-radius: 5px; text-align: center; width: 100px;  height: 150px; display: inline-block; margin: 0px; padding: 20px 25px 20px 25px; }
+        .newpolltype .fa { color: #aaaaaa; font-size: 60px; padding:20px;  }
+        .newpolltype span { display: block; color: #666; }
         .newpolltype .fa-chart-bar { padding: 20px 21px 20px 19px; }
         .newpolltype .fa-chart-pie { padding: 22px 22px 18px 18px; }
         .newpolltype .fa-money-bill-alt { padding: 20px 27px 20px 13px; }
-        .newpolltype:hover .fa { color: #666; }
-        .newpolltype:hover span { color: #000; }
+        .newpolltype:ahover .fa { color: #666; }
+        .newpolltype:ahover span { color: #000; }
+
+        .chartlabels { border: 1px solid transparent; border-radius: 5px; padding: 10px; }
+        .chartlabels.hovered { border: 1px solid rgba(255,255,255,0.5); background-color: rgba(255,255,255,0.5); }
 
         .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
         .settingshelp { text-align: justify; }
@@ -334,7 +338,7 @@
                </div>
             </div>
             <div style="position: absolute; right: 30px; top: 25px;">
-               <button id=addnewpoll style="display: inline-block; width: 222px;">+ Add poll or campaign</button>
+               <button id=backbtn class=cancel style="display: none;"><span class="fa fa-long-arrow-alt-left"></span> &nbsp;list</button>
                <div id=actionbutton></div>
             </div>
             <h1><i class="fa fa-sliders-h"></i>Vote <span id=voteid style="color: #888; margin-left: 20px;"></span></h1>
@@ -435,18 +439,23 @@
    $(document).on('keyup','#txfilter',update_gui);
 
    $(document).on('click','#addnewpoll',show_new_poll);
+   $(document).on('click','#backbtn',function(){ poll_dashboard(true); });
    $(document).on('mouseenter','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label, .nocustom',show_new_poll_help);
    $(document).on('mouseleave','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label, .nocustom',show_new_poll_help);
    $(document).on('focus blur','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
    $(document).on('click','#addoption',add_poll_option);
    $(document).on('click','#rmoption',rm_poll_option);
    $(document).on('click','#startpoll',poll_start);
-   $(document).on('click','.votelisttitle',function(){ poll_id($(this).parent().data('polltx')); })
-   $(document).on('click','.votelistbuttons',function(){ poll_results($(this).parent().data('polltx')); })
+   $(document).on('click','.votelistbuttons span:first-child',function(){ poll_id($(this).parent().parent().data('polltx')); })
+   $(document).on('click','.votelistbuttons span:last-child',function(){ poll_results($(this).parent().parent().data('polltx')); })
+   $(document).on("click",'#gotovote', function(ev) { poll_id($('#voteid').data('txid')); });
    $(document).on('click','#dovote',poll_vote_backtrack)
 
    $(document).on("change","input[type=file]",upload_file_change);
    $(document).on("change keyup paste","input[type=text], textarea, select",poll_change);
+
+   $(document).on('mouseenter','.chartlabels',poll_chart_highlight_item);
+   $(document).on('mouseleave','.chartlabels',poll_chart_highlight_item);
 
    $(document).on("change",'#countvotes, #suggestvot, #endblock, #pollsize', function(ev) { var t=$(this); if (t.val()!='custom') return; t.hide(); t.prev().hide(); t.next().show(); t.next().find('input').focus(); })
    $(document).on("click",'.nocustom', function(ev) { var t=$(this).parent().prev(); t.val(t.find('option:first').val()).show().prev().show(); t.next().hide(); t.next().find('input').val(''); poll_change.call(this); })

@@ -19,7 +19,7 @@ function gui_show(t,duration)
         if (t=='send') $('#sendto').focus();
         if (t=='dashboard') $('#txfilter').focus();
         if (t=='vote') $('#pollfilter').focus();
-        $('#right div').scrollTop(0);
+        $('#right>div').scrollTop(0);
     },100);
 }
 
@@ -209,7 +209,7 @@ function update_gui()
        votelist='<div class=votelistrow data-polltx="'+poll.txid+'">'
          +'<div class=votelistid>#'+poll.height+'#'+poll.ix+'</div>'
          +'<div class=votelisttitle>'+htmlspecialchars(poll.title)+'</div>'
-         +'<div class=votelistbuttons><i class="fa fa-sliders-h" style="cursor:pointer;"></i> vote &nbsp; &nbsp; <i class="fa fa-search" style="cursor:pointer;"></i> results</div>'
+         +'<div class=votelistbuttons><span>'+(parseInt(poll.endblock)>totalblocks?'<i class="fa fa-sliders-h" style="cursor:pointer;"></i> vote':'')+'</span><span><i class="fa fa-search" style="cursor:pointer;"></i> results</span></div>'
          +'</div>'+votelist;
     }
 
@@ -261,7 +261,7 @@ function update_gui_polldate()
       $('.end1b').text('--');
       $('.end2b').text('--');
       $('.end3b').text('--');
-      $('#dovote').prop('disabled',true).text("Voting has ended");
+      $('#dovote').html("<i class='fa fa-search'></i> see results");
    }
 }
 
@@ -308,9 +308,9 @@ function show_progress(pct)
 function scrollTop(animation)
 {
    if (animation)
-      $('#right div').animate({scrollTop:0}, 500, 'swing');
+      $('#right>div').animate({scrollTop:0}, 500, 'swing');
    else
-      $('#right div').scrollTop(0);
+      $('#right>div').scrollTop(0);
 }
 
 

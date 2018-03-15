@@ -160,6 +160,13 @@ function audio_notify()
    }
 }
 
+function num_precision(r)
+{
+   var p=num(r,8,true).split(".")[1];
+   if (p) p=p.length; else p=0;
+   return p;
+}
+
 // -----------------------------------------------------------------------------------------
 
 function sha256(str)  // returns PROMISE, call like this: sha256("string").then(result=>...)
@@ -203,3 +210,7 @@ Chart.plugins.register({
       });
    }
 });
+
+// nasty hack to skip changing chart border color if background is used
+Chart.helpers.getHoverColor2=Chart.helpers.getHoverColor;
+Chart.helpers.getHoverColor=function(col){ if (col=='#e9e9e9') return col; else return Chart.helpers.getHoverColor2(col); }
