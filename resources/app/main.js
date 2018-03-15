@@ -35,7 +35,25 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({width: 1200, height: 720, icon: path.join(__dirname, 'votecoin.ico')})
 
-  win.setMenu(null);
+  if (process.platform === 'darwin')
+  {
+    var menuTemplate = [];
+    menuTemplate.push({
+      label: 'Edit',
+      submenu: [
+        {role: 'cut'},
+        {role: 'copy'},
+        {role: 'paste'},
+        {role: 'delete'},
+        {role: 'selectall'}
+      ]}
+    );
+
+    const applicationMenu = Menu.buildFromTemplate(menuTemplate)
+    Menu.setApplicationMenu(applicationMenu)
+    win.setMenu(applicationMenu);
+  }
+  else win.setMenu(null);
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -193,7 +211,8 @@ app.on('before-quit', (event) =>
       event.preventDefault();
       walletStop();
    }
-})
+});
+
 
 
 function rpc(method,params,doneFunc,errorFunc,hideErrorMessage)
@@ -360,3 +379,4 @@ exports.openDevelTools=openDevelTools;
 exports.getLastRPCerrorMessage=getLastRPCerrorMessage;
 exports.storage_save=storage_save;
 exports.storage_load=storage_load;
+ 
