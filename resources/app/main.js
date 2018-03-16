@@ -319,7 +319,7 @@ function init_rpc_password()
    {
       wallet_user="admin";
       wallet_password=crypto.randomBytes(20).toString('hex')
-      wallet_port=6663;
+      wallet_port=6662;
       fs.writeFileSync(confpath, "rpcport="+wallet_port+"\nrpcuser="+wallet_user+"\nrpcpassword="+wallet_password+"\nbanscore=500\nbantime=60\nrpcworkqueue=80");
    }
    else
@@ -379,4 +379,3 @@ exports.openDevelTools=openDevelTools;
 exports.getLastRPCerrorMessage=getLastRPCerrorMessage;
 exports.storage_save=storage_save;
 exports.storage_load=storage_load;
- 
