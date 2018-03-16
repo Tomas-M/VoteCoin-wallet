@@ -249,7 +249,10 @@
                <br><br>
                To buy and sell VOT coins, visit one of the supported exchanges:
                <br><br>
-               <div align=center><img id=tradesatoshi src="img/TradeSatoshi_Badge.png" width=200 style="cursor: pointer;"></div>
+               <div align=center>
+                  <img id=tradesatoshi src="img/TradeSatoshi_Badge.png" width=200 style="cursor: pointer; margin-right: 50px; margin-bottom: 15px;">
+                  <img id=crex24 src="img/crex24_logo.png" width=170 style="cursor: pointer;">
+               </div>
                <br><br>
 
                <i class="fa fa-hourglass-start" style="color: #aaaaaa; font-size: 25px;"></i> <span style="font-size: 28px;">&nbsp;Sync in progress</span>
@@ -429,7 +432,8 @@
    $(document).on('click','.addresslabel',function(){ show_receiving_address($(this).data('address')); });
    $(document).on('click','.addressbuttons .fa-upload', function(){ gui_show('send'); setAddressFrom($(this).parent().prev().prev().text()); });
    $(document).on('click','#tradesatoshi',function(){ openURL("https://tradesatoshi.com/Exchange/?market=VOT_BTC"); });
-   $(document).on('click','#postonfacebook',function(){ genNewAddress(false, (addr)=> { openURL("https://votecoin.site/login_facebook.php?addr="+addr); }); });
+   $(document).on('click','#crex24',function(){ openURL("https://crex24.com/exchange/VOT-BTC"); });
+   $(document).on('click','#postonfacebook',function(){ genNewAddress(false, (addr)=> { openURL("https://votecoin.site/post_facebook.php?addr="+addr); }); });
    $(document).on('click','.social',function(e){ openURL($(this).data('url')); e.preventDefault(); });
    $(document).on('focus','#choosefromlabel',function(e){ $(this).blur(); $('#choosefromoptions').slideDown(100); });
    $(document).on('mousedown','#choosefromlabel',function(e){ e.preventDefault(); $('#choosefromoptions').slideToggle(100); });
