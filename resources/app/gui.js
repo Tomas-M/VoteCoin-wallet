@@ -4,6 +4,7 @@
 */
 
 const child_process = require('child_process');
+const {shell} = require('electron')
 
 function gui_show(t,duration)
 {
@@ -344,5 +345,5 @@ function msg(s)
 
 function openURL(url)
 {
-   child_process.execSync('start '+url.replace(/[&]/g,'^&').replace(/=/g,"^=").replace(/ /g,"+"));
+   shell.openExternal(url);
 }
