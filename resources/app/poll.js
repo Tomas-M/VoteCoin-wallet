@@ -294,7 +294,7 @@ function poll_start()
       if (data.options.length==0) return poll_hig("option1");
       if (data.endblock<totalblocks) return poll_hig("endblock2");
       var memos=memos_generate(data);
-      var pollfee=memos.length*poll_fee;
+      var totalpollfee=memos.length*poll_fee;
       var sendfee=0; // 0.0001
 
       // this is way too big
@@ -306,23 +306,22 @@ function poll_start()
 
       // find suitable outgoing address with sufficient balance.
       var from="", i;
-      if (from=='') for(i in transparent_addresses) if (transparent_addresses[i]>=pollfee+sendfee) { from=i; break; }
+      if (from=='') for(i in transparent_addresses) if (transparent_addresses[i]>=totalpollfee+sendfee) { from=i; break; }
 
       // if not found, alert and quit
-      if (from=='') return alert("Cannot find any Transparent address with sufficient balance of "+(pollfee+sendfee)+" VOT. You may need to group your coins to a single Transparent address and try again.");
+      if (from=='') return alert("Cannot find any Transparent address with sufficient balance of "+(totalpollfee+sendfee)+" VOT. You may need to group your coins to a single Transparent address and try again.");
 
       // get memos with real addresses
       poll_data(true, (data)=>
       {
          var memos=memos_generate(data);
-         var txfee=pollfee/memos.length;
          var params=[];
-         for(i=0; i<memos.length; i++) params.push({'address':poll_address,'amount':txfee,'memo':memos[i]});
+         for(i=0; i<memos.length; i++) params.push({'address':poll_address,'amount':poll_fee,'memo':memos[i]});
 
          var payment_success=function(opid) // payment was accepted for processing, operation is in progress
          {
             poll_progress_show("Publishing, please wait...");
-            operations[opid]={'create_poll_tx':true, 'amount':pollfee, 'zbalance': 0, 'creation_time':now()};
+            operations[opid]={'create_poll_tx':true, 'amount':totalpollfee, 'zbalance': 0, 'creation_time':now()};
             update_operation_status();
             update_transactions();
             update_addresses();
@@ -368,7 +367,7 @@ function poll_load(txid,doneFunc,waitmsg)
          {
             poll_progress_hide();
             var memos=[], i, ix;
-            for (i=0; i<alltxs.length; i++) if (alltxs[i].txid==txid) memos.push(alltxs[i].memo);
+            for (i=0; i<alltxs.length; i++) if (alltxs[i].txid==txid && alltxs[i].amount>=poll_fee) memos.push(alltxs[i].memo);
             memos.sort(function(a,b){ a=a.substr(2,2); b=b.substr(2,2); if (a>b) return 1; if (b>a) return -1; return 0; });
             for (i=0; i<memos.length; i++) memos[i]=hexDecode(memos[i].substr(4));
             var data=JSON_fromString(memos.join(""));
