@@ -449,13 +449,15 @@
    $(document).on('focus blur','#actionbutton button, #newvote input, #newvote textarea, #newvote select, #newvote button, #newvote label',show_new_poll_help);
    $(document).on('click','#addoption',add_poll_option);
    $(document).on('click','#rmoption',rm_poll_option);
+
    $(document).on('click','#startpoll',poll_start);
    $(document).on('click','.votelistbuttons span:first-child',function(){ poll_id($(this).parent().parent().data('polltx')); })
    $(document).on('click','.votelistbuttons span:last-child',function(){ poll_results($(this).parent().parent().data('polltx')); })
    $(document).on("click",'#gotovote', function(ev) { poll_id($('#voteid').data('txid')); });
    $(document).on('click','#dovote',poll_vote_backtrack)
 
-   $(document).on("change","input[type=file]",upload_file_change);
+   $(document).on("change","#logotypeselect",logotype_change);
+   $(document).on("change","#polllogo",upload_file_change);
    $(document).on("change keyup paste","input[type=text], textarea, select",poll_change);
 
    $(document).on('mouseenter','.chartlabels',poll_chart_highlight_item);
