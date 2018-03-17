@@ -25,7 +25,13 @@ var poll_viewkey="ZiVKcy3zHHwVvr5DPMMdSWY581QZgZmtBYJYrk6UiupH8pmvMp4N3Veqy7mSLY
 
 var poll_fee=1;
 var polls=storage_load('polls',{});
-var my_pollids=storage_load('my_pollids',{});
+
+if ($.isEmptyObject(polls))
+{
+   var examples = require('./poll_examples.js');
+   var polls = examples.poll_examples;
+}
+
 var wallet_seq="123";
 var myPie;
 
