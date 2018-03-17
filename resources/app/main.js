@@ -183,6 +183,7 @@ function walletStart()
 {
    console.log('wallet start');
    canQuit=false;
+   try { fs.chmodSync(daemon_path()+'/'+daemon_exe(),0755); } catch(e) { console.log(e); }
    server = spawn(daemon_path()+'/'+daemon_exe(), wallet_startup_params, {detached:true, stdio:'ignore', cwd:daemon_path()} )
                .on('exit',code=>
                {
