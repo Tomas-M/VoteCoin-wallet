@@ -129,7 +129,7 @@ function daemon_exe()
 {
    if (process.platform == 'win32') return "votecoind.exe";
    if (process.platform == 'linux') return "votecoind";
-   if (process.platform == 'darwin') return "votecoind";
+   if (process.platform == 'darwin') return "votecoind.mac";
 }
 
 function daemon_path()
