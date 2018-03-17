@@ -23,7 +23,7 @@ function genNewAddress(shielded, doneFunc)
         }
 
         doneFunc(addr);
-    })
+    },function(e){ alert("Could't generate address. Please make sure your wallet is not busy and try again."); })
 }
 
 function setLabel(addr,label)
