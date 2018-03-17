@@ -235,7 +235,7 @@ function upload_file_change(tx)
    }
 
    if (tx=="1" || tx==2) { reset(); poll_change.call(t); return; }
-   if (tx.match(/^[a-z0-9]{64}$/i))
+   if (typeof tx == "string" && tx.match(/^[a-z0-9]{64}$/i))
    {
       $('#logopreview').html('<img data-txid='+htmlspecialchars(tx)+' src="'+polls[tx].logo_src+'" width=220 style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');
       poll_change.call(t);
