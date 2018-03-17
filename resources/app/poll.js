@@ -489,6 +489,18 @@ function poll_show_withprogress(txid)
 }
 
 
+function poll_sharelinks(height,ix)
+{
+   var url='http://pollexplorer.votecoin.site/'+height+":"+ix;
+   var title='VoteCoin+Poll+Explorer';
+
+   return '<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fab fa-facebook-f"></a>'
+          +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fab fa-twitter"></a>'
+          +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fab fa-google"></a>'
+          +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fab fa-linkedin-in"></a>'
+}
+
+
 function poll_show(txid)
 {
    $('#newvote').html('');
@@ -496,9 +508,6 @@ function poll_show(txid)
    {
       var i;
       var max=100000000;
-      var url='http://pollexplorer.votecoin.site/'+data.height+":"+data.ix;
-      var title='VoteCoin+Poll+Explorer';
-
       var options="";
       poll_dashboard(false);
 
@@ -565,11 +574,8 @@ function poll_show(txid)
                          +"<img id=logopreview style='border: 1px solid transparent; width: 220px; max-height: 220px;'>"
                        +"</div>"
 
-                        +"<div style='display: inline-block; overflow: hidden; margin-left: 1px;' align=center>"
-                           +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fab fa-facebook-f"></a>'
-                           +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fab fa-twitter"></a>'
-                           +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fab fa-google"></a>'
-                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fab fa-linkedin-in"></a>'
+                       +"<div style='display: inline-block; overflow: hidden; margin-left: 1px;' align=center>"
+                       +poll_sharelinks(data.height,data.ix)
                        +"</div>"
 
                       +"<br><br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
@@ -761,6 +767,11 @@ function poll_results(txid)
                +"</div>"
                :"<br>")
                +"<img id=logopreview style='border: 1px solid transparent; width: 220px; max-height: 220px;'>"
+
+               +"<div style='display: inline-block; overflow: hidden; margin-left: 1px;' align=center>"
+               +poll_sharelinks(polls[txid].height,polls[txid].ix)
+               +"</div>"
+
             +'</div>');
 
          $('#voteid').text("#"+polls[txid].height+"#"+polls[txid].ix).data('txid',polls[txid].txid).data('endblock',polls[txid].endblock);
