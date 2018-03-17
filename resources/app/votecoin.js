@@ -18,12 +18,15 @@ var shielded_addresses=storage_load('zaddresses',{});
 var labels=storage_load('labels',{});
 var votes={}; // pending votes, until they are confirmed
 
-var wallet_seq="123";
-var poll_address="zcPGJHo5kdNaDSfotKFnHmyo8U7ywogRvjjHoCoJhsaUC2CFsePNMr1BvMKJ84FZC7H4gpUq2r5xVKS3yk466vYXVgqUvLt";
-var poll_viewkey="ZiVKdM5er1LWQ6Ti7UqE3BdugFCLhuwutwcFRqkoehZe9tVUZrWrojFr2A4A545dVDa7zqHBSAt95Skf1ztPHALqfLTvLY4N3";
+// This is how to generate these:
+// main.rpc('z_getnewaddress',[],function(addr){ console.log(addr); main.rpc('z_exportviewingkey',[addr],function(key){ console.log(key); },function(err){ console.log(err);}) })
+var poll_address="zcNtGdENMcuKpwwgQif7BwRZLh6dmmy2d3AC8ssWxWZQUU6bVFfj9ipHyFvZgy2xRCD1jubDrXEhBuzhi8cf1Xy1NxBH71U";
+var poll_viewkey="ZiVKcy3zHHwVvr5DPMMdSWY581QZgZmtBYJYrk6UiupH8pmvMp4N3Veqy7mSLYPmQz2aNGUpVm4Njw9Qs4rVkFrz2SR7iBY3c";
+
 var poll_fee=1;
 var polls=storage_load('polls',{});
 var my_pollids=storage_load('my_pollids',{});
+var wallet_seq="123";
 var myPie;
 
 // Get all operations, mark leftover ones from previous run as canceled
