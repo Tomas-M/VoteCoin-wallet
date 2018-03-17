@@ -10,4 +10,8 @@ Do not use master branch under any circumstances. Use releases instead.
 - Extract to a folder
 - Run votecoin.exe
 
-![screenshot](/screenshots/screen2.png?raw=true "GUI wallet initializing")
+![screenshot](/screenshots/screen3.png?raw=true "GUI wallet welcome screen")
+
+![screenshot](/screenshots/screen9.png?raw=true "GUI wallet voting results")
+
+
