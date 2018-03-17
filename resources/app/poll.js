@@ -504,7 +504,7 @@ function poll_show(txid)
 
       var ix=[];
       for (i=0; i<data.options.length; i++) if (data.options[i] && data.addresses[i]) ix.push(i);
-      if (data.shuffle) array_shuffle(ix);
+      if (data.shuffle>0) array_shuffle(ix);
 
       for (i=0; i<ix.length; i++)
         options+="<div style='position: relative;' data-backtrack='"+htmlspecialchars(data.backtrack)+"'>"
