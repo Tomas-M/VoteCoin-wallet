@@ -45,7 +45,8 @@ function createWindow () {
         {role: 'copy'},
         {role: 'paste'},
         {role: 'delete'},
-        {role: 'selectall'}
+        {role: 'selectall'},
+        {role: 'quit'}
       ]}
     );
 
