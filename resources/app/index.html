@@ -22,15 +22,18 @@
         input, textarea { user-select: text; cursor: auto; }
         .hidden { display: none; }
         .nocustom { cursor: pointer !important; }
+        .exchange { padding: 20px; border-radius: 10px; display: inline-block; height: 40px; cursor:pointer; }
+        .exchange img { cursor:pointer; }
+        .exchange:hover { background-color: #ddd; }
 
-        .social {  padding: 10px;  font-size: 20px;  width: 32px;  text-align: center;  text-decoration: none;  margin: 2px 2px; }
-        .social:first-child { margin-left: 0; }
-        .social:last-child { margin-right: 0; }
-        .social:hover { opacity: 0.7; cursor: pointer; }
-        .fa-facebook-f {  background: #3B5998;  color: white;}
-        .fa-twitter {  background: #55ACEE;  color: white;}
-        .fa-google {  background: #dd4b39;  color: white;}
-        .fa-linkedin {  background: #007bb5;  color: white;}
+        #vote .social {  padding: 10px;  font-size: 20px;  width: 32px;  text-align: center;  text-decoration: none;  margin: 2px 2px; }
+        #vote .social:first-child { margin-left: 0; }
+        #vote .social:last-child { margin-right: 0; }
+        #vote .social:hover { opacity: 0.7; cursor: pointer; }
+        #vote .fa-facebook-f {  background: #3B5998;  color: white;}
+        #vote .fa-twitter {  background: #55ACEE;  color: white;}
+        #vote .fa-google {  background: #dd4b39;  color: white;}
+        #vote .fa-linkedin {  background: #007bb5;  color: white;}
 
         .menu { margin-top: 40px; border-bottom: 1px solid #1e1924;  }
         .menu .menurow { user-select: none;letter-spacing: 1px; color: #fff; font-size: 25px; font-family: catamaran; border-top: 1px solid #1e1924;}
@@ -233,27 +236,27 @@
          </div>
 
          <div id=dashboard class=container>
-            <div id=welcomescreen class=hidden style="text-align: justify; line-height: 24px;">
-               <i class="fa fa-battery-empty" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Your wallet is empty</span>
+            <div id=welcomescreen class=hidden style="text-align: justify; line-height: 19px; font-size: 14px;">
+               <i class="fa fa-info-circle" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Your wallet is empty</span>
                <br><br>
-               To get started, we offer you 10 VOT coins for free. Allow us to place one promo post on your Facebook
+               Welcome! To get started, we offer you 10 VOT coins for free. Allow us to place one promo post on your Facebook
                wall and instantly receive 10 VOT coins right to your wallet. You will need to login with facebook first,
                and then give us permission to post our promo to your wall, so your Friends can see it on your Timeline:
-               <br>
+               <br><br><br>
                <div align=center>
-                  <button id=postonfacebook>Post on Facebook to get 10 VOT</button>
+                  <button id=postonfacebook><i class="social fab fa-facebook" style="font-size: 24px;"></i><span style="position:relative; top: -3px; cursor:pointer;"> &nbsp;Post on Facebook to get 10 VOT</span></button>
                </div>
-               <br><br>
+               <br><br><br>
 
                <i class="fa fa-shopping-cart" style="color: #aaaaaa; font-size: 30px;"></i> <span style="font-size: 28px;">&nbsp;Buy and Sell VOT</span>
                <br><br>
                To buy and sell VOT coins, visit one of the supported exchanges:
                <br><br>
                <div align=center>
-                  <img id=tradesatoshi src="img/TradeSatoshi_Badge.png" width=200 style="cursor: pointer; margin-right: 50px; margin-bottom: 15px;">
-                  <img id=crex24 src="img/crex24_logo.png" width=170 style="cursor: pointer;">
+                  <div class=exchange><img id=tradesatoshi style="margin-bottom: 5px; margin-top: 6px;" src="img/TradeSatoshi_Badge.png" width=200></div>
+                  <div class=exchange><img id=crex24 src="img/crex24_logo.svg" width=170></div>
                </div>
-               <br><br>
+               <br><br><br>
 
                <i class="fa fa-hourglass-start" style="color: #aaaaaa; font-size: 25px;"></i> <span style="font-size: 28px;">&nbsp;Sync in progress</span>
                <br><br>
