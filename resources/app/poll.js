@@ -85,12 +85,12 @@ function show_new_poll()
                     +"<div style='display: inline-block; vertical-align: top;'>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden; white-space: nowrap; width: 222px;'>"
                          +"<span class='fa fa-caret-down' style='background-color: #ffffff; padding: 6px 10px 6px 12px; position: absolute; top: 5px; left: 185px; border-left: 1px solid #ddd; pointer-events: none; color: #777;'></span>"
-                         +"<select style='width: 222px;' id=logotypeselect data-help=''>"
+                         +"<select style='width: 222px;' id=logotypeselect data-help='Using a logo image is optional. You can either choose an image file from disk, or you can reuse logo from other existing poll or campaign, if you have them loaded in your wallet.'>"
                             +"<option value=1>Do not use logo<option value=2>Select logo image from disk"+reuse_logos.join("")+"</select>"
                        +"</div><br>"
                        +"<div id=logopreview></div>"
                        +"<div style='display: inline-block; overflow: hidden; white-space: nowrap; width: 222px;'>"
-                          +"<input type=file id=polllogo><label data-help='Using a logo image is optional. Choose a small image file from disk. Make sure its width is 220 pixels. File size affects the costs, so you should optimize your image before publishing. Reasonable size is ~ 2 KB. Transparent background is recommended.'"
+                          +"<input type=file id=polllogo><label data-help='Choose a small image file from disk. Make sure its width is 220 pixels. File size affects the costs, so you should optimize your image before publishing. Reasonable size is ~ 2 KB. Transparent background is recommended.'"
                              +" for='polllogo' style='width: 202px; font-size: 14px; line-height: 19px;' class=forfile data-label='<i class=\"fa fa-image\"></i> &nbsp;Choose a logo (220px)'><i class='fa fa-image'></i> &nbsp;Choose a logo (220px)</label>"
                        +"</div><br>"
                        +"<div style='position: relative; display: inline-block; overflow: hidden;'>"
@@ -135,7 +135,7 @@ function show_new_poll()
                  );
 
    $('#polltitle').focus();
-   $('#actionbutton').html("<button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, <span id=pollcost>1</span> VOT</button>");
+   $('#actionbutton').html("<button style='width: 222px;' id=startpoll data-help='Start the poll or campaign by publishing it in the blockchain. This action costs a fee depending on total amount of data published. The biggest part is usually the logo, so keep it small or skip using it to save on fees.'><i class='fa fa-play'></i> &nbsp;Start, fee <span id=pollcost>1</span> VOT</button>");
    $('#actionbutton button').trigger('mouseenter');
    logotype_change();
 }
@@ -193,14 +193,18 @@ function poll_data(genAddr, doneFunc)
       var backtrack=$('#countvotes').val();
       if (backtrack=='custom') backtrack=$('#countvotes2').val();
 
+      var logo=$('#logopreview img').attr('src')||"";
+      var logotx=$('#logopreview img').data('txid')||"";
+      if (logotx.match(/^[a-z0-9]{64}$/i)) logo='';
+
       var data={
          "title":$('#polltitle').val(),
          "note":$('#polltext').val(),
          "options":options,
          "addresses":addresses,
          "logo_name":$('#logoname').text()||"",
-         "logo_src":$('#logopreview img').attr('src')||"",
-         "logo_txid":'',
+         "logo_src":logo,
+         "logo_txid":logotx,
          'backtrack':$.trim(backtrack),
          "refund":num($('#refundable').val(),0,true),
          "size":num(size,8,true),
@@ -231,10 +235,9 @@ function upload_file_change(tx)
    }
 
    if (tx=="1" || tx==2) { reset(); poll_change.call(t); return; }
-   console.log(tx,tx.match(/^[a-z0-9]{64}$/i))
    if (tx.match(/^[a-z0-9]{64}$/i))
    {
-      $('#logopreview').html('<img src="'+polls[tx].logo_src+'" width=220 style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');
+      $('#logopreview').html('<img data-txid='+htmlspecialchars(tx)+' src="'+polls[tx].logo_src+'" width=220 style="border: 1px solid transparent; margin-bottom: 10px; max-height: 220px;">');
       poll_change.call(t);
       return;
    }
