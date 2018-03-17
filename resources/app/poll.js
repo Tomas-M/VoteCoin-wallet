@@ -569,7 +569,7 @@ function poll_show(txid)
                            +'<a href="#" data-url="http://www.facebook.com/sharer/sharer.php?u='+url+'&title='+title+'" class="social fab fa-facebook-f"></a>'
                            +'<a href="#" data-url="http://twitter.com/intent/tweet?status='+title+'+'+url+'" class="social fab fa-twitter"></a>'
                            +'<a href="#" data-url="https://plus.google.com/share?url='+url+'" class="social fab fa-google"></a>'
-                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fab fa-linkedin"></a>'
+                           +'<a href="#" data-url="http://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+title+'&source=votecoin.site" class="social fab fa-linkedin-in"></a>'
                        +"</div>"
 
                       +"<br><br><div id=polloptionhelp style='opacity: 0; width: 222px; height: 100px;'></div>"
