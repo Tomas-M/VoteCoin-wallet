@@ -413,6 +413,7 @@ function poll_load(txid,doneFunc,waitmsg)
             for (ix=0; ix<b.tx.length; ix++) if (b.tx[ix]==txid) break;
             data.height=b.height;
             data.ix=ix;
+            data.txid=txid;
 
             // reusable txid for logo
             if (data.logo_txid && data.logo_txid.match(/^[a-z0-9]{64}$/i))
@@ -661,7 +662,7 @@ function poll_vote(totalvot,fee,fromAddress)
 
 function poll_vote_backtrack()
 {
-   // TODO if we are too late (voting is over), just show results
+   // if we are too late (voting is over), just show results
    var endblock=$('#voteid').data('endblock');
    if (endblock<=totalblocks) return poll_results($('#voteid').data('txid'));
 
