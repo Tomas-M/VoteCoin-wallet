@@ -79,6 +79,7 @@ function update_stats()
    {
       connections=parseFloat(res.connections);
       blocks=parseFloat(res.blocks);
+      if (blocks>totalblocks) totalblocks=blocks;
     });
 }
 
