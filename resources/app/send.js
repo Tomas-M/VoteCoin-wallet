@@ -23,7 +23,7 @@ function genNewAddress(shielded, doneFunc)
         }
 
         doneFunc(addr);
-    },true)
+    })
 }
 
 function setLabel(addr,label)
