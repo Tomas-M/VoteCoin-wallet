@@ -16,7 +16,13 @@ function JSON_toString(obj)
 }
 
 function storage_save(key,val) { return main.storage_save(key,JSON_toString(val)); }
-function storage_load(key,default_value) { return JSON_fromString(main.storage_load(key,JSON_toString(default_value))); }
+function storage_load(key,default_value)
+{
+   var ret=JSON_fromString(main.storage_load(key,JSON_toString(default_value)));
+   if (typeof ret != typeof default_value || ret.constructor != default_value.constructor) { console.log('wrong data type, resetting',key); ret=default_value; }
+   return ret;
+}
+
 
 // -----------------------------------------------------------------------------------------
 
