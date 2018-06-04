@@ -357,6 +357,10 @@ function storage_keyfile(key)
 
 function storage_save(key,valStr)
 {
+   // first, read currently stored value
+   var val="";
+   try { val=fs.readFileSync(storage_keyfile(key)).toString(); } catch(e) { }
+   if (val==valStr) return; // quit if new value is already stored
    fs.writeFileSync(storage_keyfile(key),valStr);
 }
 
