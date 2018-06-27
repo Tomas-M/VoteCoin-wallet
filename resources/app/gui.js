@@ -30,7 +30,7 @@ function update_logerr()
    var err=main.getLastRPCerrorMessage();
    if (err!='')
    {
-      settext('rpclog',err.replace("Work queue depth exceeded","Waiting for wallet..."));
+      settext('rpclog',err.replace("Work queue depth exceeded","Waiting for wallet...").replace(/zcash/gi,"VoteCoin"));
       $('#rpclog').show();
       $('#blockheight').hide();
    }
