@@ -3,7 +3,7 @@
     See LICENSE file for more info
 */
 
-var z_track = storage_load('z_track',true);
+var z_track = storage_load('z_track',1);
 $('#ztrack').prop('checked',z_track);
 
 function ztrack_toggle()
