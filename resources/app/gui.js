@@ -4,7 +4,8 @@
 */
 
 const child_process = require('child_process');
-const {shell} = require('electron')
+const {shell} = require('electron');
+const fs = require('fs');
 
 function gui_show(t,duration)
 {
@@ -216,6 +217,19 @@ function update_gui()
 
     sethtml('votelist',votelist);
     update_gui_polldate();
+}
+
+
+function update_debug()
+{
+    if ($('.debuglog:visible').length>0)
+    {
+       var logfile=main.daemon_data_path()+"/debug.log";
+       try {
+          var log=fs.readFileSync(logfile).toString().split("\n").slice(-300).join("<br>");
+          if ($('.debuglog:visible').data('debuglog')!=log) $('.debuglog:visible').html(log).data('debuglog',log).scrollTop(10000);
+       } catch (e) {}
+    }
 }
 
 

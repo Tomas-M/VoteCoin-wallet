@@ -352,10 +352,11 @@ function init()
    main.download_all_files(download_progress,function()
    {
       show_progress(100);
+      setUpdater(update_debug,1000);  // every 1 second
       $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
                                      +"<span class='fa fa-cog' style='color: #ddd; animation:spin 5s linear infinite; font-size: 150px;'></span>"
                                  +"</div>"
-                                 +"VoteCoin wallet is starting, please wait...");
+                                 +"VoteCoin wallet is starting, please wait...<div class=debuglogindex><div class=debuglog></div><div class=debuglogafter></div></div>");
       // start wallet
       main.walletStart();
 
@@ -370,8 +371,8 @@ function init()
           // init periodic stats updaters
           setUpdater(update_rates,600000); // once per 10 minutes
           setUpdater(update_totals,10000); // every 10 seconds
-          setUpdater(update_stats,5000);  // every 2 seconds
-          setUpdater(update_operation_status,5000);  // every 2 seconds
+          setUpdater(update_stats,5000);  // every 5 seconds
+          setUpdater(update_operation_status,5000);  // every 5 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
           setUpdater(update_transactions,5000);   // every 5 seconds
           setUpdater(update_gui,1000);   // every 1 second

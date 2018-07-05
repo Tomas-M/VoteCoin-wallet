@@ -88,6 +88,7 @@
         .votelistrow:hover div { background-color: #ddd; }
         .votelistbuttons span:hover { color: #000; cursor: pointer !important; }
 
+        .debuglog::-webkit-scrollbar-thumb,
         .addressbalance::-webkit-scrollbar-thumb,
         .operationstatus::-webkit-scrollbar-thumb,
         .operationamount::-webkit-scrollbar-thumb,
@@ -96,6 +97,7 @@
         .votelisttitle::-webkit-scrollbar-thumb
         {  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 5px, #aaa 5px, #aaa 9px, rgba(0,0,0,0) 9px, rgba(0,0,0,0)); }
 
+        .debuglog::-webkit-scrollbar,
         .addressbalance::-webkit-scrollbar,
         .operationstatus::-webkit-scrollbar,
         .operationamount::-webkit-scrollbar,
@@ -198,6 +200,10 @@
 
         .settingscheck { display: inline-block; width: 30px; margin-left: -3px; }
         .settingshelp { text-align: justify; }
+        .debuglog { position:relative; line-height: 14px; height: 200px; overflow: scroll; margin-top: 40px; font-family: Verdana; white-space: nowrap; font-size: 10px; text-align: left; }
+        .debuglogindex { opacity: 0.3; }
+        .debuglogindex:hover { opacity: 1; }
+        .debuglogafter {  position:relative; top:-200px; height:60px; width:100%;  background: linear-gradient(#e9e9e9, rgba(0,0,0,0)); }
         @keyframes spin { 100% { transform:rotate(360deg); } }
     </style>
 
@@ -392,6 +398,10 @@
             If you wish to clear the log of outgoing payments and refresh transacions list from blockchain, click the following button. Keep in mind that
             some of the information will be re-read from blockchain, but some may be lost forever (such as the log of failed payments, or log of outgoing shielded payments).
             <p align=left><button id=cleanup>Cleanup now</button> &nbsp; <span id=cleanupclicked></span></p>
+
+            <hr noshade size=1 color=#dddddd style="margin-top: 30px;">
+            <h2 style="margin-bottom: -20px;">Debug log for VoteCoin daemon</h2>
+            <div class=debuglog></div><div class=debuglogafter></div>
          </div>
 
       </div>

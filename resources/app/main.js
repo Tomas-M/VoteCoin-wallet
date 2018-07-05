@@ -385,3 +385,4 @@ exports.openDevelTools=openDevelTools;
 exports.getLastRPCerrorMessage=getLastRPCerrorMessage;
 exports.storage_save=storage_save;
 exports.storage_load=storage_load;
+exports.daemon_data_path=daemon_data_path;
