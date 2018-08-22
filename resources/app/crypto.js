@@ -1,211 +1,138 @@
 /*
-    Copyright (c) 2017 VoteCoin team, all rights reserved
-    See LICENSE file for more info
+
+   Example usage, create new keys:
+
+      var crypto=new CryptoGraphy();
+      await crypto.ready;
+      console.log(base58.encode(await crypto.sign("text to signature");))
+      console.log(JSON.stringify(await crypto.exportKeys()));
+      ...
+
+   Another example, initialize with existing keys:
+
+      var crypto=new CryptoGraphy(
+      {
+        "sign":"2EPbyvKQKUaUPMF7Mm94FjEzvs5tsLWfesyc97W1dqYeeZFEG2k....shortened....QrX9c",
+        "verify":"NkRWY4nhgQyYxr4PWqtzdLFK9A12hXJjcTqRjYkTjpNj3nG8S....shortened....jcYug",
+        "encrypt":"2TuPVgMCHJy5atawrsADEzjP7MCVbyyCA89UW6Wvjp9HrBus....shortened....uha2c",
+        "decrypt":"riiewRJm2wpE3rWTs1ikUc83so8ZXMX8vp9dUTnRgMC8GyfL....shortened....rkBz3"
+      });
+      await crypto.ready;
+      console.log(JSON.stringify(await crypto.exportKeys()));
+      ...
+
+   Note, your calling function must be defined as async,
+   in order to be able to use await
+
 */
 
-// alphabet for base58 encode-decode
-alphabet="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-
-function genSignKeys()
+// When called without argument, new keys are initialized. When called with an arguement,
+// it is treated as keys for import, and the specified keys are imported
+//
+var CryptoGraphy=function(keysForImport)
 {
-   return new Promise((resolve, reject) =>
+   // current keyspairs for encoding and signing
+   this.keys = {};
+
+   // Defined key parameters
+   this.keyParamsSign = function() { return {name: "ECDSA", namedCurve: "P-256", hash: {name: "SHA-256"}} },
+   this.keyParamsEncrypt = function() { return {name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01]), hash: {name: "SHA-256"}} },
+
+   // Generate new keys for signing/encoding
+   this.newSignKeys = async function() { return window.crypto.subtle.generateKey( this.keyParamsSign(), true, ["sign", "verify"]); },
+   this.newEncodeKeys = async function() { return window.crypto.subtle.generateKey( this.keyParamsEncrypt(), true, ["encrypt", "decrypt"]); },
+
+   // ---------------------------------------------------------------------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------------------------------------------------------------------
+
+   // Processing functions to sign, verify, encrypt and decrypt
+   this.encrypt = async function(data)
    {
-      window.crypto.subtle.generateKey( {name: "ECDSA", namedCurve: "P-256"}, true, ["sign", "verify"])
-      .then((key)=>resolve(key))
-      .catch((err)=>reject(err));
-   })
-}
+      if (typeof data == 'string') data=bufferFromString(data);
+      return await crypto.subtle.encrypt(this.keyParamsEncrypt(), this.keys.encrypt, data);
+   },
 
-
-function genEncodeKeys()
-{
-   return new Promise((resolve, reject) =>
+   this.decrypt = async function(data)
    {
-      window.crypto.subtle.generateKey( {name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01]), hash: {name: "SHA-256"}}, true, ["encrypt", "decrypt"])
-      .then((key)=>resolve(key))
-      .catch((err)=>reject(err));
-   })
-}
+      if (typeof data == 'string') data=base58.decode(data);
+      return crypto.subtle.decrypt(this.keyParamsEncrypt(), this.keys.decrypt, data);
+   },
 
-
-function exportKeyBase58(key)
-{
-   return new Promise((resolve, reject) =>
+   this.sign = async function(data)
    {
-      window.crypto.subtle.exportKey("raw", key)
-      .then(keyArray => resolve(base58_encode(new Uint8Array(keyArray))))
-      .catch(err => reject());
-   });
-}
+      if (typeof data == 'string') data=bufferFromString(data);
+      return await crypto.subtle.sign(this.keyParamsSign(), this.keys.sign, data);
+   },
 
-
-function importKeyBase58(keyStr)
-{
-   return window.crypto.subtle.importKey("raw", base58_decode(keyStr), {name: "ECDSA", namedCurve: "P-256"}, true, ["verify"]);
-}
-
-
-function exportKeyJWK(key)
-{
-   return window.crypto.subtle.exportKey("jwk", key);
-}
-
-
-function importKeyJWK(jwk)
-{
-   var options=[];
-   var parameters={};
-
-   if (jwk.kty=="RSA")
+   this.verify = async function(signature, data)
    {
-      parameters.name=jwk.alg.replace(/-[0-9]+/,'');
-      parameters.hash={name: "SHA-"+jwk.alg.replace(/.*-/,'')};
-   }
+      if (typeof signature == 'string') signature=base58.decode(signature);
+      if (typeof data == 'string') data=bufferFromString(data);
+      return window.crypto.subtle.verify(this.keyParamsSign(), this.keys.verify, signature, data);
+   },
 
-   if (jwk.kty=="EC")
+   // ---------------------------------------------------------------------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------------------------------------------------------------------
+
+   this.genKeys = async function()
    {
-      parameters.name="ECDSA";
-      parameters.namedCurve=jwk.crv;
-   }
+      var sig=await this.newSignKeys();
+      this.keys.sign=sig.privateKey;
+      this.keys.verify=sig.publicKey;
 
-   return window.crypto.subtle.importKey("jwk",jwk,parameters,true,jwk.key_ops);
-}
+      var enc=await this.newEncodeKeys();
+      this.keys.encrypt=enc.publicKey;
+      this.keys.decrypt=enc.privateKey;
 
+      return this.keys;
+   },
 
-function exportKeys()
-{
-   return new Promise((resolve, reject) =>
+   // ---------------------------------------------------------------------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------------------------------------------------------------------
+
+   // Export key to string in supported format
+   // Automatically detects key type
+   this.exportKey = async function(key)
    {
-      exportKeyBase58(cryptokey.verifyPublic)
-      .then(e=>{cryptokey.verifyPublic.base58=e; return exportKeyJWK(cryptokey.signPublic)})
-      .then(e=>{cryptokey.signPublic.jwk=e; return exportKeyJWK(cryptokey.signPrivate)})
-      .then(e=>{cryptokey.signPrivate.jwk=e; return exportKeyJWK(cryptokey.encodePublic)})
-      .then(e=>{cryptokey.encodePublic.jwk=e; return exportKeyJWK(cryptokey.encodePrivate)})
-      .then(e=>{cryptokey.encodePrivate.jwk=e; resolve(); })
-      .catch((err)=>reject(err));
-   })
-}
-
-
-function importKeys(keys)
-{
-   return new Promise((resolve,reject)=>
-   {
-      if (!keys) resolve();
-      importKeyJWK(keys.signPublic.jwk)
-      .then(e=>{ cryptokey.signPublic=e; return importKeyJWK(keys.signPrivate.jwk)})
-      .then(e=>{ cryptokey.signPrivate=e; return importKeyJWK(keys.encodePublic.jwk)})
-      .then(e=>{ cryptokey.encodePublic=e; return importKeyJWK(keys.encodePrivate.jwk)})
-      .then(e=>{ cryptokey.encodePrivate=e; return importKeyBase58(keys.verifyPublic.base58)})
-      .then(e=>{ cryptokey.verifyPublic=e; resolve(); })
-      .catch((err)=>reject(err));
-   });
-}
-
-
-function base58_encode(source)
-{
-   var ALPHABET_MAP = {};
-   var BASE = alphabet.length;
-   var LEADER = alphabet.charAt(0);
-   for (var z=0; z<alphabet.length; z++) ALPHABET_MAP[alphabet.charAt(z)] = z;
-
-   if (source.length === 0) return '';
-   var carry;
-
-   var digits = [0];
-   for (var i = 0; i < source.length; ++i)
-   {
-       for (var j = 0, carry = source[i]; j < digits.length; ++j)
-       {
-          carry += digits[j] << 8;
-          digits[j] = carry % BASE;
-          carry = (carry / BASE) | 0;
-        }
-
-        while (carry > 0)
-        {
-           digits.push(carry % BASE);
-           carry = (carry / BASE) | 0;
-        }
-   }
-
-   var string = '';
-
-   // deal with leading zeros
-   for (var k = 0; source[k] === 0 && k < source.length - 1; ++k) string += alphabet[0];
-   // convert digits to a string
-   for (var q = digits.length - 1; q >= 0; --q) string += alphabet[digits[q]];
-
-   return string;
-}
-
-
-function base58_decode(string)
-{
-   var ALPHABET_MAP = {};
-   var BASE = alphabet.length;
-   var LEADER = alphabet.charAt(0);
-   for (var z=0; z<alphabet.length; z++) ALPHABET_MAP[alphabet.charAt(z)] = z;
-
-   var bytes = [0];
-   for (var i = 0; i < string.length; i++)
-   {
-      var value = ALPHABET_MAP[string[i]];
-      if (value === undefined) return;
-
-      for (var j = 0, carry = value; j < bytes.length; ++j)
-      {
-         carry += bytes[j] * BASE;
-         bytes[j] = carry & 0xff;
-         carry >>= 8;
+      var buffer;
+      try {
+         if (key.type=='private') buffer=await window.crypto.subtle.exportKey("pkcs8", key);
+         if (key.type=='public')
+         {
+            if (key.algorithm.name=="ECDSA") buffer=await window.crypto.subtle.exportKey("raw", key); // shortest form of the key
+            else buffer=await window.crypto.subtle.exportKey("spki", key);
+         }
+         return base58.encode(new Uint8Array(buffer));
       }
-
-      while (carry > 0)
+      catch(err) // fallback to jwk, for firefox which does not support pkcs8 for ECDSA
       {
-         bytes.push(carry & 0xff);
-         carry >>= 8;
+         return base58.encode(JSON_toString(await window.crypto.subtle.exportKey("jwk", key)));
       }
-  }
+   },
 
-   // deal with leading zeros
-   for (var k = 0; string[k] === LEADER && k < string.length - 1; ++k) bytes.push(0);
-
-   return new Uint8Array(bytes.reverse());
-}
-
-
-function init_keys(doneFunc)
-{
-   genSignKeys().then( keypair =>
+   // Import key from string
+   // Usages are: sign, verify, encrypt, decrypt
+   this.importKey = async function(keyStr, usage)
    {
-      cryptokey.signPublic=keypair.publicKey;
-      cryptokey.signPrivate=keypair.privateKey;
-      cryptokey.verifyPublic=cryptokey.signPublic;
+      var key=base58.decode(keyStr);
+      var params=( usage.match(/sign|verify/) ? this.keyParamsSign() : this.keyParamsEncrypt() );
+      var format=( usage.match(/verify/) ? "raw" : (usage.match(/sign|decrypt/) ? "pkcs8" : "spki") );
 
-      genEncodeKeys().then( keypair =>
+      if (key[0]==123) // json (jwk) starts with {
       {
-         cryptokey.encodePublic=keypair.publicKey;
-         cryptokey.encodePrivate=keypair.privateKey;
+         key=JSON_fromString(String.fromCharCode.apply(null, new Uint8Array(key)));
+         return window.crypto.subtle.importKey("jwk", key, params, true, [usage]);
+      }
+      else // base58 format
+      {
+         return window.crypto.subtle.importKey(format, key, params, true, [usage]);
+      }
+   },
 
-         exportKeys().then(key => { doneFunc(); }).catch(err=>console.log("Cannot create export for sign/encode keys"));
-      }).catch(err => console.log("Unable to create encoding/decoding keypair"));
-   }).catch(err => console.log("Unable to generate sign/verify keypair"))
-}
+   this.exportKeys = async function() { var ret={}; for (k in this.keys) ret[k]=await this.exportKey(this.keys[k]); return ret; },
+   this.importKeys = async function(keys) { if (typeof keys == "string") keys=JSON_fromString(keys); for (k in keys) this.keys[k]=await this.importKey(keys[k],k); }
 
-var cryptokey=storage_load('cryptokey',false);
-if (cryptokey) importKeys(cryptokey).then(e=>exportKeys());
-else
-{
-   cryptokey={};
-   // signing keypair (private and public keys)
-   cryptokey.signPublic=false;
-   cryptokey.signPrivate=false;
-   cryptokey.verifyPublic=false;
-   // encryption keypair (public and private keys)
-   // is used to encrypt messages for others, currently not used in VoteCoin
-   cryptokey.encodePublic=false;
-   cryptokey.encodePrivate=false;
-   init_keys(function(){ storage_save('cryptokey',cryptokey); });
+   if (keysForImport) this.ready=this.importKeys(keysForImport);
+   else this.ready=this.genKeys();
 }

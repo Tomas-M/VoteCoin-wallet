@@ -50,6 +50,27 @@ for(i in operations)
 var transactions=storage_load('transactions',[]);
 
 
+// init crypto keys
+var cryptokeys=false;
+async function init_crypto()
+{
+   cryptokeys=storage_load('cryptokeys',{});
+   if (cryptokeys.sign)
+   {
+      cryptokeys=new CryptoGraphy(cryptokeys);
+      await cryptokeys.ready;
+   }
+   else
+   {
+      cryptokeys=new CryptoGraphy();
+      await cryptokeys.ready;
+      var exp=await cryptokeys.exportKeys();
+      storage_save('cryptokeys',exp);
+   }
+}
+init_crypto();
+
+
 function wait_for_wallet()
 {
    return new Promise((resolve,reject)=>
