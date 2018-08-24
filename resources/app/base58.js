@@ -7,7 +7,7 @@
    Example usage:
 
       var coded=base58.encode("test");                     // returns "3yZe7d"
-      var decoded=base58.decode("3yZe7d");                 // returns Uint8Array(4)�[116, 101, 115, 116]
+      var decoded=base58.decode("3yZe7d");                 // returns Uint8Array(4) [116, 101, 115, 116]
       var str=stringFromBuffer(base58.decode("3yZe7d"));   // returns "test"
 
 */
