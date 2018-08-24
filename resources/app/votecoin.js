@@ -361,6 +361,7 @@ function setUpdater(func,time)
 
 function init()
 {
+   settext('versioninfo',"build "+wallet_seq);
    setUpdater(update_logerr,1000); // once every second
 
    $('#progress').show();
