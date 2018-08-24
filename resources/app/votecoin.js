@@ -32,7 +32,7 @@ if ($.isEmptyObject(polls))
    var polls = examples.poll_examples;
 }
 
-var wallet_seq="126";
+var wallet_seq="127";
 var myPie;
 
 // Get all operations, mark leftover ones from previous run as canceled
@@ -367,7 +367,7 @@ function init()
    $('#progressmessage').html("<div style='margin-bottom: 40px; margin-top: 40px'>"
                                  +"<span class='fa fa-cloud-download-alt' style='color: #ddd; font-size: 150px;'></span>"
                               +"</div>"
-                              +"Downloading VoteCoin proving keys (900MB).<br>This is needed only once, please wait...");
+                              +"Downloading VoteCoin proving keys.<br>This is needed only once, please wait...");
 
    // check && download sprout proving file
    main.download_all_files(download_progress,function()

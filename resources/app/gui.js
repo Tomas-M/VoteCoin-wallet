@@ -100,6 +100,8 @@ function update_gui()
     settext('blockcurrent',num(blocks));
     settext('blocktotal',num(totalblocks>blocks?totalblocks:blocks));
 
+    settext('versioninfo',"build "+wallet_seq);
+
     if (connections==0)
     {
        settext('blockcurrent','connecting',true);
