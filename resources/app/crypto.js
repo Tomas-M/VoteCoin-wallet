@@ -51,26 +51,26 @@ var CryptoGraphy=function(keysForImport)
    {
       if (typeof data == 'string') data=bufferFromString(data);
       return await crypto.subtle.encrypt(this.keyParamsEncrypt(), this.keys.encrypt, data);
-   },
+   }
 
    this.decrypt = async function(data)
    {
       if (typeof data == 'string') data=base58.decode(data);
       return crypto.subtle.decrypt(this.keyParamsEncrypt(), this.keys.decrypt, data);
-   },
+   }
 
    this.sign = async function(data)
    {
       if (typeof data == 'string') data=bufferFromString(data);
       return await crypto.subtle.sign(this.keyParamsSign(), this.keys.sign, data);
-   },
+   }
 
    this.verify = async function(signature, data)
    {
       if (typeof signature == 'string') signature=base58.decode(signature);
       if (typeof data == 'string') data=bufferFromString(data);
       return window.crypto.subtle.verify(this.keyParamsSign(), this.keys.verify, signature, data);
-   },
+   }
 
    // ---------------------------------------------------------------------------------------------------------------------------------------
    // ---------------------------------------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ var CryptoGraphy=function(keysForImport)
       this.keys.decrypt=enc.privateKey;
 
       return this.keys;
-   },
+   }
 
    // ---------------------------------------------------------------------------------------------------------------------------------------
    // ---------------------------------------------------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ var CryptoGraphy=function(keysForImport)
       {
          return base58.encode(JSON_toString(await window.crypto.subtle.exportKey("jwk", key)));
       }
-   },
+   }
 
    // Import key from string
    // Usages are: sign, verify, encrypt, decrypt
@@ -128,9 +128,9 @@ var CryptoGraphy=function(keysForImport)
       {
          return window.crypto.subtle.importKey(format, key, params, true, [usage]);
       }
-   },
+   }
 
-   this.exportKeys = async function() { var ret={}; for (k in this.keys) ret[k]=await this.exportKey(this.keys[k]); return ret; },
+   this.exportKeys = async function() { var ret={}; for (k in this.keys) ret[k]=await this.exportKey(this.keys[k]); return ret; }
    this.importKeys = async function(keys) { if (typeof keys == "string") keys=JSON_fromString(keys); for (k in keys) this.keys[k]=await this.importKey(keys[k],k); }
 
    if (keysForImport) this.ready=this.importKeys(keysForImport);
