@@ -22,6 +22,7 @@ function gui_show(t,duration)
         if (t=='dashboard') $('#txfilter').focus();
         if (t=='vote') { $('#pollfilter').focus(); poll_drag(); }
         $('#right>div').scrollTop(0);
+        update_scroll_indicator();
     },100);
 }
 
@@ -88,6 +89,11 @@ function txfiltermatch(tx,filter)
    return false;
 }
 
+function update_scroll_indicator()
+{
+    var cOc = document.getElementsByClassName('containerOFcontainer')[0];
+    if (cOc.scrollHeight-cOc.scrollTop===cOc.clientHeight) $('#scrollindicator').hide(); else $('#scrollindicator').show();
+}
 
 function update_gui()
 {

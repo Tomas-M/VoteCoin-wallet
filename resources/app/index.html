@@ -206,6 +206,10 @@
         .debuglogafter {  position:relative; top:-200px; height:60px; width:100%;  background: linear-gradient(#e9e9e9, rgba(0,0,0,0)); }
         @keyframes spin { 100% { transform:rotate(360deg); } }
         #versioninfo { color: #aaa; font-size: 10px; height: 10px; margin-right: 65px; margin-top: -10px; }
+
+        .scroll-indicator { color: #000; opacity: 0.2; position: fixed; right: 30px; bottom: 20px; font-size: 50px; animation: bounce 1s infinite; }
+        .scroll-indicator:hover { opacity: 0; }
+        @keyframes bounce { 0% { bottom: 20px; } 50% { bottom: 10px; } 100% { bottom: 20px; } }
     </style>
 
   </head>
@@ -410,6 +414,7 @@
      </div>
 
      <div id=msg></div>
+     <div class="scroll-indicator fa fa-chevron-down" id=scrollindicator></div>
 
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 <script src=jquery-3.2.1.min.js></script>
@@ -498,7 +503,9 @@
    $(document).on('mousedown', '#transactionchart',function (e) { $(this).data('down', true).data('x', e.clientX).data('scrollLeft', this.scrollLeft).addClass("dragging"); return false; });
    $(document).on('mouseup',null,function (e) { if ($(e.target).attr('id')!='choosefromlabel') $('#choosefromoptions').slideUp(100); $('#transactionchart').data('down', false).removeClass("dragging"); });
    $(document).on('mousemove','#transactionchart',function (e) { if ($('#transactionchart').data('down') == true) { $('#transactionchart').get(0).scrollLeft = $('#transactionchart').data('scrollLeft') + $('#transactionchart').data('x') - e.clientX; } });
-
+   $(document).on('mousewheel','#scrollindicator',function(e){var cur=$('.containerOFcontainer').scrollTop(); $('.containerOFcontainer').stop().animate({scrollTop:cur-e.originalEvent.wheelDeltaY},200)});
+   $('.containerOFcontainer').scroll(update_scroll_indicator);
+   update_scroll_indicator();
 
 </script>
 
