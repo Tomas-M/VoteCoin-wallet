@@ -506,7 +506,7 @@
 
    $(document).on('mousewheel click','#scrollindicator',function(e){var cur=$('.containerOFcontainer').scrollTop(); var delta=e.originalEvent.wheelDeltaY||-120; $('.containerOFcontainer').stop().animate({scrollTop:cur-delta},200)});
    $('.containerOFcontainer').scroll(update_scroll_indicator);
-   $(document).on("click keyup",null,update_scroll_indicator);
+   $(document).on("DOMSubtreeModified",".containerOFcontainer",update_scroll_indicator);
    update_scroll_indicator();
 
 </script>
