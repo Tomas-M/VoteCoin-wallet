@@ -163,6 +163,7 @@ function rm_poll_option()
 
 function import_viewing_keys()
 {
+   if (poll_viewkey)
    main.rpc("z_importviewingkey",[poll_viewkey,"whenkeyisnew"],function(res){if (res) console.log(res);},function(res){if (res) console.log(res)});
 }
 
