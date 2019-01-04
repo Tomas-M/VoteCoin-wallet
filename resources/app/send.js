@@ -7,7 +7,7 @@ function genNewAddress(shielded, doneFunc)
 {
     var prefix="";
     if (shielded) prefix="z_";
-    main.rpc(prefix+"getnewaddress",(shielded?["sprout"]:""),function(addr)
+    main.rpc(prefix+"getnewaddress",(shielded?["sapling"]:""),function(addr)
     {
         if (shielded)
         {
