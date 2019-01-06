@@ -32,7 +32,7 @@ if ($.isEmptyObject(polls))
    var polls = examples.poll_examples;
 }
 
-var wallet_seq="129";
+var wallet_seq="130";
 var myPie;
 
 // Get all operations, mark leftover ones from previous run as canceled
