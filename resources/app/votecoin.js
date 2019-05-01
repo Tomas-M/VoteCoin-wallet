@@ -32,7 +32,7 @@ if ($.isEmptyObject(polls))
    var polls = examples.poll_examples;
 }
 
-var wallet_seq="130";
+var wallet_seq="131";
 var myPie;
 
 // Get all operations, mark leftover ones from previous run as canceled
@@ -48,6 +48,7 @@ for(i in operations)
 
 // get all transactions
 var transactions=storage_load('transactions',[]);
+var known_txs=storage_load('known_txs',{});
 
 
 // init crypto keys
@@ -194,6 +195,7 @@ function add_transaction(entry)
 {
    var ex=-1;
    if (entry.memo) entry.memo=$.trim(hexDecode(entry.memo)); // decode memo if present and store it natively
+   known_txs[entry.txid]=entry;
 
    for (var i=0; i<transactions.length; i++)
       if (propertiesMatch(transactions[i], entry, ["fee", "category", "txid", "amount"]))
@@ -218,6 +220,7 @@ function sort_transactions()
 {
    sortByKeys(transactions,["blocktime","time","amount"],true);
    storage_save("transactions",transactions);
+   storage_save("known_txs",known_txs);
 }
 
 
@@ -251,6 +254,9 @@ function update_voteheight(txid,blockhash)
 
 function update_transactions(start) // load all T transactions into array
 {
+   // during initial resync, update only at random 10% of time, that is once per 2.5 minutes on average
+   if (blocks<totalblocks && Math.random()>0.1) return;
+
    if (!start) start=0;
 
    if (reset_transactions_list)
@@ -290,6 +296,7 @@ function add_shielded_transactions_received(zaddr)
    {
       for (var i=0; i<res.length; i++) (function(rec)
       {
+         if (!known_txs[rec.txid] || !known_txs[rec.txid].blocktime)
          main.rpc("gettransaction",[rec.txid],(ret)=>
          {
             add_transaction({"blocktime":ret.blocktime, "time":ret.time, "fee":ret.fee, "category":"receive", "txid": ret.txid, "amount": rec.amount, "memo": rec.memo});
@@ -396,7 +403,7 @@ function init()
           setUpdater(update_stats,5000);  // every 5 seconds
           setUpdater(update_operation_status,5000);  // every 5 seconds
           setUpdater(update_totalblocks,60000);   // every 1 minute
-          setUpdater(update_transactions,5000);   // every 5 seconds
+          setUpdater(update_transactions,15000);   // every 15 seconds
           setUpdater(update_gui,1000);   // every 1 second
 
           gui_show('dashboard');

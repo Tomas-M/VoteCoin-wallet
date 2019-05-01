@@ -48,6 +48,8 @@ function cleanup()
 
    transactions=[];
    storage_save('transactions',transactions);
+   known_txs={};
+   storage_save('known_txs',known_txs);
    reset_transactions_list=true;
 
    $('#cleanupclicked').text("Cleanup and refresh complete.").css('opacity',0).fadeTo(500,1);
