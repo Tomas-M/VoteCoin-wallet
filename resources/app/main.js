@@ -298,11 +298,9 @@ function downloadFile(host,port,path,targetFile,size,progressFunc,doneFunc)
 
 var downloads=
 [
-   {host:'z.cash',port:443,path:"/downloads/sprout-verifying.key",target:zksnark_path()+'/sprout-verifying.key', size: 1449},
-   {host:'z.cash',port:443,path:"/downloads/sprout-proving.key",target:zksnark_path()+'/sprout-proving.key', size: 910173851},
-   {host:'z.cash',port:443,path:"/downloads/sapling-spend.params",target:zksnark_path()+'/sapling-spend.params', size: 47958396},
-   {host:'z.cash',port:443,path:"/downloads/sapling-output.params",target:zksnark_path()+'/sapling-output.params', size: 3592860},
-   {host:'z.cash',port:443,path:"/downloads/sprout-groth16.params",target:zksnark_path()+'/sprout-groth16.params', size: 725523612}
+   {host:'votecoin.site',port:443,path:"/downloads/sapling-spend.params",target:zksnark_path()+'/sapling-spend.params', size: 47958396},
+   {host:'votecoin.site',port:443,path:"/downloads/sapling-output.params",target:zksnark_path()+'/sapling-output.params', size: 3592860},
+   {host:'votecoin.site',port:443,path:"/downloads/sprout-groth16.params",target:zksnark_path()+'/sprout-groth16.params', size: 725523612}
 ]
 
 function download_all_files(progressFunc,doneFunc)
