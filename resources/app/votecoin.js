@@ -19,9 +19,9 @@ var labels=storage_load('labels',{});
 var votes={}; // pending votes, until they are confirmed
 
 // This is how to generate these:
-// main.rpc('z_getnewaddress',["sprout"],function(addr){ console.log(addr); main.rpc('z_exportviewingkey',[addr],function(key){ console.log(key); },function(err){ console.log(err);}) })
-var poll_address="zcNtGdENMcuKpwwgQif7BwRZLh6dmmy2d3AC8ssWxWZQUU6bVFfj9ipHyFvZgy2xRCD1jubDrXEhBuzhi8cf1Xy1NxBH71U";
-var poll_viewkey="ZiVKcy3zHHwVvr5DPMMdSWY581QZgZmtBYJYrk6UiupH8pmvMp4N3Veqy7mSLYPmQz2aNGUpVm4Njw9Qs4rVkFrz2SR7iBY3c";
+// main.rpc('z_getnewaddress',["sapling"],function(addr){ console.log(addr); main.rpc('z_exportviewingkey',[addr],function(key){ console.log(key); },function(err){ console.log(err);}) })
+var poll_address="zs1qycfx0gypv4hml5dgsvu6t4wwtt3k34c0nht4ccjppkl4rtdysx3p52403rgajqagn597pgzc0h";
+var poll_viewkey="zivks1z0007jn8rvsvemsmf07utgdg6thph8lrrtncjqqvf98h9gt6gcrswx8saa";
 
 var poll_fee=1;
 var polls=storage_load('polls',{});
@@ -32,7 +32,7 @@ if ($.isEmptyObject(polls))
    var polls = examples.poll_examples;
 }
 
-var wallet_seq="132";
+var wallet_seq="134";
 var myPie;
 
 // Get all operations, mark leftover ones from previous run as canceled
