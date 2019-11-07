@@ -529,7 +529,7 @@ function poll_show(txid)
                     +"<div style='font-size: 27px; margin-bottom: 10px; word-wrap: break-word;'>"+htmlspecialchars(data.title)+"</div>"
                     +"<div style='display: inline-block; width: calc(100% - 242px); margin-right: 20px; vertical-align: top;'>"
                        +"<div>"+options+"</div>"
-                       +"<div style='margin-bottom: 6px; margin-top: 20px; margin-bottom: 20px; word-wrap: break-word;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
+                       +"<div style='margin-top: 20px; margin-bottom: 20px; word-wrap: break-word;'>"+htmlspecialchars(data.note).replace(/\n/g,"<br>")+"</div>"
                     +"</div>"
 
                     +"<div style='display: inline-block; vertical-align: top; width: 222px; margin-top: 9px;'>"
@@ -756,7 +756,10 @@ function poll_results(txid)
 
          $('#newvote').html(''
             +'<div style="font-size: 27px; margin-bottom: 10px; word-wrap: break-word;">'+polls[txid]['title']+'</div>'
-            +'<div style="float: left; width: calc(100% - 340px); margin: 50px; margin-top: 20px; "><canvas id="votechart" width="400" height="400"></canvas></div>'
+            +'<div style="float: left; width: calc(100% - 340px); margin: 50px; margin-top: 20px; ">'
+               +'<canvas id="votechart" width="400" height="400"></canvas>'
+               +"<div style='margin-top: 20px; margin-bottom: 20px; margin-left: -50px; margin-right: -50px; word-wrap: break-word;'>"+htmlspecialchars(polls[txid].note).replace(/\n/g,"<br>")+"</div>"
+            +'</div>'
             +'<div style="float: left; width: 222px; margin-left: 18px; margin-top: 10px; word-wrap: break-word;" id=chartlabels>'
                +labels
                +(polls[txid].endblock>blocks?
@@ -773,7 +776,8 @@ function poll_results(txid)
                +poll_sharelinks(polls[txid].height,polls[txid].ix)
                +"</div>"
 
-            +'</div>');
+            +'</div>'
+          );
 
          $('#voteid').text("#"+polls[txid].height+"#"+polls[txid].ix).data('txid',polls[txid].txid).data('endblock',polls[txid].endblock);
 
