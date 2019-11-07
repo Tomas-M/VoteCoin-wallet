@@ -333,10 +333,6 @@ function poll_start()
       // this is way too big
       if (memos.length>50) return alert("This poll or campaign is too big. Please optimize your poll size, most likely the logo and try again.");
 
-      // if size is too big, but still usable, warn user for confirmation (long time, high fees)
-      if (memos.length>5 && !confirm("This poll or campaign requires "+memos.length+" shielded transactions to be published. It may take "
-               +(memos.length*2)+" minutes or more to complete the operation, depending on the speed of your computer. Do you really want to proceed?")) return;
-
       // find suitable outgoing address with sufficient balance.
       var from="", i;
       if (from=='') for(i in transparent_addresses) if (transparent_addresses[i]>=totalpollfee+sendfee) { from=i; break; }
