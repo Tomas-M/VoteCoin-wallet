@@ -25,6 +25,7 @@ var poll_viewkey="zivks1z0007jn8rvsvemsmf07utgdg6thph8lrrtncjqqvf98h9gt6gcrswx8s
 
 var poll_fee=1;
 var polls=storage_load('polls',{});
+var my_pollids=storage_load('my_pollids',{});
 
 if ($.isEmptyObject(polls))
 {
