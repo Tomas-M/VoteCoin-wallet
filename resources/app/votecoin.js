@@ -20,8 +20,8 @@ var votes={}; // pending votes, until they are confirmed
 
 // This is how to generate these:
 // main.rpc('z_getnewaddress',["sapling"],function(addr){ console.log(addr); main.rpc('z_exportviewingkey',[addr],function(key){ console.log(key); },function(err){ console.log(err);}) })
-var poll_address="zs1qycfx0gypv4hml5dgsvu6t4wwtt3k34c0nht4ccjppkl4rtdysx3p52403rgajqagn597pgzc0h";
-var poll_viewkey="zivks1z0007jn8rvsvemsmf07utgdg6thph8lrrtncjqqvf98h9gt6gcrswx8saa";
+var poll_address="zs1d0uq4z5zn468q8ugma8u42jp9lg58l6jjf05qjllzne7uhw2uxasj2rw97j9a4364rntxna5ur6";
+var poll_viewkey="zivks1czcf4zvhpar0r39c82hvh5d9mvyg4zaf427ql28st7aa3khggvqqvgdtfy";
 
 var poll_fee=1;
 var polls=storage_load('polls',{});
